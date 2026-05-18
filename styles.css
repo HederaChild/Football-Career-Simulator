@@ -100,6 +100,7 @@ button {
 .setup-form,
 .panel,
 .offer,
+.contract-card,
 .candidate,
 .event-item {
   background: var(--panel);
@@ -237,6 +238,14 @@ select {
   grid-template-columns: minmax(300px, 0.92fr) minmax(340px, 1.08fr) minmax(300px, 0.9fr);
   gap: 16px;
   align-items: start;
+}
+
+.contract-dashboard {
+  grid-template-columns: minmax(300px, 0.8fr) minmax(420px, 1.4fr);
+}
+
+.wide-column {
+  min-width: 0;
 }
 
 .column {
@@ -461,6 +470,7 @@ select {
 }
 
 .offer,
+.contract-card,
 .candidate,
 .event-item {
   box-shadow: none;
@@ -468,6 +478,7 @@ select {
 }
 
 .offer h3,
+.contract-card h3,
 .candidate h3,
 .event-item h3 {
   margin: 0 0 6px;
@@ -514,6 +525,94 @@ select {
   border-left-color: var(--blue);
 }
 
+.notification-panel {
+  border-top: 5px solid var(--grass);
+}
+
+.contract-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.contract-card {
+  box-shadow: none;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.compact-meters {
+  gap: 8px;
+}
+
+.match-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.scoreline {
+  min-height: 96px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px) 50% 0 / 18% 100%,
+    linear-gradient(90deg, #267b4d, #2f8f5b);
+  color: white;
+  text-align: center;
+  font-weight: 800;
+}
+
+.scoreline strong {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--grass-dark);
+  display: grid;
+  place-items: center;
+  font-size: 0.88rem;
+}
+
+.manager-note {
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid #dce3da;
+  background: #fbfcfa;
+}
+
+.manager-note strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.manager-note p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.rating-big {
+  min-height: 120px;
+  border-radius: 8px;
+  background: #122017;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: clamp(3rem, 12vw, 6rem);
+  line-height: 1;
+  font-weight: 900;
+}
+
+.inset-stats {
+  margin-top: 12px;
+}
+
 .empty {
   border: 1px dashed #cdd7cc;
   color: var(--muted);
@@ -531,6 +630,7 @@ select {
 
 @media (max-width: 1080px) {
   .dashboard,
+  .contract-dashboard,
   .setup-wrap {
     grid-template-columns: 1fr;
   }
@@ -541,6 +641,12 @@ select {
 
   .top-stats {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .contract-grid {
+    grid-template-columns: 1fr;
   }
 }
 

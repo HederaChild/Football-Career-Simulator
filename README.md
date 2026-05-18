@@ -2,7 +2,7 @@
 
 A free browser-based football career simulator prototype.
 
-You start in an academy and build toward a professional career while managing training, match performance, family support, friendships, relationships, wellbeing, and agent decisions. The game uses fictional clubs and saves progress in the browser with `localStorage`.
+You start with academy contract offers and build toward a professional career while managing training, match performance, family support, friendships, relationships, wellbeing, media attention, and agent decisions. The game uses fictionalized club names inspired by real football geography and saves progress in the browser with `localStorage`.
 
 ## Play
 
@@ -17,9 +17,16 @@ Then visit `http://localhost:4173`.
 ## First prototype systems
 
 - Academy career creation
+- Nationality list based on a FIFA ranking baseline, with lower-ranked nations giving bigger home-hero fame boosts
+- Academy contract selection before the first week
 - Weekly career, life, and agent choices
 - Attributes, coach trust, form, fitness, reputation, wage, and savings
 - Family, friends, relationship, loneliness, stress, wellbeing, and pressure
-- Agent interviews, hiring, pressure, market offers, and sacking
+- Matchday flow with pre-match manager notes, match ratings, manager thoughts, and MVP press conferences
+- Automatic agent approaches, hiring, pressure, market offers, and sacking
 - Club offers with role fit, wages, distance, and life consequences
 - Season stats, match ratings, injuries, progression milestones, and local save/reset
+
+## Data note
+
+The nationality system uses a static FIFA/Coca-Cola Men's World Ranking baseline from 1 April 2026. Club names are intentionally fictionalized, while their strength and pathway values are inspired by real football ecosystems.
