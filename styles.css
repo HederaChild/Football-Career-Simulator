@@ -78,6 +78,34 @@ button {
   justify-content: flex-end;
 }
 
+.tabbar {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14px clamp(16px, 3vw, 30px) 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tab-btn,
+.filter-btn {
+  min-height: 38px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  border: 1px solid #cbd8cb;
+  background: #eef4ee;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab-btn.active,
+.filter-btn.active {
+  background: var(--grass-dark);
+  color: white;
+  border-color: var(--grass-dark);
+}
+
 .pill {
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: rgba(255, 255, 255, 0.08);
@@ -242,6 +270,16 @@ select {
 
 .contract-dashboard {
   grid-template-columns: minmax(300px, 0.8fr) minmax(420px, 1.4fr);
+}
+
+.page-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 30px);
+  display: grid;
+  grid-template-columns: minmax(440px, 1.25fr) minmax(300px, 0.75fr);
+  gap: 16px;
+  align-items: start;
 }
 
 .wide-column {
@@ -455,6 +493,41 @@ select {
   gap: 10px;
 }
 
+.attribute-groups {
+  display: grid;
+  gap: 12px;
+}
+
+.attribute-card {
+  border: 1px solid #dce3da;
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: 11px;
+}
+
+.substat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.substat {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  border-radius: 6px;
+  background: #f0f4ef;
+  padding: 7px 8px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.substat strong {
+  color: var(--ink);
+}
+
 .stat-line {
   padding: 10px;
   border: 1px solid #dde5dc;
@@ -507,6 +580,83 @@ select {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid #dce3da;
+  border-radius: 8px;
+}
+
+.league-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+  background: #fff;
+}
+
+.league-table th,
+.league-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid #e4eae3;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.league-table th {
+  color: var(--muted);
+  background: #f4f7f3;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.league-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.current-row td {
+  background: #e7f3eb;
+}
+
+.inline-field {
+  max-width: 420px;
+}
+
+.squad-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+  margin: 12px 0;
+}
+
+.squad-header h3,
+.squad-header p {
+  margin: 0;
+}
+
+.news-list {
+  display: grid;
+  gap: 10px;
+}
+
+.news-card {
+  padding: 13px;
+  border: 1px solid #dce3da;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.news-card h3 {
+  margin: 0 0 7px;
+  font-size: 1rem;
 }
 
 .event-item {
@@ -631,6 +781,7 @@ select {
 @media (max-width: 1080px) {
   .dashboard,
   .contract-dashboard,
+  .page-grid,
   .setup-wrap {
     grid-template-columns: 1fr;
   }
@@ -654,6 +805,10 @@ select {
   .choice-grid,
   .week-actions,
   .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .substat-grid {
     grid-template-columns: 1fr;
   }
 

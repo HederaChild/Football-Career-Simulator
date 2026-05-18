@@ -1,5 +1,48 @@
-const SAVE_KEY = "full-time-life-save-v3";
+const SAVE_KEY = "full-time-life-save-v5";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
+
+const attributeGroups = {
+  technical: {
+    title: "Technical",
+    subs: [
+      ["touch", "Touch"],
+      ["passing", "Passing"],
+      ["dribbling", "Dribbling"],
+      ["finishing", "Finishing"],
+      ["firstTouch", "First touch"]
+    ]
+  },
+  physical: {
+    title: "Physical",
+    subs: [
+      ["pace", "Pace"],
+      ["stamina", "Stamina"],
+      ["strength", "Strength"],
+      ["agility", "Agility"],
+      ["jumping", "Jumping"]
+    ]
+  },
+  tactical: {
+    title: "Tactical",
+    subs: [
+      ["positioning", "Positioning"],
+      ["vision", "Vision"],
+      ["pressing", "Pressing"],
+      ["decisions", "Decisions"],
+      ["teamwork", "Teamwork"]
+    ]
+  },
+  mentality: {
+    title: "Mentality",
+    subs: [
+      ["composure", "Composure"],
+      ["workRate", "Work rate"],
+      ["leadership", "Leadership"],
+      ["resilience", "Resilience"],
+      ["focus", "Focus"]
+    ]
+  }
+};
 
 const nations = [
   { code: "FRA", name: "France", rank: 1 },
@@ -146,6 +189,127 @@ const agentActions = {
   market: { title: "Explore Market", text: "Ask for offers and interest." }
 };
 
+const pseudoStars = {
+  "Madrid White": [
+    ["Lylian Mbappo", "ST", 94],
+    ["Vinni Junioro", "WG", 91],
+    ["Jude Bellinghamn", "CM", 90],
+    ["Thibaut Courtoix", "GK", 88]
+  ],
+  "Manchester Sky": [
+    ["Erwin Halland", "ST", 93],
+    ["Kevin De Brine", "CM", 89],
+    ["Phil Fodden", "WG", 86],
+    ["Ruben Diaso", "CB", 88]
+  ],
+  "Merseyside Red": [
+    ["Mo Salim", "WG", 89],
+    ["Virgil Van Dijko", "CB", 88],
+    ["Alisson Bekker", "GK", 87],
+    ["Trent Alex-Arnold", "FB", 86]
+  ],
+  "London Red": [
+    ["Bukayo Sakae", "WG", 87],
+    ["Martin Odegard", "CM", 87],
+    ["Declan Ricce", "CM", 86],
+    ["William Salibo", "CB", 86]
+  ],
+  "London Blue": [
+    ["Cole Palmar", "CM", 86],
+    ["Enzo Fernandis", "CM", 83],
+    ["Reece Jamez", "FB", 82],
+    ["Christopher Nkunko", "ST", 82]
+  ],
+  "Paris Capital": [
+    ["Ousmane Dembeli", "WG", 86],
+    ["Achraf Hakimiq", "FB", 85],
+    ["Vitinha Silva", "CM", 84],
+    ["Gianluigi Donarumma", "GK", 85]
+  ],
+  "Munich Red": [
+    ["Harry Kain", "ST", 90],
+    ["Jamal Musialae", "CM", 88],
+    ["Joshua Kimmichh", "CM", 86],
+    ["Manuel Neueri", "GK", 84]
+  ],
+  "Catalonia Garnet": [
+    ["Lamin Yamalo", "WG", 86],
+    ["Robert Lewandovski", "ST", 86],
+    ["Pedri Gonzal", "CM", 86],
+    ["Frenkie De Jongg", "CM", 85]
+  ],
+  "Milan Blue Black": [
+    ["Lautaro Martines", "ST", 88],
+    ["Nicolo Barellae", "CM", 86],
+    ["Alessandro Bastoniq", "CB", 85],
+    ["Marcus Thuramme", "ST", 84]
+  ],
+  "Dortmund Yellow": [
+    ["Julian Brandte", "CM", 83],
+    ["Karim Adeyemio", "WG", 80],
+    ["Nico Schlotterbek", "CB", 82],
+    ["Gregor Kobeli", "GK", 84]
+  ],
+  "Seoul Red Black": [
+    ["Sung Min Soh", "WG", 86],
+    ["Jae Hwan Park", "CM", 72],
+    ["Min Kyu Han", "ST", 71],
+    ["Ji Sung Baek", "CM", 70]
+  ],
+  "Kuala Lumpur Stripes": [
+    ["Arif Aimanu", "WG", 69],
+    ["Safawi Rashido", "WG", 66],
+    ["Dion Coolsen", "CB", 68],
+    ["Akhyar Rashidee", "ST", 64]
+  ],
+  "Johor Southern": [
+    ["Bergson Silvo", "ST", 70],
+    ["La'Vere Corbin-One", "ST", 69],
+    ["Shane Lowree", "CB", 68],
+    ["Natxo Inso", "CM", 67]
+  ]
+};
+
+const firstNames = [
+  "Adrian", "Mateo", "Noah", "Luca", "Rayan", "Tomas", "Elias", "Dario", "Felix", "Ibrahim",
+  "Kai", "Min", "Haruto", "Akmal", "Rafiq", "Diego", "Nico", "Oscar", "Theo", "Yusuf",
+  "Mika", "Lucas", "Aron", "Samir", "Jae", "Ren", "Bruno", "Marco", "Leo", "Hugo"
+];
+
+const lastNames = [
+  "Novak", "Silva", "Rahman", "Tanaka", "Kimura", "Park", "Garcia", "Moretti", "Dubois", "Costa",
+  "Santos", "Hassan", "Keller", "Martins", "Muller", "Rossi", "Bakker", "Araujo", "Halim", "Foden",
+  "Yamada", "Lim", "Kovacs", "Bennett", "Alonso", "Nakamura", "Salleh", "Diallo", "Mendoza", "Ito"
+];
+
+const chairmanFirstNames = ["Victor", "Helena", "Rafael", "Darius", "Amelia", "Farid", "Clara", "Kenji", "Ismail", "Leon"];
+const chairmanLastNames = ["Marwick", "Solano", "Tan", "Keller", "Rahman", "Okada", "Moreau", "Silvestre", "Hughes", "Nordin"];
+const managerFirstNames = ["Julian", "Marco", "Hassan", "Miguel", "Andre", "Paolo", "Thomas", "Daniel", "Seo-Jun", "Riku"];
+const managerLastNames = ["Vale", "Moretti", "Reyes", "Fischer", "Collins", "Han", "Nakamura", "Rahman", "Blanc", "Ortega"];
+
+const chairmanTraits = [
+  { title: "Big spender", spending: 88, ambition: 82, patience: 42, youth: 42, stability: 45, direction: "will chase signings whenever the squad looks short" },
+  { title: "Youth builder", spending: 56, ambition: 70, patience: 76, youth: 88, stability: 72, direction: "prefers academy minutes and resale value" },
+  { title: "Pragmatic seller", spending: 48, ambition: 58, patience: 62, youth: 66, stability: 68, direction: "sells high and reinvests carefully" },
+  { title: "Galactico hunter", spending: 94, ambition: 92, patience: 28, youth: 34, stability: 35, direction: "wants stars and reacts fast to fan anger" },
+  { title: "Data driven", spending: 64, ambition: 72, patience: 70, youth: 72, stability: 78, direction: "targets value, role fit, and wage control" },
+  { title: "Cost controller", spending: 34, ambition: 45, patience: 72, youth: 58, stability: 82, direction: "keeps the club stable but frustrates ambitious managers" }
+];
+
+const broadcasters = [
+  { name: "Ramano Fabio", country: "Global", focus: "Transfers" },
+  { name: "ABC Sport", country: "England", focus: "League" },
+  { name: "Marca Norte", country: "Spain", focus: "League" },
+  { name: "Le Sportif", country: "France", focus: "League" },
+  { name: "Calcio Wire", country: "Italy", focus: "League" },
+  { name: "Bundes Blitz", country: "Germany", focus: "League" },
+  { name: "Harimau Daily", country: "Malaysia", focus: "National" },
+  { name: "Seoul Ball", country: "Korea Republic", focus: "National" },
+  { name: "Nippon Goal", country: "Japan", focus: "National" },
+  { name: "Samba Report", country: "Brazil", focus: "League" },
+  { name: "Rio Plata News", country: "Argentina", focus: "League" }
+];
+
 let state = loadState();
 let selected = { career: "technical", life: "family", agent: "none" };
 
@@ -190,9 +354,20 @@ function clubOverall(club) {
   return clamp(Math.round(club.base + (50 - nation.rank) / 20), 45, 96);
 }
 
+function createAttributesFromTemplate(template) {
+  return Object.fromEntries(Object.entries(attributeGroups).map(([group, config]) => {
+    const base = template[group];
+    return [group, Object.fromEntries(config.subs.map(([key]) => [key, clamp(base + randomBetween(-3, 3), 1, 99)]))];
+  }));
+}
+
+function groupOverall(groupKey, player = state.player) {
+  const values = Object.values(player.attributes[groupKey] || {});
+  return values.length ? average(values) : 0;
+}
+
 function overall(player = state.player) {
-  const attr = player.attributes;
-  return average([attr.technical, attr.physical, attr.tactical, attr.mentality]);
+  return average(Object.keys(attributeGroups).map((group) => groupOverall(group, player)));
 }
 
 function recentAverage() {
@@ -212,6 +387,153 @@ function loadState() {
   } catch {
     return null;
   }
+}
+
+function buildWorld() {
+  const clubs = clubCatalog.map((club, index) => {
+    const id = slug(club.name);
+    const chairman = createChairman(club, index);
+    return {
+      ...club,
+      id,
+      overall: clubOverall(club),
+      chairman,
+      manager: createManager(club, index),
+      roster: createRoster(club, false),
+      academyRoster: createRoster(club, true)
+    };
+  });
+
+  return {
+    clubs,
+    leagues: buildLeagueTables(clubs),
+    news: createOpeningNews(clubs),
+    filters: {
+      league: "Academy League",
+      newsCountry: "All",
+      club: "current"
+    }
+  };
+}
+
+function slug(value) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function createChairman(club, index) {
+  const trait = chairmanTraits[(index + Math.floor(club.base / 7)) % chairmanTraits.length];
+  return {
+    name: `${chairmanFirstNames[index % chairmanFirstNames.length]} ${chairmanLastNames[(index * 3) % chairmanLastNames.length]}`,
+    trait: trait.title,
+    direction: trait.direction,
+    spending: clamp(trait.spending + randomBetween(-8, 8)),
+    ambition: clamp(trait.ambition + randomBetween(-8, 8)),
+    patience: clamp(trait.patience + randomBetween(-8, 8)),
+    youth: clamp(trait.youth + randomBetween(-8, 8)),
+    stability: clamp(trait.stability + randomBetween(-8, 8)),
+    pressure: clamp(club.pressure + randomBetween(-10, 10))
+  };
+}
+
+function createManager(club, index) {
+  return {
+    name: `${managerFirstNames[(index * 2) % managerFirstNames.length]} ${managerLastNames[(index * 5) % managerLastNames.length]}`,
+    style: ["High press", "Possession", "Counter attack", "Youth trust", "Pragmatic"][index % 5],
+    reputation: clamp(club.base + randomBetween(-8, 8)),
+    tactics: clamp(club.base + randomBetween(-10, 10)),
+    patience: clamp(52 + club.pathway / 3 - club.pressure / 5 + randomBetween(-10, 10)),
+    fanPressure: clamp(club.pressure + randomBetween(-8, 8))
+  };
+}
+
+function createRoster(club, academy = false) {
+  const baseOverall = academy ? clamp(clubOverall(club) - 22, 32, 76) : clubOverall(club);
+  const positionsList = ["GK", "GK", "FB", "FB", "FB", "CB", "CB", "CB", "CM", "CM", "CM", "CM", "WG", "WG", "WG", "ST", "ST", "ST", "CB", "FB", "CM", "WG", "ST"];
+  const seeded = academy ? [] : (pseudoStars[club.name] || []);
+  const roster = seeded.map(([name, position, rating], index) => createPlayerRecord(name, position, clamp(rating + randomBetween(-1, 1)), club.country, index, academy));
+
+  positionsList.forEach((position, index) => {
+    if (roster.length >= 23) return;
+    const rating = clamp(baseOverall + randomBetween(-9, 8) - (index > 16 ? randomBetween(1, 5) : 0), academy ? 28 : 45, academy ? 78 : 96);
+    roster.push(createPlayerRecord(randomPlayerName(club.country, index, academy), position, rating, club.country, index + roster.length, academy));
+  });
+
+  return roster.sort((a, b) => b.overall - a.overall).slice(0, 23);
+}
+
+function createPlayerRecord(name, position, rating, country, index, academy) {
+  const age = academy ? Math.floor(randomBetween(15, 19)) : Math.floor(randomBetween(18, 35));
+  const value = academy ? Math.round(rating * rating * randomBetween(18, 65)) : Math.round(rating * rating * randomBetween(850, 4200));
+  return {
+    id: uid("player"),
+    name,
+    position,
+    overall: round(rating),
+    age,
+    country,
+    value,
+    potential: clamp(round(rating + (academy ? randomBetween(8, 22) : randomBetween(0, 8))), rating, 97)
+  };
+}
+
+function randomPlayerName(country, index, academy) {
+  const first = firstNames[(index * 7 + country.length) % firstNames.length];
+  const last = lastNames[(index * 5 + country.charCodeAt(0)) % lastNames.length];
+  return academy ? `${first} ${last}` : `${first} ${last}`;
+}
+
+function buildLeagueTables(clubs) {
+  const leagueGroups = clubs.reduce((groups, club) => {
+    if (!groups[club.tier]) groups[club.tier] = [];
+    groups[club.tier].push(club);
+    return groups;
+  }, {});
+
+  leagueGroups["Academy League"] = clubs.map((club) => ({ ...club, name: `${club.name} Academy`, overall: clamp(club.overall - 21, 30, 78) }));
+
+  return Object.fromEntries(Object.entries(leagueGroups).map(([league, entries]) => [
+    league,
+    entries
+      .map((club) => createTableRow(club, league))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+  ]));
+}
+
+function createTableRow(club, league) {
+  const strength = club.overall || clubOverall(club);
+  const played = Math.floor(randomBetween(4, 9));
+  const wins = clamp(Math.round((strength - 45) / 11 + randomBetween(0, played / 2)), 0, played);
+  const draws = clamp(Math.round(randomBetween(0, Math.max(1, played - wins)) / 2), 0, played - wins);
+  const losses = played - wins - draws;
+  const gf = Math.max(1, Math.round(wins * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.4) + randomBetween(0, 4)));
+  const ga = Math.max(1, Math.round(losses * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.3) + randomBetween(0, 3)));
+  return {
+    club: club.name,
+    country: club.country,
+    league,
+    p: played,
+    w: wins,
+    d: draws,
+    l: losses,
+    gf,
+    ga,
+    gd: gf - ga,
+    pts: wins * 3 + draws,
+    form: ["W", "D", "L", "W", "W"].sort(() => Math.random() - 0.5).slice(0, 5).join("")
+  };
+}
+
+function createOpeningNews(clubs) {
+  const top = [...clubs].sort((a, b) => b.overall - a.overall).slice(0, 4);
+  return top.map((club, index) => ({
+    id: uid("news"),
+    week: 1,
+    country: club.country,
+    source: pickBroadcaster(club.country, index).name,
+    category: "Club",
+    headline: `${club.name} board backs ${club.manager.name}`,
+    body: `${club.chairman.name}, known as a ${club.chairman.trait.toLowerCase()}, says the club direction is clear: ${club.chairman.direction}.`
+  }));
 }
 
 function createCareer(formData) {
@@ -243,12 +565,7 @@ function createCareer(formData) {
       fame: clamp(8 + (nation.rank > 80 ? 6 : 0)),
       attitude: 42,
       countryAwards: 0,
-      attributes: {
-        technical: template.technical,
-        physical: template.physical,
-        tactical: template.tactical,
-        mentality: template.mentality
-      }
+      attributes: createAttributesFromTemplate(template)
     },
     career: {
       totalWeeks: 1,
@@ -287,6 +604,13 @@ function createCareer(formData) {
     },
     academyOffers: [],
     pendingMatch: null,
+    world: buildWorld(),
+    ui: {
+      tab: "dashboard",
+      league: "Academy League",
+      newsCountry: "All",
+      club: "current"
+    },
     log: []
   };
 
@@ -367,6 +691,14 @@ function bindEvents() {
 
   document.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => handleAction(button.dataset.action, button.dataset.id));
+  });
+
+  document.querySelectorAll("select[data-action='club-select']").forEach((select) => {
+    select.addEventListener("change", () => {
+      state.ui.club = select.value;
+      saveState();
+      render();
+    });
   });
 }
 
@@ -500,67 +832,96 @@ function gameTemplate() {
   const career = state.career;
   const age = `${player.ageYears}.${Math.floor(player.ageWeeks / 5)}`;
   const ratingText = career.lastRating ? career.lastRating.toFixed(1) : "none";
+  const tab = state.ui?.tab || "dashboard";
 
   return `
     <section class="app-shell">
       ${topbarTemplate()}
-      <div class="dashboard">
-        <div class="column">
-          ${notificationsPanel()}
-          ${matchCenterPanel()}
-          ${playerPanel(age, ratingText)}
-        </div>
+      ${tabNav(tab)}
+      ${tab === "dashboard" ? dashboardTab(age, ratingText) : ""}
+      ${tab === "leagues" ? leaguesTab() : ""}
+      ${tab === "squad" ? squadTab() : ""}
+      ${tab === "contracts" ? contractsTab() : ""}
+      ${tab === "news" ? newsTab() : ""}
+    </section>
+  `;
+}
 
-        <div class="column">
-          <section class="panel">
-            <div class="panel-header">
-              <div>
-                <h2>This week</h2>
-                <p>Set your routine, then enter matchday.</p>
-              </div>
-            </div>
-            ${choiceSection("Career focus", "career", careerActions)}
-            ${choiceSection("Life focus", "life", lifeActions)}
-            ${choiceSection("Agent stance", "agent", availableAgentActions())}
-            <div class="week-actions">
-              <button class="primary-btn" type="button" data-action="advance">Advance to matchday</button>
-              <button class="secondary-btn" type="button" data-action="save">Save</button>
-            </div>
-            <p class="footer-note">Growth is capped by age and level. Most weeks add about 1 point to the main focus, and less when stress is high.</p>
-          </section>
+function tabNav(active) {
+  const tabs = [
+    ["dashboard", "Dashboard"],
+    ["leagues", "Leagues"],
+    ["squad", "Squad"],
+    ["contracts", "Agents & Contracts"],
+    ["news", "News"]
+  ];
+  return `<nav class="tabbar">${tabs.map(([id, label]) => `<button class="tab-btn ${active === id ? "active" : ""}" type="button" data-action="tab" data-id="${id}">${label}</button>`).join("")}</nav>`;
+}
 
-          <section class="panel">
-            <div class="panel-header">
-              <div>
-                <h2>Life</h2>
-                <p>Support and pressure now affect match consistency.</p>
-              </div>
-              <span class="tag">${lifeLabel()}</span>
-            </div>
-            <div class="meters">
-              ${meter("Family support", state.life.family, "blue")}
-              ${meter("Friends", state.life.friends)}
-              ${meter("Relationship", state.life.relationship, "purple")}
-              ${meter("Loneliness", state.life.loneliness, state.life.loneliness > 70 ? "risk" : state.life.loneliness > 50 ? "warn" : "")}
-              ${meter("Stress", state.life.stress, state.life.stress > 74 ? "risk" : state.life.stress > 55 ? "warn" : "")}
-              ${meter("Wellbeing", state.life.wellbeing, state.life.wellbeing < 35 ? "risk" : state.life.wellbeing < 55 ? "warn" : "")}
-              ${meter("Family pressure", state.life.familyPressure, state.life.familyPressure > 70 ? "warn" : "")}
-            </div>
-          </section>
-        </div>
+function dashboardTab(age, ratingText) {
+  return `
+    <div class="dashboard">
+      <div class="column">
+        ${notificationsPanel()}
+        ${matchCenterPanel()}
+        ${playerPanel(age, ratingText)}
+      </div>
+      <div class="column">
+        ${weeklyPanel()}
+        ${lifePanel()}
+      </div>
+      <div class="column">
+        ${footballPanel()}
+        <section class="panel">
+          <h2>Save controls</h2>
+          <div class="save-actions">
+            <button class="secondary-btn" type="button" data-action="save">Save career</button>
+            <button class="danger-btn" type="button" data-action="reset">Reset career</button>
+          </div>
+        </section>
+      </div>
+    </div>
+  `;
+}
 
-        <div class="column">
-          ${footballPanel()}
-          ${agentPanel()}
-          ${offersPanel()}
-          <section class="panel">
-            <h2>Save controls</h2>
-            <div class="save-actions">
-              <button class="secondary-btn" type="button" data-action="save">Save career</button>
-              <button class="danger-btn" type="button" data-action="reset">Reset career</button>
-            </div>
-          </section>
+function weeklyPanel() {
+  return `
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>This week</h2>
+          <p>Set your routine, then enter matchday.</p>
         </div>
+      </div>
+      ${choiceSection("Career focus", "career", careerActions)}
+      ${choiceSection("Life focus", "life", lifeActions)}
+      <div class="week-actions">
+        <button class="primary-btn" type="button" data-action="advance">Advance to matchday</button>
+        <button class="secondary-btn" type="button" data-action="save">Save</button>
+      </div>
+      <p class="footer-note">Growth is capped by age and level. Main groups rise slowly and sub-stats carry the details.</p>
+    </section>
+  `;
+}
+
+function lifePanel() {
+  return `
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Life</h2>
+          <p>Support and pressure now affect match consistency.</p>
+        </div>
+        <span class="tag">${lifeLabel()}</span>
+      </div>
+      <div class="meters">
+        ${meter("Family support", state.life.family, "blue")}
+        ${meter("Friends", state.life.friends)}
+        ${meter("Relationship", state.life.relationship, "purple")}
+        ${meter("Loneliness", state.life.loneliness, state.life.loneliness > 70 ? "risk" : state.life.loneliness > 50 ? "warn" : "")}
+        ${meter("Stress", state.life.stress, state.life.stress > 74 ? "risk" : state.life.stress > 55 ? "warn" : "")}
+        ${meter("Wellbeing", state.life.wellbeing, state.life.wellbeing < 35 ? "risk" : state.life.wellbeing < 55 ? "warn" : "")}
+        ${meter("Family pressure", state.life.familyPressure, state.life.familyPressure > 70 ? "warn" : "")}
       </div>
     </section>
   `;
@@ -610,6 +971,7 @@ function matchdayTemplate() {
 
 function postMatchTemplate() {
   const result = state.pendingMatch.result;
+  const ratingDisplay = result.rating > 0 ? result.rating.toFixed(1) : "N/A";
   return `
     <section class="app-shell">
       ${topbarTemplate()}
@@ -626,7 +988,7 @@ function postMatchTemplate() {
               </div>
               <span class="tag">${result.mvp ? "MVP" : "Team rating"}</span>
             </div>
-            <div class="rating-big">${result.rating.toFixed(1)}</div>
+            <div class="rating-big">${ratingDisplay}</div>
             <div class="manager-note">
               <strong>Manager thoughts</strong>
               <p>${escapeHtml(result.managerThought)}</p>
@@ -747,15 +1109,14 @@ function footballPanel() {
     <section class="panel">
       <div class="panel-header">
         <div>
-          <h2>Football</h2>
-          <p>Growth slows with age caps, stress, and high attributes.</p>
+          <h2>Football attributes</h2>
+          <p>Main groups are the overall of their sub-stats.</p>
         </div>
       </div>
-      <div class="meters">
-        ${meter("Technical", state.player.attributes.technical)}
-        ${meter("Physical", state.player.attributes.physical)}
-        ${meter("Tactical", state.player.attributes.tactical, "blue")}
-        ${meter("Mentality", state.player.attributes.mentality, "purple")}
+      <div class="attribute-groups">
+        ${Object.keys(attributeGroups).map(attributeGroupTemplate).join("")}
+      </div>
+      <div class="meters inset-stats">
         ${meter("Coach trust", state.career.coachTrust, "blue")}
         ${meter("Reputation", state.career.reputation, "purple")}
         ${meter("Form", state.career.form)}
@@ -768,6 +1129,25 @@ function footballPanel() {
         ${statLine("Avg rating", state.career.avgRating ? state.career.avgRating.toFixed(2) : "none", "Season")}
       </div>
     </section>
+  `;
+}
+
+function attributeGroupTemplate(groupKey) {
+  const group = attributeGroups[groupKey];
+  const value = groupOverall(groupKey);
+  const type = groupKey === "tactical" ? "blue" : groupKey === "mentality" ? "purple" : "";
+  return `
+    <div class="attribute-card">
+      ${meter(group.title, value, type)}
+      <div class="substat-grid">
+        ${group.subs.map(([key, label]) => `
+          <div class="substat">
+            <span>${label}</span>
+            <strong>${round(state.player.attributes[groupKey][key])}</strong>
+          </div>
+        `).join("")}
+      </div>
+    </div>
   `;
 }
 
@@ -812,6 +1192,260 @@ function offersPanel() {
       </div>
     </section>
   `;
+}
+
+function leaguesTab() {
+  const leagues = Object.keys(state.world.leagues);
+  const activeLeague = state.ui.league || currentLeagueName();
+  const table = state.world.leagues[activeLeague] || [];
+  return `
+    <div class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>League tables</h2>
+            <p>Current table plus selectable leagues across the game world.</p>
+          </div>
+          <span class="tag">${escapeHtml(activeLeague)}</span>
+        </div>
+        <div class="filter-row">
+          ${leagues.map((league) => `<button class="filter-btn ${activeLeague === league ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(league)}">${escapeHtml(league)}</button>`).join("")}
+        </div>
+        ${leagueTableTemplate(table)}
+      </section>
+      <section class="panel">
+        <h2>Current club direction</h2>
+        ${clubDirectionTemplate(currentWorldClub())}
+      </section>
+    </div>
+  `;
+}
+
+function leagueTableTemplate(table) {
+  return `
+    <div class="table-wrap">
+      <table class="league-table">
+        <thead>
+          <tr><th>#</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th><th>Form</th></tr>
+        </thead>
+        <tbody>
+          ${table.map((row, index) => `
+            <tr class="${row.club === state.player.club ? "current-row" : ""}">
+              <td>${index + 1}</td>
+              <td>${escapeHtml(row.club)}</td>
+              <td>${row.p}</td>
+              <td>${row.w}</td>
+              <td>${row.d}</td>
+              <td>${row.l}</td>
+              <td>${row.gd > 0 ? "+" : ""}${row.gd}</td>
+              <td><strong>${row.pts}</strong></td>
+              <td>${escapeHtml(row.form)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function squadTab() {
+  const club = selectedWorldClub();
+  const roster = rosterForClub(club);
+  return `
+    <div class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Squad and teammates</h2>
+            <p>Academy squads are generated to match club strength. Senior squads include altered inspired names plus generated depth.</p>
+          </div>
+        </div>
+        <label class="field inline-field">
+          <span>View club</span>
+          <select data-action="club-select">
+            <option value="current">Current club</option>
+            ${state.world.clubs.map((item) => `<option value="${item.id}" ${state.ui.club === item.id ? "selected" : ""}>${escapeHtml(item.name)}</option>`).join("")}
+          </select>
+        </label>
+        <div class="squad-header">
+          <div>
+            <h3>${escapeHtml(clubDisplayName(club))}</h3>
+            <p class="microcopy">${escapeHtml(club.country)} - Club OVR ${club.overall}</p>
+          </div>
+          <span class="tag">${state.player.club.includes("Academy") && club.id === currentWorldClub().id ? "Academy squad" : "Senior squad"}</span>
+        </div>
+        ${rosterTableTemplate(roster, club)}
+      </section>
+      <section class="panel">
+        <h2>Club leadership</h2>
+        ${clubDirectionTemplate(club)}
+      </section>
+    </div>
+  `;
+}
+
+function rosterTableTemplate(roster, club) {
+  const playerRow = club.id === currentWorldClub().id ? [careerPlayerRecord()] : [];
+  const rows = [...playerRow, ...roster].slice(0, 26);
+  return `
+    <div class="table-wrap">
+      <table class="league-table">
+        <thead>
+          <tr><th>Name</th><th>Pos</th><th>Age</th><th>OVR</th><th>Potential</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          ${rows.map((player) => `
+            <tr class="${player.isYou ? "current-row" : ""}">
+              <td>${escapeHtml(player.name)}</td>
+              <td>${escapeHtml(player.position)}</td>
+              <td>${player.age}</td>
+              <td><strong>${player.overall}</strong></td>
+              <td>${player.potential}</td>
+              <td>$${formatMoney(player.value)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function contractsTab() {
+  return `
+    <div class="dashboard contract-dashboard">
+      <div class="column">
+        ${agentPanel()}
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h2>Agent stance</h2>
+              <p>Use this when you want market action or boundaries.</p>
+            </div>
+          </div>
+          ${choiceSection("Agent stance", "agent", availableAgentActions())}
+        </section>
+      </div>
+      <div class="column wide-column">
+        ${offersPanel()}
+        <section class="panel">
+          <h2>Market logic</h2>
+          <p class="microcopy">Higher overall players have higher values and stronger desire for larger clubs. Chairmen can try ambitious signings, but the game blocks absurd moves like elite 94 OVR players joining 20-40 OVR clubs without a logical reason.</p>
+        </section>
+      </div>
+    </div>
+  `;
+}
+
+function newsTab() {
+  const countries = ["All", "Global", ...new Set(state.world.news.map((item) => item.country))].filter(Boolean);
+  const active = state.ui.newsCountry || "All";
+  const news = active === "All" ? state.world.news : state.world.news.filter((item) => item.country === active);
+  return `
+    <div class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>News</h2>
+            <p>Filter country coverage and watch pressure build around clubs, transfers, and national stories.</p>
+          </div>
+        </div>
+        <div class="filter-row">
+          ${countries.map((country) => `<button class="filter-btn ${active === country ? "active" : ""}" type="button" data-action="news-filter" data-id="${escapeHtml(country)}">${escapeHtml(country)}</button>`).join("")}
+        </div>
+        <div class="news-list">
+          ${news.length ? news.slice(0, 18).map(newsTemplate).join("") : `<div class="empty">No news for this filter yet.</div>`}
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Broadcasters</h2>
+        <div class="events">
+          ${broadcasters.map((source) => `
+            <article class="event-item">
+              <h3>${escapeHtml(source.name)}</h3>
+              <p class="microcopy">${escapeHtml(source.country)} - ${escapeHtml(source.focus)}</p>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function newsTemplate(item) {
+  return `
+    <article class="news-card">
+      <div class="offer-meta">
+        <span class="tag">${escapeHtml(item.source)}</span>
+        <span class="tag">${escapeHtml(item.country)}</span>
+        <span class="tag">${escapeHtml(item.category)}</span>
+      </div>
+      <h3>${escapeHtml(item.headline)}</h3>
+      <p class="microcopy">${escapeHtml(item.body)}</p>
+      <span class="tag">Week ${item.week}</span>
+    </article>
+  `;
+}
+
+function clubDirectionTemplate(club) {
+  if (!club) return `<div class="empty">No club selected.</div>`;
+  const chairman = club.chairman;
+  return `
+    <div class="agent-card">
+      <strong>${escapeHtml(chairman.name)}</strong>
+      <span class="microcopy">Chairman profile: ${escapeHtml(chairman.trait)}. ${escapeHtml(chairman.direction)}.</span>
+      ${meter("Spending", chairman.spending)}
+      ${meter("Ambition", chairman.ambition, "purple")}
+      ${meter("Patience", chairman.patience, chairman.patience < 38 ? "warn" : "blue")}
+      ${meter("Youth focus", chairman.youth)}
+      ${meter("Stability", chairman.stability, chairman.stability < 40 ? "risk" : "")}
+      <div class="manager-note">
+        <strong>Manager</strong>
+        <p>${escapeHtml(club.manager.name)} - ${escapeHtml(club.manager.style)} - reputation ${round(club.manager.reputation)}.</p>
+      </div>
+    </div>
+  `;
+}
+
+function currentLeagueName() {
+  return state.player.tier === "Academy" || state.player.club.includes("Academy") ? "Academy League" : state.player.tier;
+}
+
+function currentWorldClub() {
+  const baseName = state.player.club.replace(" Academy", "");
+  return state.world.clubs.find((club) => club.name === baseName) || state.world.clubs[0];
+}
+
+function selectedWorldClub() {
+  if (!state.ui.club || state.ui.club === "current") return currentWorldClub();
+  return state.world.clubs.find((club) => club.id === state.ui.club) || currentWorldClub();
+}
+
+function rosterForClub(club) {
+  const isCurrentAcademy = club.id === currentWorldClub().id && state.player.club.includes("Academy");
+  return isCurrentAcademy ? club.academyRoster : club.roster;
+}
+
+function clubDisplayName(club) {
+  if (!club) return "";
+  return club.id === currentWorldClub().id && state.player.club.includes("Academy") ? `${club.name} Academy` : club.name;
+}
+
+function careerPlayerRecord() {
+  return {
+    name: `${state.player.name} (You)`,
+    position: positions[state.player.position].short,
+    age: state.player.ageYears,
+    overall: round(overall()),
+    potential: ageSoftCap() + 8,
+    value: Math.round(overall() * overall() * (state.player.stage.includes("Academy") ? 42 : 1000)),
+    isYou: true
+  };
+}
+
+function formatMoney(value) {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}m`;
+  if (value >= 1000) return `${Math.round(value / 1000)}k`;
+  return String(value);
 }
 
 function ladderStep(number, title, text) {
@@ -913,6 +1547,21 @@ function eventTemplate(event) {
 }
 
 function handleAction(action, id) {
+  if (action === "tab") {
+    state.ui.tab = id;
+    saveState();
+    render();
+  }
+  if (action === "league-filter") {
+    state.ui.league = id;
+    saveState();
+    render();
+  }
+  if (action === "news-filter") {
+    state.ui.newsCountry = id;
+    saveState();
+    render();
+  }
   if (action === "accept-academy") acceptAcademy(id);
   if (action === "advance") advanceToMatchday();
   if (action === "proceed-match") proceedMatch();
@@ -957,7 +1606,10 @@ function acceptAcademy(id) {
 
   state.phase = "weekly";
   state.academyOffers = [];
+  state.ui.league = "Academy League";
+  state.ui.club = "current";
   addLog("Academy contract signed", `You joined ${offer.club}. Fit ${offer.fit}, pathway ${offer.pathway}, pressure ${offer.pressure}.`, "good");
+  addNews(offer.country, "Academy", `${state.player.name} chooses ${offer.club}`, `The ${state.player.nationality} prospect signed a youth deal after weighing pathway, pressure, and distance.`);
   saveState();
   render();
 }
@@ -1015,11 +1667,13 @@ function applyTraining(action, logs) {
 }
 
 function addAttribute(key, amount) {
-  const current = state.player.attributes[key];
   const cap = ageSoftCap();
-  const capPenalty = current > cap ? 0.18 : current > cap - 3 ? 0.45 : 1;
-  const elitePenalty = current > 82 ? 0.32 : current > 72 ? 0.62 : 1;
-  state.player.attributes[key] = clamp(current + amount * capPenalty * elitePenalty);
+  Object.keys(state.player.attributes[key]).forEach((subKey) => {
+    const current = state.player.attributes[key][subKey];
+    const capPenalty = current > cap ? 0.18 : current > cap - 3 ? 0.45 : 1;
+    const elitePenalty = current > 82 ? 0.32 : current > 72 ? 0.62 : 1;
+    state.player.attributes[key][subKey] = clamp(current + amount * randomBetween(0.65, 1.18) * capPenalty * elitePenalty);
+  });
 }
 
 function ageSoftCap() {
@@ -1177,8 +1831,12 @@ function simulateMatch() {
   applyEndProduct(rating);
   updateFameFromRating(rating, mvp);
 
-  if (rating >= 8) addLog("Breakout performance", `A ${rating.toFixed(1)} rating pushed your name into bigger conversations.`, "good");
-  else if (rating < 5.5) addLog("Difficult match", `A ${rating.toFixed(1)} rating hurt form and trust. The response matters.`, "warning");
+  if (rating >= 8) {
+    addLog("Breakout performance", `A ${rating.toFixed(1)} rating pushed your name into bigger conversations.`, "good");
+    addNews(player.nationality, "Match", `${player.name} lights up academy match`, `A ${rating.toFixed(1)} rating put the ${player.nationality} prospect into the spotlight.`);
+  } else if (rating < 5.5) {
+    addLog("Difficult match", `A ${rating.toFixed(1)} rating hurt form and trust. The response matters.`, "warning");
+  }
 
   const injuryRisk = career.fitness < 30 ? 0.11 : career.fitness < 45 ? 0.05 : 0.015;
   if (Math.random() < injuryRisk) {
@@ -1198,7 +1856,7 @@ function simulateMatch() {
 
 function applyEndProduct(rating) {
   const player = state.player;
-  const chance = rating + player.attributes.technical / 18 + Math.random() * 2.8;
+  const chance = rating + groupOverall("technical") / 18 + Math.random() * 2.8;
   if (player.position === "Goalkeeper") {
     if (rating > 6.8 && Math.random() < 0.45) state.career.cleanSheets += 1;
   } else {
@@ -1274,6 +1932,7 @@ function handlePress(choice) {
     player.fame = clamp(player.fame + 1.5 + player.countrySpotlight);
     state.career.reputation = clamp(state.career.reputation + player.countrySpotlight / 2);
     body = `You spoke about ${player.nationality}. The lower-ranked nation spotlight made the story travel further at home.`;
+    addNews(player.nationality, "National", `${player.name} speaks for ${player.nationality}`, `The post-match message resonated at home and added to the home-hero story.`);
   }
 
   if (choice === "skip") {
@@ -1294,11 +1953,76 @@ function handlePress(choice) {
 function finishWeek() {
   maybeAgentApproach();
   evaluateContractsAndMilestones();
+  updateLeagueTables();
+  updateClubPolitics();
   advanceCalendar();
   state.phase = "weekly";
   state.pendingMatch = null;
   saveState();
   render();
+}
+
+function updateLeagueTables() {
+  Object.keys(state.world.leagues).forEach((league) => {
+    state.world.leagues[league] = state.world.leagues[league]
+      .map((row) => simulateTableRow(row))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  });
+}
+
+function simulateTableRow(row) {
+  const strength = clubStrengthByTableName(row.club);
+  const winChance = clamp(0.26 + (strength - 55) / 120, 0.12, 0.72);
+  const roll = Math.random();
+  const scored = Math.max(0, Math.round(randomBetween(0, 2.2) + (strength - 50) / 28));
+  const conceded = Math.max(0, Math.round(randomBetween(0, 2.3) + (70 - strength) / 35));
+  const updated = { ...row, p: row.p + 1, gf: row.gf + scored, ga: row.ga + conceded };
+
+  if (roll < winChance) {
+    updated.w += 1;
+    updated.pts += 3;
+    updated.form = `W${row.form}`.slice(0, 5);
+  } else if (roll < winChance + 0.27) {
+    updated.d += 1;
+    updated.pts += 1;
+    updated.form = `D${row.form}`.slice(0, 5);
+  } else {
+    updated.l += 1;
+    updated.form = `L${row.form}`.slice(0, 5);
+  }
+
+  updated.gd = updated.gf - updated.ga;
+  return updated;
+}
+
+function clubStrengthByTableName(name) {
+  const baseName = name.replace(" Academy", "");
+  const club = state.world.clubs.find((item) => item.name === baseName);
+  if (!club) return 55;
+  return name.includes("Academy") ? club.overall - 21 : club.overall;
+}
+
+function updateClubPolitics() {
+  Object.entries(state.world.leagues).forEach(([league, table]) => {
+    if (league === "Academy League") return;
+    table.forEach((row, index) => {
+      const club = state.world.clubs.find((item) => item.name === row.club);
+      if (!club || row.p < 8) return;
+      const expectedTop = club.overall >= 86 ? 4 : club.overall >= 80 ? 7 : 12;
+      const badPosition = index + 1 > expectedTop;
+      const fanHeat = club.manager.fanPressure + club.chairman.ambition - club.chairman.patience;
+      if (badPosition && fanHeat > 78 && Math.random() < 0.025) {
+        const oldManager = club.manager.name;
+        club.manager = createManager(club, Math.floor(randomBetween(1, 999)));
+        addNews(club.country, "Manager", `${club.name} replace ${oldManager}`, `Fans demanded action after poor results. ${club.chairman.name} appointed ${club.manager.name} to steady the club.`);
+      }
+      if (badPosition && club.chairman.stability < 38 && row.p > 14 && Math.random() < 0.006) {
+        const oldChairman = club.chairman.name;
+        club.chairman = createChairman(club, Math.floor(randomBetween(1, 999)));
+        addNews(club.country, "Boardroom", `${club.name} boardroom changes`, `${oldChairman} left after fan unrest and poor results. ${club.chairman.name} now sets the club direction.`);
+      }
+    });
+  });
 }
 
 function applyAgentAction(logs) {
@@ -1465,6 +2189,7 @@ function createOffer(reason, viaAgent) {
   });
 
   state.agent.offers = state.agent.offers.slice(0, 4);
+  addNews(club.country, "Transfer", `Ramano Fabio: ${club.name} monitor ${player.name}`, `${club.name} have discussed a ${role.toLowerCase()} pathway. Value and role fit remain the key questions.`, "Ramano Fabio");
 }
 
 function offerRole(club, fit, age) {
@@ -1500,6 +2225,7 @@ function acceptOffer(id) {
   } else {
     addLog("Contract accepted", `You joined ${offer.club} as ${offer.role}. A new environment means new pressure.`, "good");
   }
+  addNews(offer.distance === "home country" ? state.player.nationality : "Global", "Transfer", `${state.player.name} agrees ${offer.club} move`, `The deal gives him a ${offer.role.toLowerCase()} role with a fit score of ${offer.fit}.`, "Ramano Fabio");
 
   state.agent.offers = state.agent.offers.filter((item) => item.id !== id);
   saveState();
@@ -1570,6 +2296,26 @@ function addLog(title, body, type = "") {
     week: state.career.totalWeeks
   });
   state.log = state.log.slice(0, 50);
+}
+
+function addNews(country, category, headline, body, sourceName = null) {
+  const source = sourceName ? { name: sourceName } : pickBroadcaster(country, state.world.news.length);
+  state.world.news.unshift({
+    id: uid("news"),
+    week: state.career.totalWeeks,
+    country,
+    source: source.name,
+    category,
+    headline,
+    body
+  });
+  state.world.news = state.world.news.slice(0, 120);
+}
+
+function pickBroadcaster(country, offset = 0) {
+  const countrySources = broadcasters.filter((source) => source.country === country);
+  if (countrySources.length) return countrySources[offset % countrySources.length];
+  return broadcasters[offset % broadcasters.length];
 }
 
 function lifeLabel() {

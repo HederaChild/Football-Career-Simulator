@@ -25,6 +25,11 @@ Then visit `http://localhost:4173`.
 - Matchday flow with pre-match manager notes, match ratings, manager thoughts, and MVP press conferences
 - Automatic agent approaches, hiring, pressure, market offers, and sacking
 - Club offers with role fit, wages, distance, and life consequences
+- Attribute groups with sub-stats such as touch, passing, pace, stamina, positioning, composure, and more
+- Tabbed league tables, squad/teammate views, agents/contracts, and filtered news
+- Generated senior and academy rosters for every fictionalized club
+- Club chairman and manager profiles, with board direction and pressure-driven changes
+- Altered broadcaster names and country-filtered news
 - Season stats, match ratings, injuries, progression milestones, and local save/reset
 
 ## Data note
