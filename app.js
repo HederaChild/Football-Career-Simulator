@@ -1,4 +1,4 @@
-const SAVE_KEY = "full-time-life-save-v5";
+const SAVE_KEY = "full-time-life-save-v7";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 
 const attributeGroups = {
@@ -101,52 +101,52 @@ const positions = {
 };
 
 const clubCatalog = [
-  { name: "London Blue", country: "England", city: "London", tier: "Premier Division", base: 82, pathway: 58, pressure: 82 },
-  { name: "London Red", country: "England", city: "London", tier: "Premier Division", base: 88, pathway: 63, pressure: 78 },
-  { name: "North London Lily", country: "England", city: "London", tier: "Premier Division", base: 84, pathway: 66, pressure: 70 },
-  { name: "Manchester Sky", country: "England", city: "Manchester", tier: "Premier Division", base: 94, pathway: 45, pressure: 88 },
-  { name: "Manchester Red", country: "England", city: "Manchester", tier: "Premier Division", base: 83, pathway: 62, pressure: 86 },
-  { name: "Merseyside Red", country: "England", city: "Liverpool", tier: "Premier Division", base: 91, pathway: 54, pressure: 84 },
-  { name: "Tyneside Black White", country: "England", city: "Newcastle", tier: "Premier Division", base: 80, pathway: 70, pressure: 68 },
-  { name: "Birmingham Claret", country: "England", city: "Birmingham", tier: "Premier Division", base: 78, pathway: 72, pressure: 61 },
-  { name: "Madrid White", country: "Spain", city: "Madrid", tier: "La Liga", base: 94, pathway: 44, pressure: 90 },
-  { name: "Madrid Red White", country: "Spain", city: "Madrid", tier: "La Liga", base: 86, pathway: 58, pressure: 76 },
-  { name: "Catalonia Garnet", country: "Spain", city: "Barcelona", tier: "La Liga", base: 89, pathway: 57, pressure: 84 },
-  { name: "Basque Red White", country: "Spain", city: "Bilbao", tier: "La Liga", base: 80, pathway: 76, pressure: 62 },
-  { name: "Seville Green White", country: "Spain", city: "Seville", tier: "La Liga", base: 77, pathway: 73, pressure: 58 },
-  { name: "Milan Red Black", country: "Italy", city: "Milan", tier: "Serie A", base: 86, pathway: 61, pressure: 76 },
-  { name: "Milan Blue Black", country: "Italy", city: "Milan", tier: "Serie A", base: 89, pathway: 56, pressure: 83 },
-  { name: "Turin Stripes", country: "Italy", city: "Turin", tier: "Serie A", base: 84, pathway: 59, pressure: 80 },
-  { name: "Naples Blue", country: "Italy", city: "Naples", tier: "Serie A", base: 87, pathway: 62, pressure: 81 },
-  { name: "Rome Maroon", country: "Italy", city: "Rome", tier: "Serie A", base: 80, pathway: 70, pressure: 66 },
-  { name: "Munich Red", country: "Germany", city: "Munich", tier: "Bundesliga", base: 92, pathway: 51, pressure: 86 },
-  { name: "Dortmund Yellow", country: "Germany", city: "Dortmund", tier: "Bundesliga", base: 85, pathway: 75, pressure: 72 },
-  { name: "Leverkusen Works", country: "Germany", city: "Leverkusen", tier: "Bundesliga", base: 87, pathway: 72, pressure: 68 },
-  { name: "Saxony Red", country: "Germany", city: "Leipzig", tier: "Bundesliga", base: 82, pathway: 73, pressure: 65 },
-  { name: "Paris Capital", country: "France", city: "Paris", tier: "Ligue 1", base: 91, pathway: 49, pressure: 88 },
-  { name: "Marseille Sky", country: "France", city: "Marseille", tier: "Ligue 1", base: 81, pathway: 68, pressure: 74 },
-  { name: "Lyon White", country: "France", city: "Lyon", tier: "Ligue 1", base: 78, pathway: 75, pressure: 64 },
-  { name: "Monaco Red White", country: "France", city: "Monaco", tier: "Ligue 1", base: 80, pathway: 72, pressure: 61 },
-  { name: "Lisbon Green White", country: "Portugal", city: "Lisbon", tier: "Primeira", base: 84, pathway: 74, pressure: 67 },
-  { name: "Lisbon Red", country: "Portugal", city: "Lisbon", tier: "Primeira", base: 85, pathway: 69, pressure: 73 },
-  { name: "Porto Blue", country: "Portugal", city: "Porto", tier: "Primeira", base: 83, pathway: 70, pressure: 71 },
-  { name: "Amsterdam Red White", country: "Netherlands", city: "Amsterdam", tier: "Eredivisie", base: 80, pathway: 82, pressure: 62 },
-  { name: "Eindhoven Red White", country: "Netherlands", city: "Eindhoven", tier: "Eredivisie", base: 83, pathway: 78, pressure: 66 },
-  { name: "Rotterdam Red White", country: "Netherlands", city: "Rotterdam", tier: "Eredivisie", base: 79, pathway: 77, pressure: 63 },
-  { name: "Seoul Red Black", country: "Korea Republic", city: "Seoul", tier: "K League", base: 69, pathway: 82, pressure: 50 },
-  { name: "Ulsan Blue", country: "Korea Republic", city: "Ulsan", tier: "K League", base: 72, pathway: 79, pressure: 56 },
-  { name: "Jeonbuk Green", country: "Korea Republic", city: "Jeonju", tier: "K League", base: 71, pathway: 80, pressure: 55 },
-  { name: "Kuala Lumpur Stripes", country: "Malaysia", city: "Kuala Lumpur", tier: "Malaysia Super League", base: 55, pathway: 88, pressure: 42 },
-  { name: "Johor Southern", country: "Malaysia", city: "Johor Bahru", tier: "Malaysia Super League", base: 62, pathway: 77, pressure: 55 },
-  { name: "Klang Valley Red", country: "Malaysia", city: "Shah Alam", tier: "Malaysia Super League", base: 56, pathway: 84, pressure: 44 },
-  { name: "Penang Island", country: "Malaysia", city: "George Town", tier: "Malaysia Super League", base: 53, pathway: 86, pressure: 39 },
-  { name: "Tokyo Blue Red", country: "Japan", city: "Tokyo", tier: "J League", base: 72, pathway: 80, pressure: 56 },
-  { name: "Yokohama Navy", country: "Japan", city: "Yokohama", tier: "J League", base: 73, pathway: 78, pressure: 58 },
-  { name: "Saitama Red", country: "Japan", city: "Saitama", tier: "J League", base: 72, pathway: 76, pressure: 60 },
-  { name: "Rio Red Black", country: "Brazil", city: "Rio de Janeiro", tier: "Serie A Brazil", base: 80, pathway: 82, pressure: 69 },
-  { name: "Sao Paulo Green", country: "Brazil", city: "Sao Paulo", tier: "Serie A Brazil", base: 78, pathway: 82, pressure: 66 },
-  { name: "Buenos Aires Blue Gold", country: "Argentina", city: "Buenos Aires", tier: "Primera Argentina", base: 80, pathway: 83, pressure: 72 },
-  { name: "Buenos Aires Red White", country: "Argentina", city: "Buenos Aires", tier: "Primera Argentina", base: 79, pathway: 83, pressure: 70 }
+  { name: "London Blue", country: "England", city: "London", tier: "English League", base: 82, pathway: 58, pressure: 82 },
+  { name: "London Red", country: "England", city: "London", tier: "English League", base: 88, pathway: 63, pressure: 78 },
+  { name: "North London Lily", country: "England", city: "London", tier: "English League", base: 84, pathway: 66, pressure: 70 },
+  { name: "Manchester Sky", country: "England", city: "Manchester", tier: "English League", base: 94, pathway: 45, pressure: 88 },
+  { name: "Manchester Red", country: "England", city: "Manchester", tier: "English League", base: 83, pathway: 62, pressure: 86 },
+  { name: "Merseyside Red", country: "England", city: "Liverpool", tier: "English League", base: 91, pathway: 54, pressure: 84 },
+  { name: "Tyneside Black White", country: "England", city: "Newcastle", tier: "English League", base: 80, pathway: 70, pressure: 68 },
+  { name: "Birmingham Claret", country: "England", city: "Birmingham", tier: "English League", base: 78, pathway: 72, pressure: 61 },
+  { name: "Madrid White", country: "Spain", city: "Madrid", tier: "Spanish League", base: 94, pathway: 44, pressure: 90 },
+  { name: "Madrid Red White", country: "Spain", city: "Madrid", tier: "Spanish League", base: 86, pathway: 58, pressure: 76 },
+  { name: "Catalonia Garnet", country: "Spain", city: "Barcelona", tier: "Spanish League", base: 89, pathway: 57, pressure: 84 },
+  { name: "Basque Red White", country: "Spain", city: "Bilbao", tier: "Spanish League", base: 80, pathway: 76, pressure: 62 },
+  { name: "Seville Green White", country: "Spain", city: "Seville", tier: "Spanish League", base: 77, pathway: 73, pressure: 58 },
+  { name: "Milan Red Black", country: "Italy", city: "Milan", tier: "Italian League", base: 86, pathway: 61, pressure: 76 },
+  { name: "Milan Blue Black", country: "Italy", city: "Milan", tier: "Italian League", base: 89, pathway: 56, pressure: 83 },
+  { name: "Turin Stripes", country: "Italy", city: "Turin", tier: "Italian League", base: 84, pathway: 59, pressure: 80 },
+  { name: "Naples Blue", country: "Italy", city: "Naples", tier: "Italian League", base: 87, pathway: 62, pressure: 81 },
+  { name: "Rome Maroon", country: "Italy", city: "Rome", tier: "Italian League", base: 80, pathway: 70, pressure: 66 },
+  { name: "Munich Red", country: "Germany", city: "Munich", tier: "German League", base: 92, pathway: 51, pressure: 86 },
+  { name: "Dortmund Yellow", country: "Germany", city: "Dortmund", tier: "German League", base: 85, pathway: 75, pressure: 72 },
+  { name: "Leverkusen Works", country: "Germany", city: "Leverkusen", tier: "German League", base: 87, pathway: 72, pressure: 68 },
+  { name: "Saxony Red", country: "Germany", city: "Leipzig", tier: "German League", base: 82, pathway: 73, pressure: 65 },
+  { name: "Paris Capital", country: "France", city: "Paris", tier: "French League", base: 91, pathway: 49, pressure: 88 },
+  { name: "Marseille Sky", country: "France", city: "Marseille", tier: "French League", base: 81, pathway: 68, pressure: 74 },
+  { name: "Lyon White", country: "France", city: "Lyon", tier: "French League", base: 78, pathway: 75, pressure: 64 },
+  { name: "Monaco Red White", country: "France", city: "Monaco", tier: "French League", base: 80, pathway: 72, pressure: 61 },
+  { name: "Lisbon Green White", country: "Portugal", city: "Lisbon", tier: "Portuguese League", base: 84, pathway: 74, pressure: 67 },
+  { name: "Lisbon Red", country: "Portugal", city: "Lisbon", tier: "Portuguese League", base: 85, pathway: 69, pressure: 73 },
+  { name: "Porto Blue", country: "Portugal", city: "Porto", tier: "Portuguese League", base: 83, pathway: 70, pressure: 71 },
+  { name: "Amsterdam Red White", country: "Netherlands", city: "Amsterdam", tier: "Dutch League", base: 80, pathway: 82, pressure: 62 },
+  { name: "Eindhoven Red White", country: "Netherlands", city: "Eindhoven", tier: "Dutch League", base: 83, pathway: 78, pressure: 66 },
+  { name: "Rotterdam Red White", country: "Netherlands", city: "Rotterdam", tier: "Dutch League", base: 79, pathway: 77, pressure: 63 },
+  { name: "Seoul Red Black", country: "Korea Republic", city: "Seoul", tier: "Korean League", base: 69, pathway: 82, pressure: 50 },
+  { name: "Ulsan Blue", country: "Korea Republic", city: "Ulsan", tier: "Korean League", base: 72, pathway: 79, pressure: 56 },
+  { name: "Jeonbuk Green", country: "Korea Republic", city: "Jeonju", tier: "Korean League", base: 71, pathway: 80, pressure: 55 },
+  { name: "Kuala Lumpur Stripes", country: "Malaysia", city: "Kuala Lumpur", tier: "Malaysian League", base: 55, pathway: 88, pressure: 42 },
+  { name: "Johor Southern", country: "Malaysia", city: "Johor Bahru", tier: "Malaysian League", base: 62, pathway: 77, pressure: 55 },
+  { name: "Klang Valley Red", country: "Malaysia", city: "Shah Alam", tier: "Malaysian League", base: 56, pathway: 84, pressure: 44 },
+  { name: "Penang Island", country: "Malaysia", city: "George Town", tier: "Malaysian League", base: 53, pathway: 86, pressure: 39 },
+  { name: "Tokyo Blue Red", country: "Japan", city: "Tokyo", tier: "Japanese League", base: 72, pathway: 80, pressure: 56 },
+  { name: "Yokohama Navy", country: "Japan", city: "Yokohama", tier: "Japanese League", base: 73, pathway: 78, pressure: 58 },
+  { name: "Saitama Red", country: "Japan", city: "Saitama", tier: "Japanese League", base: 72, pathway: 76, pressure: 60 },
+  { name: "Rio Red Black", country: "Brazil", city: "Rio de Janeiro", tier: "Brazilian League", base: 80, pathway: 82, pressure: 69 },
+  { name: "Sao Paulo Green", country: "Brazil", city: "Sao Paulo", tier: "Brazilian League", base: 78, pathway: 82, pressure: 66 },
+  { name: "Buenos Aires Blue Gold", country: "Argentina", city: "Buenos Aires", tier: "Argentine League", base: 80, pathway: 83, pressure: 72 },
+  { name: "Buenos Aires Red White", country: "Argentina", city: "Buenos Aires", tier: "Argentine League", base: 79, pathway: 83, pressure: 70 }
 ];
 
 const academyPrograms = clubCatalog.map((club) => ({
@@ -156,6 +156,42 @@ const academyPrograms = clubCatalog.map((club) => ({
   academyQuality: clamp(Math.round(club.base + club.pathway / 10), 45, 96),
   wage: 0
 }));
+
+const leagueConfigs = {
+  "English League": { country: "England", clubs: 20, matches: 38, region: "Europe" },
+  "Spanish League": { country: "Spain", clubs: 20, matches: 38, region: "Europe" },
+  "Italian League": { country: "Italy", clubs: 20, matches: 38, region: "Europe" },
+  "German League": { country: "Germany", clubs: 18, matches: 34, region: "Europe" },
+  "French League": { country: "France", clubs: 18, matches: 34, region: "Europe" },
+  "Portuguese League": { country: "Portugal", clubs: 18, matches: 34, region: "Europe" },
+  "Dutch League": { country: "Netherlands", clubs: 18, matches: 34, region: "Europe" },
+  "Korean League": { country: "Korea Republic", clubs: 12, matches: 38, region: "Asia" },
+  "Malaysian League": { country: "Malaysia", clubs: 13, matches: 24, region: "Asia" },
+  "Japanese League": { country: "Japan", clubs: 20, matches: 38, region: "Asia" },
+  "Brazilian League": { country: "Brazil", clubs: 20, matches: 38, region: "South America" },
+  "Argentine League": { country: "Argentina", clubs: 30, matches: 16, region: "South America" }
+};
+
+const continentalConfigs = {
+  "European Crown League": {
+    region: "Europe",
+    clubs: 36,
+    matches: 8,
+    rule: "36-club league phase. Each club plays 8 different opponents, then top 8 advance directly and 9-24 enter a knockout play-off."
+  },
+  "Asian Crown League": {
+    region: "Asia",
+    clubs: 24,
+    matches: 8,
+    rule: "24-club elite phase split by region. Each club plays 8 matches before knockout qualification."
+  },
+  "South American Crown Cup": {
+    region: "South America",
+    clubs: 32,
+    matches: 6,
+    rule: "32 clubs in groups of four. Six group matches decide knockout qualification."
+  }
+};
 
 const agentPool = [
   { name: "Maya Fernandes", style: "Patient builder", quality: 62, loyalty: 78, connections: 55, pushiness: 23, patience: 82 },
@@ -390,13 +426,17 @@ function loadState() {
 }
 
 function buildWorld() {
-  const clubs = clubCatalog.map((club, index) => {
+  const clubs = expandedClubCatalog().map((club, index) => {
     const id = slug(club.name);
     const chairman = createChairman(club, index);
+    const facilities = createFacilities(club, chairman);
     return {
       ...club,
       id,
       overall: clubOverall(club),
+      finance: createClubFinance(club),
+      fame: clamp(club.base + randomBetween(-8, 10), 30, 98),
+      facilities,
       chairman,
       manager: createManager(club, index),
       roster: createRoster(club, false),
@@ -407,12 +447,76 @@ function buildWorld() {
   return {
     clubs,
     leagues: buildLeagueTables(clubs),
+    competitions: buildContinentalCompetitions(clubs),
+    leaders: buildLeaderboards(clubs),
     news: createOpeningNews(clubs),
     filters: {
       league: "Academy League",
       newsCountry: "All",
       club: "current"
     }
+  };
+}
+
+function expandedClubCatalog() {
+  const expanded = [...clubCatalog];
+  Object.entries(leagueConfigs).forEach(([league, config]) => {
+    const current = expanded.filter((club) => club.tier === league).length;
+    for (let index = current; index < config.clubs; index += 1) {
+      expanded.push(generateFillerClub(league, config, index));
+    }
+  });
+  return expanded;
+}
+
+function generateFillerClub(league, config, index) {
+  const cityRoots = {
+    England: ["Brighton", "Bristol", "Leeds", "Nottingham", "Sheffield", "Wolverhampton", "Leicester", "Southampton", "Norwich", "Cardiff", "Sunderland", "Derby"],
+    Spain: ["Valencia", "Villarreal", "Girona", "Getafe", "Granada", "Pamplona", "Vigo", "Mallorca", "Cadiz", "Alaves", "Zaragoza", "Oviedo"],
+    Italy: ["Florence", "Bergamo", "Bologna", "Genoa", "Sardinia", "Parma", "Verona", "Udine", "Lecce", "Palermo", "Venice", "Como"],
+    Germany: ["Frankfurt", "Stuttgart", "Freiburg", "Mainz", "Bremen", "Gladbach", "Berlin", "Augsburg", "Bochum", "Hamburg", "Cologne", "Hoffenheim"],
+    France: ["Lille", "Nice", "Rennes", "Lens", "Nantes", "Toulouse", "Strasbourg", "Brest", "Montpellier", "Reims", "Metz", "Dijon"],
+    Portugal: ["Braga", "Guimaraes", "Faro", "Madeira", "Arouca", "Estoril", "Boavista", "Chaves", "Coimbra", "Setubal", "Vizela", "Rio Ave"],
+    Netherlands: ["Utrecht", "Alkmaar", "Twente", "Heerenveen", "Groningen", "Tilburg", "Arnhem", "Zwolle", "Sparta", "Sittard", "Waalwijk", "Breda"],
+    "Korea Republic": ["Busan", "Daegu", "Incheon", "Pohang", "Suwon", "Gwangju", "Daejeon", "Gangwon", "Jeju", "Gimcheon", "Anyang", "Cheonan"],
+    Malaysia: ["Sabah", "Sarawak", "Kedah", "Kelantan", "Perak", "Terengganu", "Melaka", "Negeri", "Pahang", "Putrajaya", "Perlis", "Labuan"],
+    Japan: ["Kobe", "Osaka", "Nagoya", "Kawasaki", "Hiroshima", "Fukuoka", "Kyoto", "Kashima", "Shonan", "Niigata", "Sendai", "Sapporo"],
+    Brazil: ["Belo Horizonte", "Porto Alegre", "Fortaleza", "Curitiba", "Salvador", "Recife", "Goiania", "Bahia", "Ceara", "Braganca", "Santos", "Fluminense"],
+    Argentina: ["Cordoba", "Rosario", "La Plata", "Avellaneda", "Tucuman", "Mendoza", "Santa Fe", "Lanus", "Tigre", "Huracan", "Velez", "Banfield"]
+  };
+  const suffixes = ["United", "City", "Athletic", "Rovers", "Sporting", "Wanderers", "Rail", "Harbour", "County", "Union"];
+  const city = cityRoots[config.country][index % cityRoots[config.country].length];
+  const base = clamp(leagueAverageBase(league) + randomBetween(-10, 7) - index / 5, 35, 86);
+  return {
+    name: `${city} ${suffixes[index % suffixes.length]}`,
+    country: config.country,
+    city,
+    tier: league,
+    base,
+    pathway: clamp(randomBetween(45, 82) + (base < 62 ? 8 : 0), 35, 92),
+    pressure: clamp(randomBetween(35, 80) + (base > 78 ? 12 : 0), 25, 95),
+    generated: true
+  };
+}
+
+function leagueAverageBase(league) {
+  const clubs = clubCatalog.filter((club) => club.tier === league);
+  return clubs.length ? average(clubs.map((club) => club.base)) : 62;
+}
+
+function createClubFinance(club) {
+  return clamp(Math.round(club.base * 1.2 + randomBetween(-18, 18)), 20, 100);
+}
+
+function createFacilities(club, chairman) {
+  const youthBias = chairman.youth / 6;
+  const moneyBias = club.base / 5;
+  return {
+    academy: clamp(Math.round(club.pathway * 0.72 + youthBias + randomBetween(-6, 6)), 25, 99),
+    training: clamp(Math.round(club.base * 0.72 + moneyBias + randomBetween(-7, 7)), 25, 99),
+    medical: clamp(Math.round(club.base * 0.54 + chairman.stability / 5 + randomBetween(-7, 9)), 20, 96),
+    hospitality: clamp(Math.round(club.fame ? club.fame * 0.5 : club.base * 0.56 + chairman.spending / 6 + randomBetween(-6, 8)), 20, 96),
+    scouting: clamp(Math.round(chairman.spending * 0.35 + chairman.ambition * 0.35 + randomBetween(-8, 8)), 20, 98)
   };
 }
 
@@ -483,34 +587,37 @@ function randomPlayerName(country, index, academy) {
 }
 
 function buildLeagueTables(clubs) {
-  const leagueGroups = clubs.reduce((groups, club) => {
-    if (!groups[club.tier]) groups[club.tier] = [];
-    groups[club.tier].push(club);
-    return groups;
-  }, {});
-
-  leagueGroups["Academy League"] = clubs.map((club) => ({ ...club, name: `${club.name} Academy`, overall: clamp(club.overall - 21, 30, 78) }));
-
-  return Object.fromEntries(Object.entries(leagueGroups).map(([league, entries]) => [
+  const leagueTables = Object.fromEntries(Object.keys(leagueConfigs).map((league) => [
     league,
-    entries
-      .map((club) => createTableRow(club, league))
+    clubs
+      .filter((club) => club.tier === league)
+      .slice(0, leagueConfigs[league].clubs)
+      .map((club) => createTableRow(club, league, leagueConfigs[league].matches))
       .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
   ]));
+
+  leagueTables["Academy League"] = clubs
+    .slice(0, 20)
+    .map((club) => ({ ...club, name: `${club.name} Academy`, overall: clamp(club.overall - 21, 30, 78) }))
+    .map((club) => createTableRow(club, "Academy League", 30))
+    .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+
+  return leagueTables;
 }
 
-function createTableRow(club, league) {
+function createTableRow(club, league, maxMatches) {
   const strength = club.overall || clubOverall(club);
-  const played = Math.floor(randomBetween(4, 9));
+  const played = 0;
   const wins = clamp(Math.round((strength - 45) / 11 + randomBetween(0, played / 2)), 0, played);
   const draws = clamp(Math.round(randomBetween(0, Math.max(1, played - wins)) / 2), 0, played - wins);
   const losses = played - wins - draws;
-  const gf = Math.max(1, Math.round(wins * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.4) + randomBetween(0, 4)));
-  const ga = Math.max(1, Math.round(losses * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.3) + randomBetween(0, 3)));
+  const gf = played ? Math.max(1, Math.round(wins * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.4) + randomBetween(0, 4))) : 0;
+  const ga = played ? Math.max(1, Math.round(losses * randomBetween(1.4, 2.5) + draws * randomBetween(0.6, 1.3) + randomBetween(0, 3))) : 0;
   return {
     club: club.name,
     country: club.country,
     league,
+    maxMatches,
     p: played,
     w: wins,
     d: draws,
@@ -520,6 +627,66 @@ function createTableRow(club, league) {
     gd: gf - ga,
     pts: wins * 3 + draws,
     form: ["W", "D", "L", "W", "W"].sort(() => Math.random() - 0.5).slice(0, 5).join("")
+  };
+}
+
+function buildContinentalCompetitions(clubs) {
+  return Object.fromEntries(Object.entries(continentalConfigs).map(([name, config]) => {
+    const entrants = clubs
+      .filter((club) => leagueConfigs[club.tier]?.region === config.region)
+      .sort((a, b) => b.overall + b.fame / 8 - (a.overall + a.fame / 8))
+      .slice(0, config.clubs);
+    return [name, {
+      ...config,
+      table: entrants.map((club) => createCompetitionRow(club, name, config.matches))
+        .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf)
+    }];
+  }));
+}
+
+function createCompetitionRow(club, competition, maxMatches) {
+  return {
+    club: club.name,
+    country: club.country,
+    competition,
+    maxMatches,
+    p: 0,
+    w: 0,
+    d: 0,
+    l: 0,
+    gf: 0,
+    ga: 0,
+    gd: 0,
+    pts: 0,
+    form: ""
+  };
+}
+
+function buildLeaderboards(clubs) {
+  const players = clubs.flatMap((club) => club.roster.slice(0, 16).map((player) => ({ ...player, club: club.name, league: club.tier })));
+  return {
+    scorers: players.map((player) => leaderRecord(player, "goals")).sort((a, b) => b.value - a.value).slice(0, 15),
+    assists: players.map((player) => leaderRecord(player, "assists")).sort((a, b) => b.value - a.value).slice(0, 15),
+    redCards: players.map((player) => leaderRecord(player, "redCards")).sort((a, b) => b.value - a.value).slice(0, 15),
+    ratings: players.map((player) => leaderRecord(player, "rating")).sort((a, b) => b.value - a.value).slice(0, 15)
+  };
+}
+
+function leaderRecord(player, type) {
+  const roleBonus = player.position === "ST" || player.position === "WG" ? 1.25 : player.position === "CM" ? 0.75 : 0.28;
+  const oneSeasonWonder = Math.random() < 0.025 ? randomBetween(4, 10) : 0;
+  const flop = player.overall > 84 && Math.random() < 0.04 ? randomBetween(0.35, 0.65) : 1;
+  let value = 0;
+  if (type === "goals") value = Math.round((player.overall - 48) * roleBonus * randomBetween(0.06, 0.22) * flop + oneSeasonWonder);
+  if (type === "assists") value = Math.round((player.overall - 45) * (player.position === "CM" || player.position === "WG" ? 1.1 : 0.45) * randomBetween(0.05, 0.17) * flop + oneSeasonWonder / 2);
+  if (type === "redCards") value = Math.max(0, Math.round(randomBetween(-0.5, 2.4) + (player.position === "CB" ? 0.7 : 0)));
+  if (type === "rating") value = Number(clamp(5.8 + (player.overall - 60) / 17 + randomBetween(-0.8, 0.75) + oneSeasonWonder / 18 - (flop < 1 ? 0.7 : 0), 5.2, 8.9).toFixed(2));
+  return {
+    name: player.name,
+    club: player.club,
+    league: player.league,
+    position: player.position,
+    value: Math.max(0, value)
   };
 }
 
@@ -1197,25 +1364,38 @@ function offersPanel() {
 function leaguesTab() {
   const leagues = Object.keys(state.world.leagues);
   const activeLeague = state.ui.league || currentLeagueName();
-  const table = state.world.leagues[activeLeague] || [];
+  const isCompetition = Boolean(state.world.competitions[activeLeague]);
+  const table = isCompetition ? state.world.competitions[activeLeague].table : state.world.leagues[activeLeague] || [];
+  const config = isCompetition ? state.world.competitions[activeLeague] : leagueConfigs[activeLeague] || { clubs: 20, matches: 30 };
+  const competitionNames = Object.keys(state.world.competitions);
   return `
     <div class="page-grid">
       <section class="panel">
         <div class="panel-header">
           <div>
-            <h2>League tables</h2>
-            <p>Current table plus selectable leagues across the game world.</p>
+            <h2>Tables</h2>
+            <p>Domestic leagues use realistic club counts and match totals. Continental competitions use fictional names with real-style formats.</p>
           </div>
           <span class="tag">${escapeHtml(activeLeague)}</span>
         </div>
         <div class="filter-row">
           ${leagues.map((league) => `<button class="filter-btn ${activeLeague === league ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(league)}">${escapeHtml(league)}</button>`).join("")}
+          ${competitionNames.map((competition) => `<button class="filter-btn ${activeLeague === competition ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(competition)}">${escapeHtml(competition)}</button>`).join("")}
+        </div>
+        <div class="offer-meta">
+          <span class="tag">${config.clubs} clubs</span>
+          <span class="tag">${config.matches} matches each</span>
+          ${config.rule ? `<span class="tag">${escapeHtml(config.rule)}</span>` : ""}
         </div>
         ${leagueTableTemplate(table)}
       </section>
       <section class="panel">
         <h2>Current club direction</h2>
         ${clubDirectionTemplate(currentWorldClub())}
+      </section>
+      <section class="panel full-span">
+        <h2>Season leaders</h2>
+        ${leaderboardsTemplate()}
       </section>
     </div>
   `;
@@ -1244,6 +1424,31 @@ function leagueTableTemplate(table) {
           `).join("")}
         </tbody>
       </table>
+    </div>
+  `;
+}
+
+function leaderboardsTemplate() {
+  return `
+    <div class="leaderboard-grid">
+      ${leaderboardColumn("Top scorers", state.world.leaders.scorers, "G")}
+      ${leaderboardColumn("Top assists", state.world.leaders.assists, "A")}
+      ${leaderboardColumn("Red cards", state.world.leaders.redCards, "RC")}
+      ${leaderboardColumn("Ratings", state.world.leaders.ratings, "RT")}
+    </div>
+  `;
+}
+
+function leaderboardColumn(title, rows, label) {
+  return `
+    <div class="leaderboard-card">
+      <h3>${title}</h3>
+      ${rows.slice(0, 8).map((row, index) => `
+        <div class="leader-row">
+          <span>${index + 1}. ${escapeHtml(row.name)}<small>${escapeHtml(row.club)}</small></span>
+          <strong>${row.value}${label === "RT" ? "" : ""}</strong>
+        </div>
+      `).join("")}
     </div>
   `;
 }
@@ -1389,15 +1594,26 @@ function newsTemplate(item) {
 function clubDirectionTemplate(club) {
   if (!club) return `<div class="empty">No club selected.</div>`;
   const chairman = club.chairman;
+  const facilities = club.facilities;
   return `
     <div class="agent-card">
       <strong>${escapeHtml(chairman.name)}</strong>
       <span class="microcopy">Chairman profile: ${escapeHtml(chairman.trait)}. ${escapeHtml(chairman.direction)}.</span>
+      ${meter("Club finance", club.finance)}
+      ${meter("Club fame", club.fame, "purple")}
       ${meter("Spending", chairman.spending)}
       ${meter("Ambition", chairman.ambition, "purple")}
       ${meter("Patience", chairman.patience, chairman.patience < 38 ? "warn" : "blue")}
       ${meter("Youth focus", chairman.youth)}
       ${meter("Stability", chairman.stability, chairman.stability < 40 ? "risk" : "")}
+      <div class="facility-grid">
+        <div><strong>${round(facilities.academy)}</strong><span>Academy</span></div>
+        <div><strong>${round(facilities.training)}</strong><span>Training</span></div>
+        <div><strong>${round(facilities.medical)}</strong><span>Medical</span></div>
+        <div><strong>${round(facilities.hospitality)}</strong><span>Hospitality</span></div>
+        <div><strong>${round(facilities.scouting)}</strong><span>Scouting</span></div>
+      </div>
+      <p class="footer-note">Academy quality improves youth output. Training improves growth. Medical and hospitality reduce injury risk and time out. Scouting improves recruitment logic.</p>
       <div class="manager-note">
         <strong>Manager</strong>
         <p>${escapeHtml(club.manager.name)} - ${escapeHtml(club.manager.style)} - reputation ${round(club.manager.reputation)}.</p>
@@ -1838,9 +2054,11 @@ function simulateMatch() {
     addLog("Difficult match", `A ${rating.toFixed(1)} rating hurt form and trust. The response matters.`, "warning");
   }
 
-  const injuryRisk = career.fitness < 30 ? 0.11 : career.fitness < 45 ? 0.05 : 0.015;
+  const clubFacilities = currentWorldClub()?.facilities || { medical: 50, hospitality: 50 };
+  const careReduction = (clubFacilities.medical + clubFacilities.hospitality) / 4200;
+  const injuryRisk = Math.max(0.006, (career.fitness < 30 ? 0.11 : career.fitness < 45 ? 0.05 : 0.015) - careReduction);
   if (Math.random() < injuryRisk) {
-    career.injuryWeeks = Math.ceil(randomBetween(2, 6));
+    career.injuryWeeks = Math.max(1, Math.ceil(randomBetween(2, 6) - clubFacilities.medical / 38));
     career.fitness = clamp(career.fitness - 17);
     addLog("Injury setback", `You picked up an injury and will miss about ${career.injuryWeeks} weeks.`, "risk");
   }
@@ -1954,6 +2172,7 @@ function finishWeek() {
   maybeAgentApproach();
   evaluateContractsAndMilestones();
   updateLeagueTables();
+  updateClubEconomies();
   updateClubPolitics();
   advanceCalendar();
   state.phase = "weekly";
@@ -1968,11 +2187,20 @@ function updateLeagueTables() {
       .map((row) => simulateTableRow(row))
       .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
   });
+  Object.keys(state.world.competitions).forEach((competition) => {
+    state.world.competitions[competition].table = state.world.competitions[competition].table
+      .map((row) => simulateTableRow(row))
+      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  });
+  refreshLeaderboards();
 }
 
 function simulateTableRow(row) {
+  if (row.p >= row.maxMatches) return row;
   const strength = clubStrengthByTableName(row.club);
-  const winChance = clamp(0.26 + (strength - 55) / 120, 0.12, 0.72);
+  const invincibleBoost = strength > 88 && Math.random() < 0.018 ? 0.12 : 0;
+  const upsetNoise = randomBetween(-0.16, 0.16);
+  const winChance = clamp(0.26 + (strength - 55) / 125 + invincibleBoost + upsetNoise, 0.08, 0.74);
   const roll = Math.random();
   const scored = Math.max(0, Math.round(randomBetween(0, 2.2) + (strength - 50) / 28));
   const conceded = Math.max(0, Math.round(randomBetween(0, 2.3) + (70 - strength) / 35));
@@ -1993,6 +2221,20 @@ function simulateTableRow(row) {
 
   updated.gd = updated.gf - updated.ga;
   return updated;
+}
+
+function refreshLeaderboards() {
+  const careerPlayer = {
+    name: state.player.name,
+    club: state.player.club,
+    league: currentLeagueName(),
+    position: positions[state.player.position].short,
+    value: state.career.goals
+  };
+  state.world.leaders = buildLeaderboards(state.world.clubs);
+  if (state.career.goals > 0) state.world.leaders.scorers.unshift(careerPlayer);
+  if (state.career.assists > 0) state.world.leaders.assists.unshift({ ...careerPlayer, value: state.career.assists });
+  if (state.career.avgRating > 0) state.world.leaders.ratings.unshift({ ...careerPlayer, value: Number(state.career.avgRating.toFixed(2)) });
 }
 
 function clubStrengthByTableName(name) {
@@ -2020,6 +2262,22 @@ function updateClubPolitics() {
         const oldChairman = club.chairman.name;
         club.chairman = createChairman(club, Math.floor(randomBetween(1, 999)));
         addNews(club.country, "Boardroom", `${club.name} boardroom changes`, `${oldChairman} left after fan unrest and poor results. ${club.chairman.name} now sets the club direction.`);
+      }
+    });
+  });
+}
+
+function updateClubEconomies() {
+  Object.values(state.world.leagues).forEach((table) => {
+    table.slice(0, 4).forEach((row, index) => {
+      const club = state.world.clubs.find((item) => item.name === row.club);
+      if (!club) return;
+      club.fame = clamp(club.fame + (4 - index) * 0.08);
+      club.finance = clamp(club.finance + (4 - index) * 0.04);
+      if (index === 0 && row.p === row.maxMatches) {
+        club.fame = clamp(club.fame + 4);
+        club.finance = clamp(club.finance + 3);
+        addNews(club.country, "Trophy", `${club.name} win ${row.league}`, `Trophy exposure lifted club fame and finances. The board can now invest more aggressively.`);
       }
     });
   });
@@ -2286,6 +2544,9 @@ function endSeason() {
   career.ratingHistory = [];
   career.form = clamp(career.form * 0.78 + 12);
   state.life.stress = clamp(state.life.stress - 8);
+  state.world.leagues = buildLeagueTables(state.world.clubs);
+  state.world.competitions = buildContinentalCompetitions(state.world.clubs);
+  state.world.leaders = buildLeaderboards(state.world.clubs);
 }
 
 function addLog(title, body, type = "") {
