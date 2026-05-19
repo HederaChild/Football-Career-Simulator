@@ -25,8 +25,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=11` and `app.js?v=11`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v11"`.
+- `index.html` loads `styles.css?v=12` and `app.js?v=12`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v12"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -255,26 +255,31 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified build: commit `6c0f261`.
+Last verified local build: asset/save version `v12`.
 
 Checks performed:
 
 - Fresh start loaded on the live GitHub Pages site.
+- Local fresh start loaded at `http://127.0.0.1:4174/?v=12`.
 - Academy start around `OVR 17`.
 - English League 1: 20 clubs, 38 matches.
 - English League 2: 24 clubs, 46 matches.
 - English League 3: 24 clubs, 46 matches.
+- Added lower tiers are visible in the Leagues tab, including Spanish League 2/3, Italian League 2/3, German League 2/3, French League 2/3, Portuguese League 2/3, Dutch League 2, Korean League 2, Malaysian League 2, Japanese League 2/3, Brazilian League 2/3, and Argentine League 2.
 - `Wrecsam Dragons` exists in English League 2.
+- Academy offers can now come from seeded lower-tier clubs, such as `Melaka Straits Academy`.
+- Academy graduates now move into their parent club's senior tier at first-team breakthrough instead of staying in the academy league forever.
 - Manchester Sky had only one 90+ player in test, with depth down to the 60s.
 - Academy squad had no duplicate names in tested rows and low OVR range.
 - Matchday still worked with no browser console errors.
+- Post-match now shows key highlights: only on-ball/key phase moments where the player affected the ball, forced a foul, made a save, ended the phase, or contributed to a goal/assist.
 
 ## Known Limitations
 
 - The game uses generated static data, not a live sports database.
 - Standings are inspired by real structures but are fictionalized.
-- Only the English pyramid currently has tier-2/tier-3 promotion/relegation.
-- Other countries still need lower divisions.
+- Promotion/relegation is now generalized by country/league level, but it is still simplified and does not model playoffs yet.
+- Some lower tiers are compressed into one playable table even when the real system uses groups.
 - No persistent cloud save or user accounts yet.
 - No real transfer windows yet.
 - No proper match schedule calendar yet.
@@ -282,7 +287,8 @@ Checks performed:
 
 ## Likely Next Steps
 
-- Add lower divisions for Spain, Italy, Germany, France, Brazil, Japan, Korea, and Malaysia.
+- Add promotion playoffs and group-specific lower divisions where real competitions use them.
+- Make match highlights more interactive before the final rating, with the player watching key phases resolve one by one.
 - Add real-style transfer windows.
 - Add player contract expiry and negotiation screens.
 - Add loans.

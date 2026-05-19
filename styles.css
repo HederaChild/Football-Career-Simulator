@@ -807,6 +807,55 @@ select {
   line-height: 1.45;
 }
 
+.highlight-reel {
+  display: grid;
+  gap: 10px;
+}
+
+.compact-header {
+  align-items: start;
+}
+
+.highlight-list {
+  display: grid;
+  gap: 8px;
+}
+
+.highlight-card {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #dce3da;
+  border-left: 5px solid var(--grass);
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.highlight-card.good {
+  border-left-color: var(--blue);
+}
+
+.highlight-card.warning {
+  border-left-color: var(--gold);
+}
+
+.highlight-card span {
+  font-weight: 900;
+  color: var(--grass-dark);
+}
+
+.highlight-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.highlight-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .rating-big {
   min-height: 120px;
   border-radius: 8px;

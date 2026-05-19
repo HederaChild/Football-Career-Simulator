@@ -1,4 +1,4 @@
-const SAVE_KEY = "full-time-life-save-v11";
+const SAVE_KEY = "full-time-life-save-v12";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 
 const attributeGroups = {
@@ -225,6 +225,72 @@ const englishLowerPyramid = [
 
 clubCatalog.push(...englishLowerPyramid);
 
+const internationalLowerPyramid = [
+  ["Valencia Coast", "Spain", "Valencia", "Spanish League 2", 67, 77, 60, 1, 54, 65],
+  ["Galicia Blue White", "Spain", "A Coruna", "Spanish League 2", 66, 75, 62, 2, 50, 64],
+  ["Asturias Blue", "Spain", "Oviedo", "Spanish League 2", 65, 73, 60, 3, 48, 62],
+  ["Malaga Harbour", "Spain", "Malaga", "Spanish League 2", 63, 74, 58, 4, 46, 59],
+  ["Castilla Crown", "Spain", "Madrid", "Spanish League 3", 58, 84, 50, 1, 38, 54],
+  ["Catalonia B", "Spain", "Barcelona", "Spanish League 3", 57, 82, 52, 2, 38, 54],
+  ["Sardinia Red Blue", "Italy", "Cagliari", "Italian League 2", 68, 71, 64, 1, 52, 66],
+  ["Palermo Pink Black", "Italy", "Palermo", "Italian League 2", 66, 73, 62, 2, 49, 63],
+  ["Venice Lagoon", "Italy", "Venice", "Italian League 2", 64, 72, 58, 3, 47, 60],
+  ["Parma Gold Blue", "Italy", "Parma", "Italian League 2", 63, 70, 57, 4, 46, 59],
+  ["Padua White Red", "Italy", "Padua", "Italian League 3", 57, 72, 50, 1, 35, 50],
+  ["Catania Island", "Italy", "Catania", "Italian League 3", 56, 70, 55, 2, 34, 50],
+  ["Hamburg Port", "Germany", "Hamburg", "German League 2", 69, 74, 68, 1, 56, 70],
+  ["Cologne Billy", "Germany", "Cologne", "German League 2", 68, 72, 70, 2, 55, 69],
+  ["Dusseldorf Red White", "Germany", "Dusseldorf", "German League 2", 64, 70, 58, 3, 46, 60],
+  ["Hanover Red", "Germany", "Hanover", "German League 2", 63, 69, 58, 4, 45, 59],
+  ["Dresden Yellow Black", "Germany", "Dresden", "German League 3", 58, 72, 58, 1, 38, 56],
+  ["Saarland Blue Black", "Germany", "Saarbrucken", "German League 3", 56, 69, 51, 2, 34, 49],
+  ["Saint-Etienne Green", "France", "Saint-Etienne", "French League 2", 66, 74, 66, 1, 49, 66],
+  ["Bordeaux Wine", "France", "Bordeaux", "French League 2", 64, 72, 68, 2, 48, 65],
+  ["Caen Normandy", "France", "Caen", "French League 2", 61, 70, 54, 3, 41, 55],
+  ["Dijon Mustard", "France", "Dijon", "French League 3", 56, 68, 50, 1, 32, 48],
+  ["Nancy Red White", "France", "Nancy", "French League 3", 55, 68, 52, 2, 32, 48],
+  ["Madeira Green Red", "Portugal", "Funchal", "Portuguese League 2", 64, 72, 58, 1, 45, 61],
+  ["Viseu Fontelo", "Portugal", "Viseu", "Portuguese League 2", 61, 75, 48, 2, 36, 51],
+  ["Leiria Castle", "Portugal", "Leiria", "Portuguese League 2", 60, 70, 50, 3, 35, 50],
+  ["Alverca Red", "Portugal", "Alverca", "Portuguese League 3", 54, 68, 45, 1, 27, 42],
+  ["Setubal River", "Portugal", "Setubal", "Portuguese League 3", 53, 66, 47, 2, 27, 43],
+  ["Tilburg Tricolour", "Netherlands", "Tilburg", "Dutch League 2", 63, 76, 58, 1, 43, 59],
+  ["The Hague Storks", "Netherlands", "The Hague", "Dutch League 2", 62, 72, 62, 2, 42, 60],
+  ["Maastricht Red White", "Netherlands", "Maastricht", "Dutch League 2", 58, 68, 50, 3, 32, 48],
+  ["Nagasaki Orange", "Japan", "Nagasaki", "Japanese League 2", 65, 78, 56, 1, 46, 61],
+  ["Chiba United", "Japan", "Chiba", "Japanese League 2", 64, 76, 58, 2, 45, 60],
+  ["Iwata Blue", "Japan", "Iwata", "Japanese League 2", 64, 73, 60, 3, 46, 62],
+  ["Tochigi Gold", "Japan", "Tochigi", "Japanese League 3", 55, 72, 45, 1, 29, 44],
+  ["Kagoshima Volcano", "Japan", "Kagoshima", "Japanese League 3", 54, 70, 46, 2, 29, 44],
+  ["Busan Harbour", "Korea Republic", "Busan", "Korean League 2", 62, 78, 56, 1, 42, 58],
+  ["Suwon Blue Red", "Korea Republic", "Suwon", "Korean League 2", 61, 76, 60, 2, 43, 60],
+  ["Anyang Violet", "Korea Republic", "Anyang", "Korean League 2", 59, 74, 54, 3, 36, 52],
+  ["Melaka Straits", "Malaysia", "Melaka", "Malaysian League 2", 48, 86, 42, 1, 24, 39],
+  ["Perlis Northern", "Malaysia", "Kangar", "Malaysian League 2", 45, 84, 38, 2, 20, 34],
+  ["Immigration United", "Malaysia", "Putrajaya", "Malaysian League 2", 46, 82, 40, 3, 22, 36],
+  ["Rio Hill", "Brazil", "Rio de Janeiro", "Brazilian League 2", 67, 82, 65, 1, 54, 67],
+  ["Curitiba Green White", "Brazil", "Curitiba", "Brazilian League 2", 65, 80, 60, 2, 48, 60],
+  ["Recife Red Black", "Brazil", "Recife", "Brazilian League 2", 64, 78, 62, 3, 47, 60],
+  ["Londrina Blue", "Brazil", "Londrina", "Brazilian League 3", 56, 76, 48, 1, 32, 47],
+  ["Nautical White Red", "Brazil", "Recife", "Brazilian League 3", 55, 74, 52, 2, 33, 48],
+  ["Santa Fe Red Black", "Argentina", "Santa Fe", "Argentine League 2", 65, 80, 64, 1, 45, 61],
+  ["Cordoba Sky", "Argentina", "Cordoba", "Argentine League 2", 63, 78, 60, 2, 41, 56],
+  ["Mendoza Blue", "Argentina", "Mendoza", "Argentine League 2", 62, 76, 58, 3, 40, 54]
+].map(([name, country, city, tier, base, pathway, pressure, standing, revenue, reputation]) => ({
+  name,
+  country,
+  city,
+  tier,
+  base,
+  pathway,
+  pressure,
+  standing,
+  revenue,
+  reputation
+}));
+
+clubCatalog.push(...internationalLowerPyramid);
+
 const academyPrograms = clubCatalog.map((club) => ({
   ...club,
   name: `${club.name} Academy`,
@@ -237,17 +303,35 @@ const leagueConfigs = {
   "English League 1": { country: "England", clubs: 20, matches: 38, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
   "English League 2": { country: "England", clubs: 24, matches: 46, region: "Europe", level: 2, promotion: 3, relegation: 3 },
   "English League 3": { country: "England", clubs: 24, matches: 46, region: "Europe", level: 3, promotion: 3, relegation: 4 },
-  "Spanish League": { country: "Spain", clubs: 20, matches: 38, region: "Europe" },
-  "Italian League": { country: "Italy", clubs: 20, matches: 38, region: "Europe" },
-  "German League": { country: "Germany", clubs: 18, matches: 34, region: "Europe" },
-  "French League": { country: "France", clubs: 18, matches: 34, region: "Europe" },
-  "Portuguese League": { country: "Portugal", clubs: 18, matches: 34, region: "Europe" },
-  "Dutch League": { country: "Netherlands", clubs: 18, matches: 34, region: "Europe" },
-  "Korean League": { country: "Korea Republic", clubs: 12, matches: 38, region: "Asia" },
-  "Malaysian League": { country: "Malaysia", clubs: 13, matches: 24, region: "Asia" },
-  "Japanese League": { country: "Japan", clubs: 20, matches: 38, region: "Asia" },
-  "Brazilian League": { country: "Brazil", clubs: 20, matches: 38, region: "South America" },
-  "Argentine League": { country: "Argentina", clubs: 30, matches: 16, region: "South America" }
+  "Spanish League": { country: "Spain", clubs: 20, matches: 38, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
+  "Spanish League 2": { country: "Spain", clubs: 22, matches: 42, region: "Europe", level: 2, promotion: 3, relegation: 4 },
+  "Spanish League 3": { country: "Spain", clubs: 20, matches: 38, region: "Europe", level: 3, promotion: 4, relegation: 4 },
+  "Italian League": { country: "Italy", clubs: 20, matches: 38, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
+  "Italian League 2": { country: "Italy", clubs: 20, matches: 38, region: "Europe", level: 2, promotion: 3, relegation: 4 },
+  "Italian League 3": { country: "Italy", clubs: 20, matches: 38, region: "Europe", level: 3, promotion: 4, relegation: 4 },
+  "German League": { country: "Germany", clubs: 18, matches: 34, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
+  "German League 2": { country: "Germany", clubs: 18, matches: 34, region: "Europe", level: 2, promotion: 3, relegation: 3 },
+  "German League 3": { country: "Germany", clubs: 20, matches: 38, region: "Europe", level: 3, promotion: 3, relegation: 4 },
+  "French League": { country: "France", clubs: 18, matches: 34, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
+  "French League 2": { country: "France", clubs: 18, matches: 34, region: "Europe", level: 2, promotion: 3, relegation: 3 },
+  "French League 3": { country: "France", clubs: 18, matches: 34, region: "Europe", level: 3, promotion: 3, relegation: 4 },
+  "Portuguese League": { country: "Portugal", clubs: 18, matches: 34, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 3 },
+  "Portuguese League 2": { country: "Portugal", clubs: 18, matches: 34, region: "Europe", level: 2, promotion: 3, relegation: 3 },
+  "Portuguese League 3": { country: "Portugal", clubs: 20, matches: 38, region: "Europe", level: 3, promotion: 3, relegation: 4 },
+  "Dutch League": { country: "Netherlands", clubs: 18, matches: 34, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 3 },
+  "Dutch League 2": { country: "Netherlands", clubs: 20, matches: 38, region: "Europe", level: 2, promotion: 3, relegation: 0 },
+  "Korean League": { country: "Korea Republic", clubs: 12, matches: 38, region: "Asia", level: 1, promotion: 0, relegation: 2, continental: 3 },
+  "Korean League 2": { country: "Korea Republic", clubs: 14, matches: 39, region: "Asia", level: 2, promotion: 2, relegation: 0 },
+  "Malaysian League": { country: "Malaysia", clubs: 13, matches: 24, region: "Asia", level: 1, promotion: 0, relegation: 2, continental: 2 },
+  "Malaysian League 2": { country: "Malaysia", clubs: 16, matches: 30, region: "Asia", level: 2, promotion: 2, relegation: 0 },
+  "Japanese League": { country: "Japan", clubs: 20, matches: 38, region: "Asia", level: 1, promotion: 0, relegation: 3, continental: 3 },
+  "Japanese League 2": { country: "Japan", clubs: 20, matches: 38, region: "Asia", level: 2, promotion: 3, relegation: 3 },
+  "Japanese League 3": { country: "Japan", clubs: 20, matches: 38, region: "Asia", level: 3, promotion: 3, relegation: 2 },
+  "Brazilian League": { country: "Brazil", clubs: 20, matches: 38, region: "South America", level: 1, promotion: 0, relegation: 4, continental: 6 },
+  "Brazilian League 2": { country: "Brazil", clubs: 20, matches: 38, region: "South America", level: 2, promotion: 4, relegation: 4 },
+  "Brazilian League 3": { country: "Brazil", clubs: 20, matches: 38, region: "South America", level: 3, promotion: 4, relegation: 4 },
+  "Argentine League": { country: "Argentina", clubs: 30, matches: 16, region: "South America", level: 1, promotion: 0, relegation: 2, continental: 6 },
+  "Argentine League 2": { country: "Argentina", clubs: 36, matches: 34, region: "South America", level: 2, promotion: 2, relegation: 4 }
 };
 
 const continentalConfigs = {
@@ -1300,11 +1384,39 @@ function postMatchTemplate() {
               <h3>${escapeHtml(result.headline)}</h3>
               <p class="microcopy">${escapeHtml(result.summary)}</p>
             </div>
+            ${matchHighlightsTemplate(result.highlights || [])}
             ${result.mvp ? pressOptionsTemplate(result) : `<button class="primary-btn" type="button" data-action="finish-week">Continue career</button>`}
           </section>
         </div>
       </div>
     </section>
+  `;
+}
+
+function matchHighlightsTemplate(highlights) {
+  if (!highlights.length) {
+    return `<div class="empty">No on-ball highlights this week.</div>`;
+  }
+  return `
+    <div class="highlight-reel">
+      <div class="panel-header compact-header">
+        <div>
+          <h3>Key highlights</h3>
+          <p>Only moments where you affected the ball, forced a foul, or ended the phase.</p>
+        </div>
+      </div>
+      <div class="highlight-list">
+        ${highlights.map((item) => `
+          <article class="highlight-card ${escapeHtml(item.type)}">
+            <span>${item.minute}'</span>
+            <div>
+              <strong>${escapeHtml(item.title)}</strong>
+              <p>${escapeHtml(item.body)}</p>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </div>
   `;
 }
 
@@ -2108,7 +2220,9 @@ function pickOpponent() {
   const currentName = state.player.club.replace(" Academy", "");
   const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
   const target = overall() + state.career.reputation * 0.25 + (isAcademy ? 15 : 0);
-  const candidates = clubCatalog
+  const worldClubs = state.world?.clubs?.length ? state.world.clubs : clubCatalog;
+  const leaguePool = isAcademy ? worldClubs : worldClubs.filter((club) => club.tier === state.player.tier);
+  const candidates = (leaguePool.length > 1 ? leaguePool : worldClubs)
     .filter((club) => club.name !== currentName)
     .map((club) => {
       const scaledOverall = clubOverall(club) - (isAcademy ? 20 : 0);
@@ -2140,7 +2254,8 @@ function simulateMatch() {
       mvp: false,
       headline: "Rehab week",
       summary: "You missed the game and stayed with the medical staff.",
-      managerThought: "Availability is part of a career. Get fit properly before asking for minutes."
+      managerThought: "Availability is part of a career. Get fit properly before asking for minutes.",
+      highlights: []
     };
     addLog("Injury rehab", "You missed matchday and focused on returning safely.", "warning");
     return result;
@@ -2155,7 +2270,8 @@ function simulateMatch() {
       mvp: false,
       headline: "Unused substitute",
       summary: "You did not get meaningful minutes. Your week still counted in training.",
-      managerThought: "You are close, but I need to trust the habits before I trust the minutes."
+      managerThought: "You are close, but I need to trust the habits before I trust the minutes.",
+      highlights: []
     };
     addLog("Limited minutes", "The manager kept you on the edge of the squad. Keep building trust.", "");
     return result;
@@ -2181,7 +2297,8 @@ function simulateMatch() {
   career.confidence = clamp(career.confidence + (rating - 6.1) * 3.2);
   career.fitness = clamp(career.fitness - randomBetween(3, 8));
 
-  applyEndProduct(rating);
+  const endProduct = applyEndProduct(rating);
+  const highlights = generateMatchHighlights(rating, mvp, endProduct);
   updateFameFromRating(rating, mvp);
 
   if (rating >= 8) {
@@ -2205,19 +2322,31 @@ function simulateMatch() {
     mvp,
     headline: matchHeadline(rating, mvp),
     summary: matchSummary(rating, mvp),
-    managerThought: managerThought(rating)
+    managerThought: managerThought(rating),
+    highlights
   };
 }
 
 function applyEndProduct(rating) {
   const player = state.player;
   const chance = rating + groupOverall("technical") / 18 + Math.random() * 2.8;
+  const impact = { goal: false, assist: false, cleanSheet: false };
   if (player.position === "Goalkeeper") {
-    if (rating > 6.8 && Math.random() < 0.45) state.career.cleanSheets += 1;
+    if (rating > 6.8 && Math.random() < 0.45) {
+      state.career.cleanSheets += 1;
+      impact.cleanSheet = true;
+    }
   } else {
-    if (chance > 11.4) state.career.goals += 1;
-    if (chance > 10.4 && Math.random() < 0.68) state.career.assists += 1;
+    if (chance > 11.4) {
+      state.career.goals += 1;
+      impact.goal = true;
+    }
+    if (chance > 10.4 && Math.random() < 0.68) {
+      state.career.assists += 1;
+      impact.assist = true;
+    }
   }
+  return impact;
 }
 
 function updateFameFromRating(rating, mvp) {
@@ -2231,6 +2360,99 @@ function updateFameFromRating(rating, mvp) {
     player.fame = clamp(player.fame + 2.5);
     addLog("National spotlight", `${player.nationality} media framed you as a reason people are watching the country more closely.`, "good");
   }
+}
+
+function generateMatchHighlights(rating, mvp, endProduct) {
+  const player = state.player;
+  const role = positions[player.position]?.short || "CM";
+  const minutes = uniqueMinutes(rating >= 8 ? 5 : rating >= 6.5 ? 4 : 3);
+  const quality = rating >= 7.6 ? "good" : rating < 5.7 ? "warning" : "";
+  const moments = [];
+
+  if (endProduct.goal) {
+    moments.push(highlight(minutes.shift() || 18, "Goal", "You attack the box, take one touch away from pressure, and finish before the defender can block.", "good"));
+  }
+
+  if (endProduct.assist) {
+    moments.push(highlight(minutes.shift() || 32, "Assist", "You receive between lines, wait for the runner, and slide the pass through before the move ends with a finish.", "good"));
+  }
+
+  if (endProduct.cleanSheet) {
+    moments.push(highlight(minutes.shift() || 54, "Key save", "You set early, read the striker's body shape, and push the shot wide for a corner.", "good"));
+  }
+
+  const library = role === "GK" ? goalkeeperHighlights(rating) : outfieldHighlights(player.position, rating);
+  while (moments.length < (mvp ? 5 : rating >= 6.5 ? 4 : 3) && library.length) {
+    const index = Math.floor(randomBetween(0, library.length));
+    const [title, body, type] = library.splice(index, 1)[0];
+    moments.push(highlight(minutes.shift() || Math.floor(randomBetween(9, 88)), title, body, type || quality));
+  }
+
+  return moments
+    .sort((a, b) => a.minute - b.minute)
+    .map((item, index) => ({ ...item, id: `hl-${state.career.totalWeeks}-${index}` }));
+}
+
+function uniqueMinutes(count) {
+  const minutes = [];
+  while (minutes.length < count) {
+    const minute = Math.floor(randomBetween(7, 89));
+    if (!minutes.some((existing) => Math.abs(existing - minute) < 8)) minutes.push(minute);
+  }
+  return minutes.sort((a, b) => a - b);
+}
+
+function highlight(minute, title, body, type = "") {
+  return { minute, title, body, type };
+}
+
+function outfieldHighlights(position, rating) {
+  const strong = rating >= 7.4;
+  const weak = rating < 5.8;
+  const shared = [
+    ["First touch under pressure", "You take the ball on the half-turn, protect it with your body, and win a foul as the challenge arrives.", strong ? "good" : ""],
+    ["Loose pass warning", "You try to force a forward pass, the angle closes, and the ball rolls out before the attack can build.", weak ? "warning" : ""],
+    ["Pressing trigger", "You jump onto a heavy touch, force the defender backward, and the crowd reacts as the ball is cleared out.", strong ? "good" : ""],
+    ["Recovery run", "You sprint back after possession is lost and slow the counter long enough for teammates to reset.", strong ? "good" : ""]
+  ];
+  const byPosition = {
+    Goalkeeper: [
+      ["Claimed cross", "You step through traffic, catch the cross cleanly, and slow the match down before distributing.", strong ? "good" : ""],
+      ["Distribution risk", "You look for the quick throw, hesitate, and the safe pass goes out under pressure.", weak ? "warning" : ""]
+    ],
+    "Full-back": [
+      ["Overlap", "You time the overlap, receive near the touchline, and whip a cross that is cleared for a corner.", strong ? "good" : ""],
+      ["One-v-one defending", "You show the winger outside and block the cross off his shin for a throw.", strong ? "good" : ""]
+    ],
+    "Centre-back": [
+      ["Aerial duel", "You attack the long ball first and head it into midfield before the striker can settle.", strong ? "good" : ""],
+      ["Late tackle", "You step out aggressively, miss the ball by inches, and give away a free kick in a dangerous lane.", weak ? "warning" : ""]
+    ],
+    Midfielder: [
+      ["Switch of play", "You scan before receiving, open your hips, and hit the far-side runner to break the press.", strong ? "good" : ""],
+      ["Second ball", "You arrive first after a clearance and recycle possession before the opponent can counter.", strong ? "good" : ""]
+    ],
+    Winger: [
+      ["Dribble attempt", "You isolate the full-back, push the ball outside, and win a corner when the cross is blocked.", strong ? "good" : ""],
+      ["Cut inside", "You cut onto your stronger foot and shoot, but the keeper sees it early and holds.", weak ? "warning" : ""]
+    ],
+    Striker: [
+      ["Near-post run", "You dart across the centre-back and glance a shot just wide before the flag stays down.", strong ? "good" : ""],
+      ["Hold-up play", "You pin the defender, bring the ball down, and lay it off before being clipped from behind.", strong ? "good" : ""]
+    ]
+  };
+  return [...(byPosition[position] || []), ...shared];
+}
+
+function goalkeeperHighlights(rating) {
+  const strong = rating >= 7.4;
+  const weak = rating < 5.8;
+  return [
+    ["Early save", "You stay big at the near post and turn the shot behind for a corner.", strong ? "good" : ""],
+    ["Claimed cross", "You come through traffic, catch cleanly, and calm the back line before restarting play.", strong ? "good" : ""],
+    ["Pass under pressure", "You receive a back pass, open your body, and clip it wide before the striker closes.", strong ? "good" : ""],
+    ["Handling scare", "A low shot skids awkwardly, you spill it for a second, then smother before anyone can tap in.", weak ? "warning" : ""]
+  ];
 }
 
 function matchHeadline(rating, mvp) {
@@ -2547,11 +2769,17 @@ function evaluateContractsAndMilestones() {
   }
 
   if (player.stage === "Reserve Prospect" && player.ageYears >= 18 && career.coachTrust > 64 && level > 60) {
+    const seniorClub = currentWorldClub();
     player.stage = "First-team Breakthrough";
     player.role = "First-team rotation";
+    if (seniorClub) {
+      player.club = seniorClub.name;
+      player.tier = seniorClub.tier;
+      state.ui.league = seniorClub.tier;
+    }
     player.wage = Math.max(player.wage, 900);
     career.reputation = clamp(career.reputation + 10);
-    addLog("First-team breakthrough", "Senior staff gave you a real role. Every choice is louder now.", "good");
+    addLog("First-team breakthrough", `Senior staff gave you a real role${seniorClub ? ` in ${seniorClub.tier}` : ""}. Every choice is louder now.`, "good");
   }
 }
 
@@ -2560,12 +2788,13 @@ function createOffer(reason, viaAgent) {
   const career = state.career;
   const agent = state.agent.current;
   const marketPower = overall() + career.reputation * 0.45 + player.fame * 0.22 + career.form * 0.14 + (agent ? agent.connections * 0.16 : 0);
-  const possible = clubCatalog
+  const worldClubs = state.world?.clubs?.length ? state.world.clubs : clubCatalog;
+  const possible = worldClubs
     .map((club) => ({ ...club, adjustedOverall: clubOverall(club) }))
     .filter((club) => club.adjustedOverall <= marketPower + randomBetween(22, 42))
     .sort((a, b) => b.adjustedOverall - a.adjustedOverall);
 
-  const club = possible[Math.floor(randomBetween(0, Math.min(6, possible.length)))] || clubCatalog[clubCatalog.length - 1];
+  const club = possible[Math.floor(randomBetween(0, Math.min(6, possible.length)))] || worldClubs[worldClubs.length - 1];
   const fit = clamp(round(42 + club.pathway * 0.22 + (marketPower - clubOverall(club)) * 0.45 + randomBetween(-10, 12)));
   const role = offerRole(club, fit, player.ageYears);
   const wage = logicalWageOffer(club, fit, marketPower);
@@ -2700,16 +2929,24 @@ function endSeason() {
 }
 
 function applyPromotionRelegation() {
-  const pairs = [
-    ["English League 1", "English League 2"],
-    ["English League 2", "English League 3"]
-  ];
+  const pairs = Object.entries(leagueConfigs)
+    .filter(([, config]) => config.level && config.level > 1 && config.promotion > 0)
+    .map(([lower, config]) => {
+      const upper = Object.entries(leagueConfigs)
+        .find(([, upperConfig]) => upperConfig.country === config.country && upperConfig.level === config.level - 1)?.[0];
+      return upper ? [upper, lower] : null;
+    })
+    .filter(Boolean);
   pairs.forEach(([upper, lower]) => {
     const upperTable = state.world.leagues[upper];
     const lowerTable = state.world.leagues[lower];
     if (!upperTable || !lowerTable) return;
-    const relegated = upperTable.slice(-3).map((row) => row.club);
-    const promoted = lowerTable.slice(0, 3).map((row) => row.club);
+    const relegationCount = leagueConfigs[upper]?.relegation || 0;
+    const promotionCount = leagueConfigs[lower]?.promotion || 0;
+    const movementCount = Math.min(relegationCount, promotionCount);
+    if (!movementCount) return;
+    const relegated = upperTable.slice(-movementCount).map((row) => row.club);
+    const promoted = lowerTable.slice(0, movementCount).map((row) => row.club);
     state.world.clubs.forEach((club) => {
       if (relegated.includes(club.name)) {
         club.tier = lower;
