@@ -1,4 +1,4 @@
-const SAVE_KEY = "full-time-life-save-v7";
+const SAVE_KEY = "full-time-life-save-v11";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 
 const attributeGroups = {
@@ -92,23 +92,35 @@ const nations = [
 ];
 
 const positions = {
-  Goalkeeper: { short: "GK", x: "12%", y: "50%", technical: 28, physical: 32, tactical: 35, mentality: 35 },
-  "Full-back": { short: "FB", x: "32%", y: "24%", technical: 32, physical: 35, tactical: 32, mentality: 31 },
-  "Centre-back": { short: "CB", x: "26%", y: "50%", technical: 29, physical: 37, tactical: 35, mentality: 33 },
-  Midfielder: { short: "CM", x: "50%", y: "50%", technical: 36, physical: 32, tactical: 36, mentality: 33 },
-  Winger: { short: "WG", x: "68%", y: "24%", technical: 36, physical: 35, tactical: 30, mentality: 31 },
-  Striker: { short: "ST", x: "80%", y: "50%", technical: 35, physical: 34, tactical: 31, mentality: 34 }
+  Goalkeeper: { short: "GK", x: "12%", y: "50%", technical: 16, physical: 18, tactical: 19, mentality: 18 },
+  "Full-back": { short: "FB", x: "32%", y: "24%", technical: 18, physical: 20, tactical: 17, mentality: 17 },
+  "Centre-back": { short: "CB", x: "26%", y: "50%", technical: 16, physical: 21, tactical: 19, mentality: 18 },
+  Midfielder: { short: "CM", x: "50%", y: "50%", technical: 21, physical: 18, tactical: 20, mentality: 18 },
+  Winger: { short: "WG", x: "68%", y: "24%", technical: 21, physical: 20, tactical: 16, mentality: 17 },
+  Striker: { short: "ST", x: "80%", y: "50%", technical: 20, physical: 19, tactical: 17, mentality: 18 }
 };
 
 const clubCatalog = [
-  { name: "London Blue", country: "England", city: "London", tier: "English League", base: 82, pathway: 58, pressure: 82 },
-  { name: "London Red", country: "England", city: "London", tier: "English League", base: 88, pathway: 63, pressure: 78 },
-  { name: "North London Lily", country: "England", city: "London", tier: "English League", base: 84, pathway: 66, pressure: 70 },
-  { name: "Manchester Sky", country: "England", city: "Manchester", tier: "English League", base: 94, pathway: 45, pressure: 88 },
-  { name: "Manchester Red", country: "England", city: "Manchester", tier: "English League", base: 83, pathway: 62, pressure: 86 },
-  { name: "Merseyside Red", country: "England", city: "Liverpool", tier: "English League", base: 91, pathway: 54, pressure: 84 },
-  { name: "Tyneside Black White", country: "England", city: "Newcastle", tier: "English League", base: 80, pathway: 70, pressure: 68 },
-  { name: "Birmingham Claret", country: "England", city: "Birmingham", tier: "English League", base: 78, pathway: 72, pressure: 61 },
+  { name: "London Red", country: "England", city: "London", tier: "English League 1", base: 87, pathway: 66, pressure: 78, standing: 1, revenue: 91, reputation: 90 },
+  { name: "Manchester Sky", country: "England", city: "Manchester", tier: "English League 1", base: 90, pathway: 54, pressure: 88, standing: 2, revenue: 96, reputation: 94 },
+  { name: "Manchester Red", country: "England", city: "Manchester", tier: "English League 1", base: 82, pathway: 62, pressure: 86, standing: 3, revenue: 94, reputation: 91 },
+  { name: "Birmingham Claret", country: "England", city: "Birmingham", tier: "English League 1", base: 78, pathway: 74, pressure: 63, standing: 4, revenue: 74, reputation: 76 },
+  { name: "Merseyside Red", country: "England", city: "Liverpool", tier: "English League 1", base: 85, pathway: 58, pressure: 84, standing: 5, revenue: 92, reputation: 91 },
+  { name: "South Coast Cherries", country: "England", city: "Bournemouth", tier: "English League 1", base: 73, pathway: 74, pressure: 52, standing: 6, revenue: 62, reputation: 61 },
+  { name: "Brighton Coast", country: "England", city: "Brighton", tier: "English League 1", base: 75, pathway: 82, pressure: 55, standing: 7, revenue: 66, reputation: 68 },
+  { name: "West London Bees", country: "England", city: "London", tier: "English League 1", base: 71, pathway: 73, pressure: 52, standing: 8, revenue: 61, reputation: 59 },
+  { name: "Wearside Red White", country: "England", city: "Sunderland", tier: "English League 1", base: 69, pathway: 78, pressure: 60, standing: 9, revenue: 58, reputation: 63 },
+  { name: "London Blue", country: "England", city: "London", tier: "English League 1", base: 78, pathway: 68, pressure: 82, standing: 10, revenue: 90, reputation: 86 },
+  { name: "Tyneside Black White", country: "England", city: "Newcastle", tier: "English League 1", base: 77, pathway: 72, pressure: 68, standing: 11, revenue: 78, reputation: 77 },
+  { name: "Merseyside Blue", country: "England", city: "Liverpool", tier: "English League 1", base: 70, pathway: 64, pressure: 70, standing: 12, revenue: 67, reputation: 70 },
+  { name: "West London Whites", country: "England", city: "London", tier: "English League 1", base: 70, pathway: 66, pressure: 57, standing: 13, revenue: 65, reputation: 64 },
+  { name: "Yorkshire White", country: "England", city: "Leeds", tier: "English League 1", base: 69, pathway: 73, pressure: 68, standing: 14, revenue: 63, reputation: 71 },
+  { name: "South London Eagles", country: "England", city: "London", tier: "English League 1", base: 70, pathway: 70, pressure: 63, standing: 15, revenue: 65, reputation: 66 },
+  { name: "Nottingham Trees", country: "England", city: "Nottingham", tier: "English League 1", base: 69, pathway: 66, pressure: 65, standing: 16, revenue: 60, reputation: 65 },
+  { name: "North London Lily", country: "England", city: "London", tier: "English League 1", base: 80, pathway: 66, pressure: 80, standing: 17, revenue: 88, reputation: 86 },
+  { name: "East London Irons", country: "England", city: "London", tier: "English League 1", base: 68, pathway: 62, pressure: 73, standing: 18, revenue: 72, reputation: 70 },
+  { name: "Lancashire Claret", country: "England", city: "Burnley", tier: "English League 1", base: 62, pathway: 70, pressure: 56, standing: 19, revenue: 50, reputation: 55 },
+  { name: "Midlands Wolves", country: "England", city: "Wolverhampton", tier: "English League 1", base: 61, pathway: 65, pressure: 58, standing: 20, revenue: 52, reputation: 57 },
   { name: "Madrid White", country: "Spain", city: "Madrid", tier: "Spanish League", base: 94, pathway: 44, pressure: 90 },
   { name: "Madrid Red White", country: "Spain", city: "Madrid", tier: "Spanish League", base: 86, pathway: 58, pressure: 76 },
   { name: "Catalonia Garnet", country: "Spain", city: "Barcelona", tier: "Spanish League", base: 89, pathway: 57, pressure: 84 },
@@ -149,6 +161,70 @@ const clubCatalog = [
   { name: "Buenos Aires Red White", country: "Argentina", city: "Buenos Aires", tier: "Argentine League", base: 79, pathway: 83, pressure: 70 }
 ];
 
+const englishLowerPyramid = [
+  ["Coventry Sky", "Coventry", "English League 2", 72, 78, 54, 1, 56, 63],
+  ["Ipswich Tractor", "Ipswich", "English League 2", 71, 76, 56, 2, 58, 66],
+  ["Millwall Dockers", "London", "English League 2", 68, 66, 67, 3, 50, 61],
+  ["South Coast Saints", "Southampton", "English League 2", 70, 75, 65, 4, 68, 76],
+  ["Teesside Red", "Middlesbrough", "English League 2", 67, 72, 58, 5, 52, 63],
+  ["Humberside Tigers", "Hull", "English League 2", 66, 70, 56, 6, 50, 59],
+  ["Wrecsam Dragons", "Wrexham", "English League 2", 66, 82, 78, 7, 70, 72],
+  ["Black Country Albion", "West Bromwich", "English League 2", 65, 68, 64, 8, 57, 66],
+  ["Blackburn Roses", "Blackburn", "English League 2", 64, 71, 56, 9, 49, 60],
+  ["Sheffield Steel Blue", "Sheffield", "English League 2", 65, 66, 68, 10, 55, 66],
+  ["Norwich Canaries", "Norwich", "English League 2", 64, 74, 55, 11, 55, 66],
+  ["Bristol Robins", "Bristol", "English League 2", 63, 70, 52, 12, 49, 58],
+  ["Swansea White", "Swansea", "English League 2", 62, 72, 54, 13, 48, 58],
+  ["Derby Rams", "Derby", "English League 2", 62, 68, 60, 14, 47, 61],
+  ["Oxford Scholars", "Oxford", "English League 2", 61, 72, 48, 15, 42, 52],
+  ["Watford Horns", "Watford", "English League 2", 63, 64, 66, 16, 55, 63],
+  ["Stoke Potters", "Stoke-on-Trent", "English League 2", 62, 63, 62, 17, 50, 60],
+  ["Portsmouth Navy", "Portsmouth", "English League 2", 61, 67, 58, 18, 46, 58],
+  ["Preston Lilywhite", "Preston", "English League 2", 60, 65, 54, 19, 45, 55],
+  ["Sheffield Red White", "Sheffield", "English League 2", 61, 62, 66, 20, 52, 63],
+  ["Queens Park Hoops", "London", "English League 2", 60, 66, 55, 21, 46, 57],
+  ["Plymouth Green", "Plymouth", "English League 2", 58, 64, 52, 22, 40, 50],
+  ["Luton Hatters", "Luton", "English League 2", 59, 62, 58, 23, 45, 58],
+  ["Leicester Foxes", "Leicester", "English League 2", 63, 66, 82, 24, 68, 78],
+  ["Lincoln Imps", "Lincoln", "English League 3", 60, 74, 45, 1, 36, 48],
+  ["Stockport Hats", "Stockport", "English League 3", 59, 72, 48, 2, 35, 48],
+  ["Bolton Wander", "Bolton", "English League 3", 59, 68, 60, 3, 42, 58],
+  ["Bradford Bantams", "Bradford", "English League 3", 58, 68, 55, 4, 34, 46],
+  ["Stevenage Borough", "Stevenage", "English League 3", 58, 66, 54, 5, 33, 45],
+  ["Reading Royals", "Reading", "English League 3", 57, 72, 63, 6, 38, 55],
+  ["Huddersfield Terriers", "Huddersfield", "English League 3", 57, 65, 58, 7, 39, 54],
+  ["Wycombe Chairmen", "Wycombe", "English League 3", 56, 64, 52, 8, 32, 44],
+  ["Barnsley Oak", "Barnsley", "English League 3", 56, 68, 50, 9, 34, 47],
+  ["Leyton East", "London", "English League 3", 55, 70, 48, 10, 31, 43],
+  ["Doncaster Rail", "Doncaster", "English League 3", 55, 66, 48, 11, 30, 42],
+  ["Wigan Latics", "Wigan", "English League 3", 55, 62, 58, 12, 36, 52],
+  ["Rotherham Millers", "Rotherham", "English League 3", 54, 62, 56, 13, 34, 48],
+  ["Charlton Reds", "London", "English League 3", 56, 66, 60, 14, 37, 55],
+  ["Peterborough Blue", "Peterborough", "English League 3", 55, 68, 54, 15, 36, 51],
+  ["Mansfield Stags", "Mansfield", "English League 3", 54, 64, 48, 16, 29, 41],
+  ["Northampton Cobblers", "Northampton", "English League 3", 53, 62, 48, 17, 28, 40],
+  ["Port Vale Black White", "Stoke-on-Trent", "English League 3", 53, 64, 48, 18, 28, 41],
+  ["Exeter Grecians", "Exeter", "English League 3", 53, 66, 45, 19, 27, 39],
+  ["Burton Brewers", "Burton", "English League 3", 52, 60, 48, 20, 27, 38],
+  ["Cambridge Scholars", "Cambridge", "English League 3", 52, 66, 44, 21, 27, 38],
+  ["Shrewsbury Blues", "Shrewsbury", "English League 3", 51, 60, 48, 22, 26, 38],
+  ["Crawley Reds", "Crawley", "English League 3", 51, 62, 48, 23, 26, 38],
+  ["Bristol Gas", "Bristol", "English League 3", 51, 61, 48, 24, 28, 42]
+].map(([name, city, tier, base, pathway, pressure, standing, revenue, reputation]) => ({
+  name,
+  country: "England",
+  city,
+  tier,
+  base,
+  pathway,
+  pressure,
+  standing,
+  revenue,
+  reputation
+}));
+
+clubCatalog.push(...englishLowerPyramid);
+
 const academyPrograms = clubCatalog.map((club) => ({
   ...club,
   name: `${club.name} Academy`,
@@ -158,7 +234,9 @@ const academyPrograms = clubCatalog.map((club) => ({
 }));
 
 const leagueConfigs = {
-  "English League": { country: "England", clubs: 20, matches: 38, region: "Europe" },
+  "English League 1": { country: "England", clubs: 20, matches: 38, region: "Europe", level: 1, promotion: 0, relegation: 3, continental: 4 },
+  "English League 2": { country: "England", clubs: 24, matches: 46, region: "Europe", level: 2, promotion: 3, relegation: 3 },
+  "English League 3": { country: "England", clubs: 24, matches: 46, region: "Europe", level: 3, promotion: 3, relegation: 4 },
   "Spanish League": { country: "Spain", clubs: 20, matches: 38, region: "Europe" },
   "Italian League": { country: "Italy", clubs: 20, matches: 38, region: "Europe" },
   "German League": { country: "Germany", clubs: 18, matches: 34, region: "Europe" },
@@ -435,7 +513,7 @@ function buildWorld() {
       id,
       overall: clubOverall(club),
       finance: createClubFinance(club),
-      fame: clamp(club.base + randomBetween(-8, 10), 30, 98),
+      fame: clamp((club.reputation ?? club.base) + randomBetween(-7, 8), 20, 98),
       facilities,
       chairman,
       manager: createManager(club, index),
@@ -486,7 +564,8 @@ function generateFillerClub(league, config, index) {
   };
   const suffixes = ["United", "City", "Athletic", "Rovers", "Sporting", "Wanderers", "Rail", "Harbour", "County", "Union"];
   const city = cityRoots[config.country][index % cityRoots[config.country].length];
-  const base = clamp(leagueAverageBase(league) + randomBetween(-10, 7) - index / 5, 35, 86);
+  const levelDrop = config.level ? (config.level - 1) * 9 : 0;
+  const base = clamp(leagueAverageBase(league) + randomBetween(-10, 7) - index / 5 - levelDrop, 35, 86);
   return {
     name: `${city} ${suffixes[index % suffixes.length]}`,
     country: config.country,
@@ -505,7 +584,9 @@ function leagueAverageBase(league) {
 }
 
 function createClubFinance(club) {
-  return clamp(Math.round(club.base * 1.2 + randomBetween(-18, 18)), 20, 100);
+  const revenue = club.revenue ?? club.base;
+  const levelPenalty = leagueConfigs[club.tier]?.level ? (leagueConfigs[club.tier].level - 1) * 10 : 0;
+  return clamp(Math.round(revenue * 0.72 + club.base * 0.36 - levelPenalty + randomBetween(-10, 10)), 12, 100);
 }
 
 function createFacilities(club, chairman) {
@@ -551,39 +632,94 @@ function createManager(club, index) {
 }
 
 function createRoster(club, academy = false) {
-  const baseOverall = academy ? clamp(clubOverall(club) - 22, 32, 76) : clubOverall(club);
+  const reputation = club.reputation ?? club.base;
+  const revenue = club.revenue ?? club.base;
+  const baseOverall = academy
+    ? clamp(10 + club.pathway / 13 + (leagueConfigs[club.tier]?.level === 1 ? 2 : 0), 12, 26)
+    : clamp(clubOverall(club) * 0.62 + reputation * 0.18 + revenue * 0.12, 35, 88);
   const positionsList = ["GK", "GK", "FB", "FB", "FB", "CB", "CB", "CB", "CM", "CM", "CM", "CM", "WG", "WG", "WG", "ST", "ST", "ST", "CB", "FB", "CM", "WG", "ST"];
   const seeded = academy ? [] : (pseudoStars[club.name] || []);
-  const roster = seeded.map(([name, position, rating], index) => createPlayerRecord(name, position, clamp(rating + randomBetween(-1, 1)), club.country, index, academy));
+  const roster = seeded.map(([name, position, rating], index) => {
+    const starCap = clamp(baseOverall + 8 + revenue / 18 + randomBetween(-3, 3), 62, 93);
+    return createPlayerRecord(name, position, clamp(Math.min(rating, starCap) + randomBetween(-2, 1), 50, 93), likelyNationality(club.country, index, true), index, academy);
+  });
 
   positionsList.forEach((position, index) => {
     if (roster.length >= 23) return;
-    const rating = clamp(baseOverall + randomBetween(-9, 8) - (index > 16 ? randomBetween(1, 5) : 0), academy ? 28 : 45, academy ? 78 : 96);
-    roster.push(createPlayerRecord(randomPlayerName(club.country, index, academy), position, rating, club.country, index + roster.length, academy));
+    const squadBand = index < 11 ? randomBetween(-4, 5) : index < 17 ? randomBetween(-9, 1) : randomBetween(-16, -5);
+    const youngsterDip = !academy && index > 17 ? randomBetween(2, 8) : 0;
+    const rating = clamp(baseOverall + squadBand - youngsterDip, academy ? 10 : 32, academy ? 34 : 88);
+    const nation = likelyNationality(club.country, index + roster.length, false);
+    roster.push(createPlayerRecord(randomPlayerName(nation, index + roster.length, academy), position, rating, nation, index + roster.length, academy));
   });
 
-  return roster.sort((a, b) => b.overall - a.overall).slice(0, 23);
+  return uniquifyRosterNames(roster.sort((a, b) => b.overall - a.overall).slice(0, 23));
+}
+
+function uniquifyRosterNames(roster) {
+  const seen = new Map();
+  return roster.map((player) => {
+    const count = seen.get(player.name) || 0;
+    seen.set(player.name, count + 1);
+    if (!count) return player;
+    const parts = player.name.split(" ");
+    const first = parts[0];
+    const replacement = lastNames[(player.name.length + count * 9) % lastNames.length];
+    return { ...player, name: `${first} ${replacement}` };
+  });
 }
 
 function createPlayerRecord(name, position, rating, country, index, academy) {
   const age = academy ? Math.floor(randomBetween(15, 19)) : Math.floor(randomBetween(18, 35));
-  const value = academy ? Math.round(rating * rating * randomBetween(18, 65)) : Math.round(rating * rating * randomBetween(850, 4200));
+  const value = academy ? Math.round(rating * rating * randomBetween(6, 26)) : Math.round(rating * rating * randomBetween(420, 3100));
   return {
     id: uid("player"),
     name,
     position,
     overall: round(rating),
     age,
-    country,
+    nationality: country,
     value,
     potential: clamp(round(rating + (academy ? randomBetween(8, 22) : randomBetween(0, 8))), rating, 97)
   };
 }
 
 function randomPlayerName(country, index, academy) {
-  const first = firstNames[(index * 7 + country.length) % firstNames.length];
-  const last = lastNames[(index * 5 + country.charCodeAt(0)) % lastNames.length];
-  return academy ? `${first} ${last}` : `${first} ${last}`;
+  const countryPools = {
+    England: [["Archie", "Oliver", "Jude", "Harry", "Mason", "Callum"], ["Bennett", "Hughes", "Walker", "Turner", "Cooper", "Walsh"]],
+    Spain: [["Pablo", "Iker", "Unai", "Sergio", "Mateo", "Nico"], ["Garcia", "Alonso", "Navarro", "Moreno", "Soler", "Vidal"]],
+    Italy: [["Luca", "Marco", "Nico", "Andrea", "Matteo", "Davide"], ["Rossi", "Bianchi", "Moretti", "Conti", "Ferraro", "Gallo"]],
+    Germany: [["Lukas", "Felix", "Jonas", "Timo", "Florian", "Noah"], ["Muller", "Schmidt", "Keller", "Weber", "Fischer", "Brandt"]],
+    France: [["Theo", "Hugo", "Rayan", "Lucas", "Jules", "Mathis"], ["Dubois", "Moreau", "Laurent", "Blanc", "Garnier", "Roux"]],
+    Malaysia: [["Aiman", "Hakim", "Syafiq", "Rafiq", "Akmal", "Faris"], ["Rahman", "Salleh", "Halim", "Azmi", "Zainal", "Yusof"]],
+    Japan: [["Haruto", "Ren", "Riku", "Kaito", "Sota", "Yuma"], ["Tanaka", "Ito", "Yamada", "Nakamura", "Kobayashi", "Saito"]],
+    "Korea Republic": [["Min-Jun", "Ji-Hoon", "Seo-Jun", "Hyun-Woo", "Jae-Min", "Do-Yun"], ["Kim", "Park", "Lee", "Choi", "Jung", "Han"]],
+    Brazil: [["Joao", "Lucas", "Matheus", "Rafael", "Bruno", "Caio"], ["Silva", "Santos", "Costa", "Araujo", "Pereira", "Lima"]],
+    Argentina: [["Mateo", "Thiago", "Nico", "Lautaro", "Tomas", "Facundo"], ["Mendoza", "Romero", "Acosta", "Paz", "Ferreyra", "Sosa"]]
+  };
+  const pool = countryPools[country] || [firstNames, lastNames];
+  const first = pool[0][(index * 3 + country.length) % pool[0].length];
+  const last = pool[1][(index * 5 + country.charCodeAt(0)) % pool[1].length];
+  const suffix = academy ? "" : index > 18 ? ` ${String.fromCharCode(65 + (index % 26))}` : "";
+  return `${first} ${last}${suffix}`;
+}
+
+function likelyNationality(clubCountry, index, star = false) {
+  if (star) return clubCountry;
+  const foreignPools = {
+    England: ["England", "France", "Spain", "Brazil", "Portugal", "Netherlands", "Nigeria", "Japan", "Korea Republic"],
+    Spain: ["Spain", "Argentina", "Brazil", "France", "Portugal", "Uruguay", "Morocco"],
+    Italy: ["Italy", "Argentina", "France", "Brazil", "Netherlands", "Nigeria"],
+    Germany: ["Germany", "France", "Austria", "Netherlands", "Denmark", "Japan"],
+    France: ["France", "Morocco", "Senegal", "Algeria", "Brazil", "Portugal"],
+    Malaysia: ["Malaysia", "Indonesia", "Singapore", "Thailand", "Brazil", "Japan"],
+    Japan: ["Japan", "Brazil", "Korea Republic", "Australia", "Thailand"],
+    "Korea Republic": ["Korea Republic", "Brazil", "Japan", "Australia", "Malaysia"],
+    Brazil: ["Brazil", "Argentina", "Uruguay", "Colombia", "Paraguay"],
+    Argentina: ["Argentina", "Uruguay", "Brazil", "Colombia", "Paraguay"]
+  };
+  const pool = foreignPools[clubCountry] || [clubCountry, "Brazil", "France", "Spain"];
+  return pool[index % pool.length];
 }
 
 function buildLeagueTables(clubs) {
@@ -633,7 +769,7 @@ function createTableRow(club, league, maxMatches) {
 function buildContinentalCompetitions(clubs) {
   return Object.fromEntries(Object.entries(continentalConfigs).map(([name, config]) => {
     const entrants = clubs
-      .filter((club) => leagueConfigs[club.tier]?.region === config.region)
+      .filter((club) => leagueConfigs[club.tier]?.region === config.region && (leagueConfigs[club.tier]?.level || 1) === 1)
       .sort((a, b) => b.overall + b.fame / 8 - (a.overall + a.fame / 8))
       .slice(0, config.clubs);
     return [name, {
@@ -1496,7 +1632,7 @@ function rosterTableTemplate(roster, club) {
     <div class="table-wrap">
       <table class="league-table">
         <thead>
-          <tr><th>Name</th><th>Pos</th><th>Age</th><th>OVR</th><th>Potential</th><th>Value</th></tr>
+          <tr><th>Name</th><th>Pos</th><th>Age</th><th>OVR</th><th>Potential</th><th>Nation / Value</th></tr>
         </thead>
         <tbody>
           ${rows.map((player) => `
@@ -1506,7 +1642,7 @@ function rosterTableTemplate(roster, club) {
               <td>${player.age}</td>
               <td><strong>${player.overall}</strong></td>
               <td>${player.potential}</td>
-              <td>$${formatMoney(player.value)}</td>
+              <td>${escapeHtml(player.nationality || player.country || "")}<br>$${formatMoney(player.value)}</td>
             </tr>
           `).join("")}
         </tbody>
@@ -1654,6 +1790,7 @@ function careerPlayerRecord() {
     overall: round(overall()),
     potential: ageSoftCap() + 8,
     value: Math.round(overall() * overall() * (state.player.stage.includes("Academy") ? 42 : 1000)),
+    nationality: state.player.nationality,
     isYou: true
   };
 }
@@ -2405,14 +2542,14 @@ function evaluateContractsAndMilestones() {
   if (player.stage === "U18 Starter" && player.ageYears >= 17 && career.reputation > 28 && level > 53) {
     player.stage = "Reserve Prospect";
     player.role = "Reserve prospect";
-    player.wage = Math.max(player.wage, 180);
+    player.wage = Math.max(player.wage, 260);
     addLog("First pro development deal", "The club gave you money and expectation. Family pressure may change now.", "good");
   }
 
   if (player.stage === "Reserve Prospect" && player.ageYears >= 18 && career.coachTrust > 64 && level > 60) {
     player.stage = "First-team Breakthrough";
     player.role = "First-team rotation";
-    player.wage = Math.max(player.wage, 750);
+    player.wage = Math.max(player.wage, 900);
     career.reputation = clamp(career.reputation + 10);
     addLog("First-team breakthrough", "Senior staff gave you a real role. Every choice is louder now.", "good");
   }
@@ -2431,8 +2568,7 @@ function createOffer(reason, viaAgent) {
   const club = possible[Math.floor(randomBetween(0, Math.min(6, possible.length)))] || clubCatalog[clubCatalog.length - 1];
   const fit = clamp(round(42 + club.pathway * 0.22 + (marketPower - clubOverall(club)) * 0.45 + randomBetween(-10, 12)));
   const role = offerRole(club, fit, player.ageYears);
-  const wageBase = player.stage.includes("Academy") || player.stage.includes("U18") ? 45 : 170;
-  const wage = Math.max(player.wage + wageBase, round((clubOverall(club) + fit + marketPower) * randomBetween(3.5, 10.5)));
+  const wage = logicalWageOffer(club, fit, marketPower);
   const pressureReason = viaAgent && agent && agent.pushiness > 65 ? "Your agent is strongly recommending this move." : "The club explained a possible pathway.";
 
   state.agent.offers.unshift({
@@ -2457,6 +2593,19 @@ function offerRole(club, fit, age) {
   if (fit < 64) return "Rotation option";
   if (clubOverall(club) > overall() + 10) return "Loan pathway";
   return "Important player";
+}
+
+function logicalWageOffer(club, fit, marketPower) {
+  const level = leagueConfigs[club.tier]?.level || 1;
+  if (state.player.stage.includes("Academy") || state.player.ageYears < 17) {
+    return Math.max(state.player.wage + 25, round(randomBetween(80, 320) + fit * 2 + (club.finance || club.base) * 1.2));
+  }
+  if (state.player.ageYears < 18 || state.player.stage.includes("U18")) {
+    return Math.max(state.player.wage + 45, round(randomBetween(180, 650) + fit * 4 + (club.finance || club.base) * 2));
+  }
+  const tierMultiplier = level === 1 ? randomBetween(11, 36) : level === 2 ? randomBetween(5, 15) : randomBetween(2.2, 7);
+  const overspend = club.chairman?.spending > 82 && Math.random() < 0.12 ? randomBetween(1.25, 1.8) : 1;
+  return Math.max(state.player.wage + 80, round((marketPower + fit + (club.finance || club.base)) * tierMultiplier * overspend));
 }
 
 function acceptOffer(id) {
@@ -2544,9 +2693,38 @@ function endSeason() {
   career.ratingHistory = [];
   career.form = clamp(career.form * 0.78 + 12);
   state.life.stress = clamp(state.life.stress - 8);
+  applyPromotionRelegation();
   state.world.leagues = buildLeagueTables(state.world.clubs);
   state.world.competitions = buildContinentalCompetitions(state.world.clubs);
   state.world.leaders = buildLeaderboards(state.world.clubs);
+}
+
+function applyPromotionRelegation() {
+  const pairs = [
+    ["English League 1", "English League 2"],
+    ["English League 2", "English League 3"]
+  ];
+  pairs.forEach(([upper, lower]) => {
+    const upperTable = state.world.leagues[upper];
+    const lowerTable = state.world.leagues[lower];
+    if (!upperTable || !lowerTable) return;
+    const relegated = upperTable.slice(-3).map((row) => row.club);
+    const promoted = lowerTable.slice(0, 3).map((row) => row.club);
+    state.world.clubs.forEach((club) => {
+      if (relegated.includes(club.name)) {
+        club.tier = lower;
+        club.finance = clamp(club.finance - 8);
+        club.fame = clamp(club.fame - 5);
+        addNews(club.country, "Relegation", `${club.name} drop to ${lower}`, "Poor results forced a reset. Contracts, morale, and transfer desire will shift.");
+      }
+      if (promoted.includes(club.name)) {
+        club.tier = upper;
+        club.finance = clamp(club.finance + 9);
+        club.fame = clamp(club.fame + 7);
+        addNews(club.country, "Promotion", `${club.name} promoted to ${upper}`, "Promotion money and exposure make the club more attractive.");
+      }
+    });
+  });
 }
 
 function addLog(title, body, type = "") {

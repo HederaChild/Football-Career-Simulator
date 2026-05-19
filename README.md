@@ -28,11 +28,14 @@ Then visit `http://localhost:4173`.
 - Attribute groups with sub-stats such as touch, passing, pace, stamina, positioning, composure, and more
 - Tabbed league tables, squad/teammate views, agents/contracts, and filtered news
 - Fictionalized domestic league names with realistic club counts and match totals
+- English League 1, 2, and 3 with promotion/relegation logic and 24-club lower divisions
 - Continental competitions with real-style formats under fictional names
 - Season leaderboards for scorers, assists, red cards, and ratings
 - Generated senior and academy rosters for every fictionalized club
 - Club chairman and manager profiles, with board direction and pressure-driven changes
 - Club finance, fame, academy, training, medical, hospitality, and scouting ratings
+- More realistic squad distributions based on club revenue, reputation, standing, and league level
+- Player nationalities on squad screens and lower academy starting ability for long careers
 - Altered broadcaster names and country-filtered news
 - Season stats, match ratings, injuries, progression milestones, and local save/reset
 
