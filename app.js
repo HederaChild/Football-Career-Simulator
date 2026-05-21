@@ -1,9 +1,18 @@
-const SAVE_KEY = "full-time-life-save-v14";
+const SAVE_KEY = "full-time-life-save-v15";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v15",
+    title: "Start button compatibility fix",
+    date: "2026-05-21",
+    notes: [
+      "Changed Start academy offers into a normal form submit as well as a click action.",
+      "Made ?new=1 clear the save once, then remove itself from the URL so reloads do not confuse the career state."
+    ]
+  },
   {
     version: "v14",
     title: "Schedule, academy balance, and league stats",
@@ -554,6 +563,9 @@ const broadcasters = [
 
 if (new URLSearchParams(window.location.search).has("new")) {
   localStorage.removeItem(SAVE_KEY);
+  const cleanUrl = new URL(window.location.href);
+  cleanUrl.searchParams.delete("new");
+  window.history.replaceState({}, "", cleanUrl);
 }
 
 let state = loadState();
@@ -1192,7 +1204,7 @@ function setupTemplate() {
               <option value="strained">Strained home, less support</option>
             </select>
           </label>
-          <button class="primary-btn" type="button" data-start-button>Start academy offers</button>
+          <button class="primary-btn" type="submit" data-start-button>Start academy offers</button>
           ${hasSave ? `<button class="secondary-btn" type="button" data-continue>Continue saved career</button>` : ""}
           <p class="footer-note">${RANKING_NOTE} Lower-ranked nations give bigger home-hero fame when you perform.</p>
         </form>

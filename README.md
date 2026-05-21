@@ -26,8 +26,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=14` and `app.js?v=14`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v14"`.
+- `index.html` loads `styles.css?v=15` and `app.js?v=15`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v15"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -273,7 +273,7 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v14`.
+Last verified local build: asset/save version `v15`.
 
 Checks performed:
 
@@ -300,6 +300,7 @@ Checks performed:
 - Post-match now shows key highlights: only on-ball/key phase moments where the player affected the ball, forced a foul, made a save, ended the phase, or contributed to a goal/assist.
 - `?new=1` in the URL clears the local save for that version and returns the user to the create-player screen.
 - The start button has a direct click handler, and in-career screens include a topbar `New career` button so players are not trapped by an old save.
+- `v15` changes `Start academy offers` back to a normal form submit while keeping the direct click handler, and removes `?new=1` from the address after it clears the save once.
 
 ## Known Limitations
 
