@@ -87,6 +87,10 @@ button {
   overflow-x: auto;
 }
 
+.tabbar .tab-btn:last-child {
+  margin-left: auto;
+}
+
 .tab-btn,
 .filter-btn {
   min-height: 38px;
@@ -589,6 +593,10 @@ select {
   margin-bottom: 12px;
 }
 
+.compact-filters {
+  margin-top: 8px;
+}
+
 .table-wrap {
   overflow-x: auto;
   border: 1px solid #dce3da;
@@ -659,14 +667,54 @@ select {
   font-size: 1rem;
 }
 
-.full-span {
-  grid-column: 1 / -1;
+.schedule-list,
+.update-list {
+  display: grid;
+  gap: 10px;
 }
 
-.leaderboard-grid {
+.schedule-card,
+.update-card {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: minmax(92px, 0.28fr) 1fr;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #dce3da;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.schedule-card.active {
+  border-left: 5px solid var(--grass);
+}
+
+.schedule-card span,
+.update-card span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.schedule-card strong,
+.update-card strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.schedule-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.update-card ul {
+  margin: 7px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.full-span {
+  grid-column: 1 / -1;
 }
 
 .leaderboard-card {
@@ -928,6 +976,11 @@ select {
   .setup-form,
   .panel {
     padding: 14px;
+  }
+
+  .schedule-card,
+  .update-card {
+    grid-template-columns: 1fr;
   }
 
   .pitch {

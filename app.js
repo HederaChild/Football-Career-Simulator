@@ -1,5 +1,49 @@
-const SAVE_KEY = "full-time-life-save-v13";
+const SAVE_KEY = "full-time-life-save-v14";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
+const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
+const GAME_START_DATE = "2026-07-01";
+
+const updateHistory = [
+  {
+    version: "v14",
+    title: "Schedule, academy balance, and league stats",
+    date: "2026-05-21",
+    notes: [
+      "Renamed the front page to Football Career Simulator by Jeff Adkins.",
+      "Added update history on the start screen and inside the game.",
+      "Added an in-game date and Schedule tab with league calendar logic.",
+      "Made academy match ratings fairer because academy opponents are closer in age and level.",
+      "Changed leaderboards so each league shows its own scorers, assists, cards, and ratings after matches begin."
+    ]
+  },
+  {
+    version: "v13",
+    title: "Academy start fix",
+    date: "2026-05-21",
+    notes: [
+      "Fixed the Start academy offers button on the public site.",
+      "Added a New career button and ?new=1 fresh-start support."
+    ]
+  },
+  {
+    version: "v12",
+    title: "Multi-tier leagues and highlights",
+    date: "2026-05-20",
+    notes: [
+      "Added lower tiers in more countries so careers can start deeper and climb.",
+      "Added post-match key highlights for saves, fouls, passes, goals, assists, and phase-ending moments."
+    ]
+  },
+  {
+    version: "v11",
+    title: "Long-career realism pass",
+    date: "2026-05-20",
+    notes: [
+      "Slowed academy growth.",
+      "Added more logical squad ratings, lower English tiers, and club finance/facility effects."
+    ]
+  }
+];
 
 const attributeGroups = {
   technical: {
@@ -614,7 +658,7 @@ function buildWorld() {
     clubs,
     leagues: buildLeagueTables(clubs),
     competitions: buildContinentalCompetitions(clubs),
-    leaders: buildLeaderboards(clubs),
+    leaders: buildLeaderboards(),
     news: createOpeningNews(clubs),
     filters: {
       league: "Academy League",
@@ -886,25 +930,26 @@ function createCompetitionRow(club, competition, maxMatches) {
   };
 }
 
-function buildLeaderboards(clubs) {
-  const players = clubs.flatMap((club) => club.roster.slice(0, 16).map((player) => ({ ...player, club: club.name, league: club.tier })));
-  return {
-    scorers: players.map((player) => leaderRecord(player, "goals")).sort((a, b) => b.value - a.value).slice(0, 15),
-    assists: players.map((player) => leaderRecord(player, "assists")).sort((a, b) => b.value - a.value).slice(0, 15),
-    redCards: players.map((player) => leaderRecord(player, "redCards")).sort((a, b) => b.value - a.value).slice(0, 15),
-    ratings: players.map((player) => leaderRecord(player, "rating")).sort((a, b) => b.value - a.value).slice(0, 15)
-  };
+function buildLeaderboards() {
+  const names = [...Object.keys(leagueConfigs), "Academy League", ...Object.keys(continentalConfigs)];
+  return Object.fromEntries(names.map((name) => [name, emptyLeaderboards()]));
 }
 
-function leaderRecord(player, type) {
+function emptyLeaderboards() {
+  return { scorers: [], assists: [], redCards: [], ratings: [] };
+}
+
+function leaderRecord(player, type, matchesPlayed = 0) {
+  if (!matchesPlayed) return { name: player.name, club: player.club, league: player.league, position: player.position, value: 0 };
   const roleBonus = player.position === "ST" || player.position === "WG" ? 1.25 : player.position === "CM" ? 0.75 : 0.28;
   const oneSeasonWonder = Math.random() < 0.025 ? randomBetween(4, 10) : 0;
   const flop = player.overall > 84 && Math.random() < 0.04 ? randomBetween(0.35, 0.65) : 1;
   let value = 0;
-  if (type === "goals") value = Math.round((player.overall - 48) * roleBonus * randomBetween(0.06, 0.22) * flop + oneSeasonWonder);
-  if (type === "assists") value = Math.round((player.overall - 45) * (player.position === "CM" || player.position === "WG" ? 1.1 : 0.45) * randomBetween(0.05, 0.17) * flop + oneSeasonWonder / 2);
-  if (type === "redCards") value = Math.max(0, Math.round(randomBetween(-0.5, 2.4) + (player.position === "CB" ? 0.7 : 0)));
-  if (type === "rating") value = Number(clamp(5.8 + (player.overall - 60) / 17 + randomBetween(-0.8, 0.75) + oneSeasonWonder / 18 - (flop < 1 ? 0.7 : 0), 5.2, 8.9).toFixed(2));
+  const sample = Math.max(1, matchesPlayed);
+  if (type === "goals") value = Math.round((player.overall - 48) * roleBonus * randomBetween(0.015, 0.055) * sample * flop + oneSeasonWonder);
+  if (type === "assists") value = Math.round((player.overall - 45) * (player.position === "CM" || player.position === "WG" ? 1.1 : 0.45) * randomBetween(0.012, 0.045) * sample * flop + oneSeasonWonder / 2);
+  if (type === "redCards") value = Math.max(0, Math.round(randomBetween(-0.7, 0.08 * sample) + (player.position === "CB" ? 0.25 : 0)));
+  if (type === "rating") value = Number(clamp(5.7 + (player.overall - 60) / 18 + randomBetween(-0.45, 0.55) + oneSeasonWonder / 22 - (flop < 1 ? 0.45 : 0), 5.2, 8.9).toFixed(2));
   return {
     name: player.name,
     club: player.club,
@@ -962,6 +1007,7 @@ function createCareer(formData) {
       totalWeeks: 1,
       season: 1,
       week: 1,
+      startDate: GAME_START_DATE,
       coachTrust: 22,
       reputation: 6,
       form: 48,
@@ -999,6 +1045,7 @@ function createCareer(formData) {
     ui: {
       tab: "dashboard",
       league: "Academy League",
+      leaderboard: "scorers",
       newsCountry: "All",
       club: "current"
     },
@@ -1107,7 +1154,7 @@ function setupTemplate() {
     <section class="app-shell">
       <header class="topbar">
         <div class="brand">
-          <h1>Full Time Life</h1>
+          <h1>${GAME_TITLE}</h1>
           <p>A football career simulator where the person matters as much as the player.</p>
         </div>
         <div class="top-stats">
@@ -1163,6 +1210,10 @@ function setupTemplate() {
           <section class="panel">
             <h2>World logic</h2>
             <p class="microcopy">Clubs use fictional names inspired by real football geography and colours. National fame is tied to FIFA rank: being excellent for a smaller nation can make you a bigger national story.</p>
+          </section>
+          <section class="panel">
+            <h2>Update history</h2>
+            ${updateHistoryTemplate(3)}
           </section>
         </div>
       </div>
@@ -1238,10 +1289,12 @@ function gameTemplate() {
       ${topbarTemplate()}
       ${tabNav(tab)}
       ${tab === "dashboard" ? dashboardTab(age, ratingText) : ""}
+      ${tab === "schedule" ? scheduleTab() : ""}
       ${tab === "leagues" ? leaguesTab() : ""}
       ${tab === "squad" ? squadTab() : ""}
       ${tab === "contracts" ? contractsTab() : ""}
       ${tab === "news" ? newsTab() : ""}
+      ${tab === "updates" ? updatesTab() : ""}
     </section>
   `;
 }
@@ -1249,12 +1302,49 @@ function gameTemplate() {
 function tabNav(active) {
   const tabs = [
     ["dashboard", "Dashboard"],
+    ["schedule", "Schedule"],
     ["leagues", "Leagues"],
     ["squad", "Squad"],
     ["contracts", "Agents & Contracts"],
-    ["news", "News"]
+    ["news", "News"],
+    ["updates", "Updates"]
   ];
   return `<nav class="tabbar">${tabs.map(([id, label]) => `<button class="tab-btn ${active === id ? "active" : ""}" type="button" data-action="tab" data-id="${id}">${label}</button>`).join("")}</nav>`;
+}
+
+function updateHistoryTemplate(limit = updateHistory.length) {
+  return `
+    <div class="update-list">
+      ${updateHistory.slice(0, limit).map((item) => `
+        <article class="update-card">
+          <div>
+            <strong>${escapeHtml(item.version)} - ${escapeHtml(item.title)}</strong>
+            <span>${formatDisplayDate(item.date)}</span>
+          </div>
+          <ul>
+            ${item.notes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
+          </ul>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function updatesTab() {
+  return `
+    <div class="page-grid">
+      <section class="panel full-span">
+        <div class="panel-header">
+          <div>
+            <h2>Update history</h2>
+            <p>Recent changes so players know what moved and why.</p>
+          </div>
+          <span class="tag">${updateHistory[0].version}</span>
+        </div>
+        ${updateHistoryTemplate()}
+      </section>
+    </div>
+  `;
 }
 
 function dashboardTab(age, ratingText) {
@@ -1469,7 +1559,7 @@ function topbarTemplate() {
       </div>
       <div class="top-stats">
         <span class="pill">${escapeHtml(player.nationality)} FIFA #${player.nationRank}</span>
-        <span class="pill">Season ${state.career.season}, Week ${state.career.week}</span>
+        <span class="pill">${formatDisplayDate(currentGameDate())}</span>
         <span class="pill">Fame ${round(player.fame)}</span>
         <span class="pill">Attitude ${attitudeLabel()}</span>
         <button class="small-btn" type="button" data-action="new-career">New career</button>
@@ -1495,19 +1585,20 @@ function notificationsPanel() {
 }
 
 function matchCenterPanel() {
+  const fixture = nextFixture();
   return `
     <section class="panel">
       <div class="panel-header">
         <div>
           <h2>Next match</h2>
-          <p>Prepare first, then proceed to game.</p>
+          <p>${formatDisplayDate(fixture.date)} - ${escapeHtml(fixture.competition)}</p>
         </div>
       </div>
       <div class="stat-grid">
+        ${statLine("Opponent", fixture.opponent, fixture.home ? "Home" : "Away")}
         ${statLine("Recent avg", recentAverage() ? recentAverage().toFixed(2) : "none", "Last five ratings")}
         ${statLine("Manager trust", round(state.career.coachTrust), "Selection confidence")}
         ${statLine("Fame", round(state.player.fame), "Public attention")}
-        ${statLine("Nation OVR", state.player.nationOverall, `${state.player.nationality} strength`)}
       </div>
     </section>
   `;
@@ -1557,6 +1648,54 @@ function footballPanel() {
         ${statLine("Avg rating", state.career.avgRating ? state.career.avgRating.toFixed(2) : "none", "Season")}
       </div>
     </section>
+  `;
+}
+
+function scheduleTab() {
+  const fixture = nextFixture();
+  const calendars = Object.entries(leagueConfigs)
+    .filter(([, config]) => config.level === 1 || config.country === currentWorldClub()?.country)
+    .slice(0, 14);
+  return `
+    <div class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Player schedule</h2>
+            <p>${formatDisplayDate(currentGameDate())} - career calendar</p>
+          </div>
+          <span class="tag">${escapeHtml(currentLeagueName())}</span>
+        </div>
+        <div class="schedule-list">
+          ${upcomingFixtures(8).map((item, index) => `
+            <article class="schedule-card ${index === 0 ? "active" : ""}">
+              <span>${formatDisplayDate(item.date)}</span>
+              <div>
+                <strong>${escapeHtml(item.home ? state.player.club : item.opponent)} vs ${escapeHtml(item.home ? item.opponent : state.player.club)}</strong>
+                <p>${escapeHtml(item.competition)} - ${item.home ? "home" : "away"} - match ${item.round}/${item.maxMatches}</p>
+              </div>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+      <section class="panel">
+        <h2>League calendars</h2>
+        <div class="schedule-list">
+          ${calendars.map(([league, config]) => {
+            const calendar = leagueCalendar(config);
+            return `
+              <article class="schedule-card">
+                <span>${config.matches} matches</span>
+                <div>
+                  <strong>${escapeHtml(league)}</strong>
+                  <p>${formatDisplayDate(calendar.start)} to ${formatDisplayDate(calendar.end)} - ${config.clubs} clubs</p>
+                </div>
+              </article>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    </div>
   `;
 }
 
@@ -1629,6 +1768,7 @@ function leaguesTab() {
   const table = isCompetition ? state.world.competitions[activeLeague].table : state.world.leagues[activeLeague] || [];
   const config = isCompetition ? state.world.competitions[activeLeague] : leagueConfigs[activeLeague] || { clubs: 20, matches: 30 };
   const competitionNames = Object.keys(state.world.competitions);
+  const activeLeaders = state.world.leaders?.[activeLeague] || emptyLeaderboards();
   return `
     <div class="page-grid">
       <section class="panel">
@@ -1655,8 +1795,13 @@ function leaguesTab() {
         ${clubDirectionTemplate(currentWorldClub())}
       </section>
       <section class="panel full-span">
-        <h2>Season leaders</h2>
-        ${leaderboardsTemplate()}
+        <div class="panel-header">
+          <div>
+            <h2>${escapeHtml(activeLeague)} leaders</h2>
+            <p>Stats stay empty until that league has played matches.</p>
+          </div>
+        </div>
+        ${leaderboardsTemplate(activeLeaders)}
       </section>
     </div>
   `;
@@ -1689,14 +1834,20 @@ function leagueTableTemplate(table) {
   `;
 }
 
-function leaderboardsTemplate() {
+function leaderboardsTemplate(leaders) {
+  const activeType = state.ui.leaderboard || "scorers";
+  const options = [
+    ["scorers", "Top scorers", "G"],
+    ["assists", "Top assists", "A"],
+    ["redCards", "Red cards", "RC"],
+    ["ratings", "Ratings", "RT"]
+  ];
+  const [key, title, label] = options.find(([id]) => id === activeType) || options[0];
   return `
-    <div class="leaderboard-grid">
-      ${leaderboardColumn("Top scorers", state.world.leaders.scorers, "G")}
-      ${leaderboardColumn("Top assists", state.world.leaders.assists, "A")}
-      ${leaderboardColumn("Red cards", state.world.leaders.redCards, "RC")}
-      ${leaderboardColumn("Ratings", state.world.leaders.ratings, "RT")}
+    <div class="filter-row compact-filters">
+      ${options.map(([id, labelText]) => `<button class="filter-btn ${activeType === id ? "active" : ""}" type="button" data-action="leaderboard-filter" data-id="${id}">${labelText}</button>`).join("")}
     </div>
+    ${leaderboardColumn(title, leaders[key] || [], label)}
   `;
 }
 
@@ -1704,12 +1855,12 @@ function leaderboardColumn(title, rows, label) {
   return `
     <div class="leaderboard-card">
       <h3>${title}</h3>
-      ${rows.slice(0, 8).map((row, index) => `
+      ${rows.length ? rows.slice(0, 12).map((row, index) => `
         <div class="leader-row">
           <span>${index + 1}. ${escapeHtml(row.name)}<small>${escapeHtml(row.club)}</small></span>
           <strong>${row.value}${label === "RT" ? "" : ""}</strong>
         </div>
-      `).join("")}
+      `).join("") : `<div class="empty">No stats yet. Play matches first.</div>`}
     </div>
   `;
 }
@@ -2019,7 +2170,7 @@ function eventTemplate(event) {
     <article class="event-item ${event.type}">
       <h3>${escapeHtml(event.title)}</h3>
       <p class="microcopy">${escapeHtml(event.body)}</p>
-      <span class="tag">Week ${event.week}</span>
+      <span class="tag">${formatDisplayDate(eventDate(event.week))}</span>
     </article>
   `;
 }
@@ -2032,6 +2183,11 @@ function handleAction(action, id) {
   }
   if (action === "league-filter") {
     state.ui.league = id;
+    saveState();
+    render();
+  }
+  if (action === "leaderboard-filter") {
+    state.ui.leaderboard = id;
     saveState();
     render();
   }
@@ -2219,6 +2375,7 @@ function applySupportConsequences(logs) {
 function createMatchContext() {
   const opponent = pickOpponent();
   const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
+  const fixture = nextFixture(opponent);
   const thought = state.career.fitness < 45
     ? "You are in the squad, but I need you to manage your body. Do not chase every ball if your legs are gone."
     : state.career.form > 62
@@ -2229,6 +2386,9 @@ function createMatchContext() {
     opponent: isAcademy ? `${opponent.name} Academy` : opponent.name,
     opponentOverall: clamp(clubOverall(opponent) - (isAcademy ? 20 : 0), 28, 96),
     competition: isAcademy ? "Academy League" : opponent.tier,
+    date: fixture.date,
+    round: fixture.round,
+    home: fixture.home,
     previewThought: thought,
     result: null
   };
@@ -2279,7 +2439,8 @@ function simulateMatch() {
     return result;
   }
 
-  const chanceToPlay = clamp(34 + career.coachTrust * 0.5 + career.fitness * 0.16 + career.form * 0.12 - life.stress * 0.08);
+  const academySelectionBoost = state.player.tier === "Academy" || state.player.club.includes("Academy") ? 24 : 0;
+  const chanceToPlay = clamp(34 + academySelectionBoost + career.coachTrust * 0.5 + career.fitness * 0.16 + career.form * 0.12 - life.stress * 0.08);
   if (Math.random() * 100 > chanceToPlay) {
     career.form = clamp(career.form - 1);
     career.coachTrust = clamp(career.coachTrust + 0.6);
@@ -2299,8 +2460,14 @@ function simulateMatch() {
   const mentalDrag = life.loneliness / 125 + life.stress / 135 + (100 - life.wellbeing) / 170;
   const fitnessDrag = career.fitness < 35 ? 0.75 : career.fitness < 55 ? 0.35 : 0;
   const prepBonus = selected.career === "matchprep" ? 0.38 : selected.career === "tactical" ? 0.15 : 0;
-  const opponentDrag = clamp((state.pendingMatch.opponentOverall - ability - 25) / 55, -0.25, 0.6);
-  const rating = clamp(5.0 + (ability - 34) / 18 + career.form / 105 + career.confidence / 150 - mentalDrag - fitnessDrag - opponentDrag + prepBonus + randomBetween(-0.75, 0.9), 3.8, 10);
+  const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
+  const academyFloor = isAcademy ? 1.75 : 0;
+  const academyAbilityFit = isAcademy ? clamp((ability - 15) / 24, 0, 0.85) : 0;
+  const opponentGap = state.pendingMatch.opponentOverall - ability;
+  const opponentDrag = isAcademy
+    ? clamp((opponentGap - 18) / 110, -0.25, 0.22)
+    : clamp((opponentGap - 25) / 55, -0.25, 0.6);
+  const rating = clamp(5.0 + academyFloor + academyAbilityFit + (ability - 34) / 18 + career.form / 105 + career.confidence / 150 - mentalDrag - fitnessDrag - opponentDrag + prepBonus + randomBetween(isAcademy ? -0.35 : -0.75, isAcademy ? 0.85 : 0.9), 3.8, 10);
   const mvp = rating >= 8.1 || (rating >= 7.7 && Math.random() < 0.28);
   const seasonTotal = career.avgRating * career.appearances;
 
@@ -2601,6 +2768,14 @@ function simulateTableRow(row) {
 }
 
 function refreshLeaderboards() {
+  const leaders = buildLeaderboards();
+  Object.entries(state.world.leagues).forEach(([league, table]) => {
+    leaders[league] = generatedLeadersForTable(league, table);
+  });
+  Object.entries(state.world.competitions).forEach(([competition, config]) => {
+    leaders[competition] = generatedLeadersForTable(competition, config.table);
+  });
+
   const careerPlayer = {
     name: state.player.name,
     club: state.player.club,
@@ -2608,10 +2783,44 @@ function refreshLeaderboards() {
     position: positions[state.player.position].short,
     value: state.career.goals
   };
-  state.world.leaders = buildLeaderboards(state.world.clubs);
-  if (state.career.goals > 0) state.world.leaders.scorers.unshift(careerPlayer);
-  if (state.career.assists > 0) state.world.leaders.assists.unshift({ ...careerPlayer, value: state.career.assists });
-  if (state.career.avgRating > 0) state.world.leaders.ratings.unshift({ ...careerPlayer, value: Number(state.career.avgRating.toFixed(2)) });
+  const current = leaders[currentLeagueName()] || emptyLeaderboards();
+  if (state.career.goals > 0) current.scorers.unshift(careerPlayer);
+  if (state.career.assists > 0) current.assists.unshift({ ...careerPlayer, value: state.career.assists });
+  if (state.career.avgRating > 0) current.ratings.unshift({ ...careerPlayer, value: Number(state.career.avgRating.toFixed(2)) });
+  leaders[currentLeagueName()] = sortLeaderSet(current);
+  state.world.leaders = leaders;
+}
+
+function generatedLeadersForTable(league, table) {
+  const played = Math.max(0, ...table.map((row) => row.p || 0));
+  if (!played) return emptyLeaderboards();
+  const clubs = table
+    .map((row) => state.world.clubs.find((club) => club.name === row.club.replace(" Academy", "")))
+    .filter(Boolean);
+  const players = clubs.flatMap((club) => {
+    const academy = league === "Academy League";
+    const roster = academy ? club.academyRoster : club.roster;
+    return roster.slice(0, 16).map((player) => ({
+      ...player,
+      club: academy ? `${club.name} Academy` : club.name,
+      league
+    }));
+  });
+  return sortLeaderSet({
+    scorers: players.map((player) => leaderRecord(player, "goals", played)).filter((row) => row.value > 0),
+    assists: players.map((player) => leaderRecord(player, "assists", played)).filter((row) => row.value > 0),
+    redCards: players.map((player) => leaderRecord(player, "redCards", played)).filter((row) => row.value > 0),
+    ratings: players.map((player) => leaderRecord(player, "rating", played)).filter((row) => row.value > 0)
+  });
+}
+
+function sortLeaderSet(leaders) {
+  return {
+    scorers: [...leaders.scorers].sort((a, b) => b.value - a.value).slice(0, 15),
+    assists: [...leaders.assists].sort((a, b) => b.value - a.value).slice(0, 15),
+    redCards: [...leaders.redCards].sort((a, b) => b.value - a.value).slice(0, 15),
+    ratings: [...leaders.ratings].sort((a, b) => b.value - a.value).slice(0, 15)
+  };
 }
 
 function clubStrengthByTableName(name) {
@@ -2619,6 +2828,75 @@ function clubStrengthByTableName(name) {
   const club = state.world.clubs.find((item) => item.name === baseName);
   if (!club) return 55;
   return name.includes("Academy") ? club.overall - 21 : club.overall;
+}
+
+function currentGameDate() {
+  return addDays(state.career.startDate || GAME_START_DATE, ((state.career.totalWeeks || 1) - 1) * 7);
+}
+
+function eventDate(weekNumber) {
+  return addDays(state.career.startDate || GAME_START_DATE, (Math.max(1, weekNumber || 1) - 1) * 7);
+}
+
+function nextFixture(opponent = null) {
+  const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
+  const competition = isAcademy ? "Academy League" : state.player.tier;
+  const config = isAcademy ? { matches: 30, clubs: 20, country: state.player.nationality, level: 0 } : leagueConfigs[competition] || { matches: 30, clubs: 20 };
+  const calendar = leagueCalendar(config);
+  const round = Math.min(config.matches, Math.max(1, state.career.week || 1));
+  const fixtureDate = addDays(calendar.start, (round - 1) * 7);
+  const chosenOpponent = opponent || pickOpponent();
+  const opponentName = isAcademy ? `${chosenOpponent.name} Academy` : chosenOpponent.name;
+  return {
+    date: fixtureDate,
+    opponent: opponentName,
+    competition,
+    round,
+    maxMatches: config.matches,
+    home: round % 2 === 1
+  };
+}
+
+function upcomingFixtures(count = 6) {
+  const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
+  const competition = isAcademy ? "Academy League" : state.player.tier;
+  const config = isAcademy ? { matches: 30, clubs: 20, country: state.player.nationality, level: 0 } : leagueConfigs[competition] || { matches: 30, clubs: 20 };
+  const calendar = leagueCalendar(config);
+  const baseRound = Math.max(1, state.career.week || 1);
+  return Array.from({ length: count }, (_, index) => {
+    const round = Math.min(config.matches, baseRound + index);
+    const opponent = pickOpponent();
+    return {
+      date: addDays(calendar.start, (round - 1) * 7),
+      opponent: isAcademy ? `${opponent.name} Academy` : opponent.name,
+      competition,
+      round,
+      maxMatches: config.matches,
+      home: round % 2 === 1
+    };
+  });
+}
+
+function leagueCalendar(config) {
+  const year = Number((state.career.startDate || GAME_START_DATE).slice(0, 4));
+  const country = config.country;
+  let start = `${year}-08-10`;
+  if (["Brazil", "Argentina", "Japan", "Korea Republic", "Malaysia"].includes(country)) start = `${year}-02-15`;
+  if (country === "Malaysia") start = `${year}-05-10`;
+  if (config.level === 0) start = `${year}-07-20`;
+  const end = addDays(start, Math.max(0, (config.matches || 30) - 1) * 7);
+  return { start, end };
+}
+
+function addDays(dateString, days) {
+  const date = new Date(`${dateString}T00:00:00Z`);
+  date.setUTCDate(date.getUTCDate() + days);
+  return date.toISOString().slice(0, 10);
+}
+
+function formatDisplayDate(dateString) {
+  const date = new Date(`${dateString}T00:00:00Z`);
+  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 }
 
 function updateClubPolitics() {
@@ -2943,7 +3221,7 @@ function endSeason() {
   applyPromotionRelegation();
   state.world.leagues = buildLeagueTables(state.world.clubs);
   state.world.competitions = buildContinentalCompetitions(state.world.clubs);
-  state.world.leaders = buildLeaderboards(state.world.clubs);
+  state.world.leaders = buildLeaderboards();
 }
 
 function applyPromotionRelegation() {

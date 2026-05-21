@@ -1,4 +1,4 @@
-# Full Time Life
+# Football Career Simulator by Jeff Adkins
 
 A free browser-based football career simulator prototype.
 
@@ -25,8 +25,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=13` and `app.js?v=13`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v13"`.
+- `index.html` loads `styles.css?v=14` and `app.js?v=14`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v14"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -246,21 +246,30 @@ Leaderboards:
 ## Current UI Tabs
 
 - Dashboard
+- Schedule
 - Leagues
 - Squad
 - Agents & Contracts
 - News
+- Updates
 
 Notifications Center should remain prominent because the user specifically asked for it to be first.
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v13`.
+Last verified local build: asset/save version `v14`.
 
 Checks performed:
 
 - Fresh start loaded on the live GitHub Pages site.
-- Local fresh start loaded at `http://127.0.0.1:4174/?v=12`.
+- Local fresh start loaded at `http://127.0.0.1:4174/?new=1&v=14`.
+- Start page title now says `Football Career Simulator by Jeff Adkins`.
+- Start page includes update history under World Logic.
+- In-game navigation includes `Schedule` beside Dashboard and `Updates` at the far right.
+- Topbar now shows the in-game date instead of Season/Week.
+- Schedule tab shows upcoming player fixtures and league calendar ranges.
+- Academy selection and ratings were tuned so academy matches are fairer when the player is selected.
+- League leaders are league-specific and stay empty until matches have been played.
 - Academy start around `OVR 17`.
 - English League 1: 20 clubs, 38 matches.
 - English League 2: 24 clubs, 46 matches.
@@ -284,13 +293,14 @@ Checks performed:
 - Some lower tiers are compressed into one playable table even when the real system uses groups.
 - No persistent cloud save or user accounts yet.
 - No real transfer windows yet.
-- No proper match schedule calendar yet.
+- Schedule is now present but still simplified and generated, not a full real fixture engine.
 - No tactical position/depth chart yet.
 
 ## Likely Next Steps
 
 - Add promotion playoffs and group-specific lower divisions where real competitions use them.
 - Make match highlights more interactive before the final rating, with the player watching key phases resolve one by one.
+- Build a full fixture engine so scheduled opponents stay fixed instead of being generated for previews.
 - Add real-style transfer windows.
 - Add player contract expiry and negotiation screens.
 - Add loans.
