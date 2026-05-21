@@ -1,9 +1,18 @@
-const SAVE_KEY = "full-time-life-save-v15";
+const SAVE_KEY = "full-time-life-save-v16";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v16",
+    title: "Mobile start reliability",
+    date: "2026-05-21",
+    notes: [
+      "Made mobile taps on Start academy offers use click, pointer, touch, and form submit paths.",
+      "Made browser save failures non-blocking so phones can still advance to academy offers."
+    ]
+  },
   {
     version: "v15",
     title: "Start button compatibility fix",
@@ -562,7 +571,7 @@ const broadcasters = [
 ];
 
 if (new URLSearchParams(window.location.search).has("new")) {
-  localStorage.removeItem(SAVE_KEY);
+  removeSavedCareer();
   const cleanUrl = new URL(window.location.href);
   cleanUrl.searchParams.delete("new");
   window.history.replaceState({}, "", cleanUrl);
@@ -635,7 +644,11 @@ function recentAverage() {
 }
 
 function saveState() {
-  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.warn("Career could not be saved in this browser, but play can continue.", error);
+  }
 }
 
 function loadState() {
@@ -644,6 +657,14 @@ function loadState() {
     return stored ? JSON.parse(stored) : null;
   } catch {
     return null;
+  }
+}
+
+function removeSavedCareer() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (error) {
+    console.warn("Career save could not be cleared in this browser.", error);
   }
 }
 
@@ -1120,16 +1141,19 @@ function bindEvents() {
   if (startForm) {
     startForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      createCareer(new FormData(startForm));
+      startCareerFromForm(startForm);
     });
   }
 
   const startButton = document.querySelector("[data-start-button]");
   if (startButton) {
-    startButton.addEventListener("click", () => {
-      const form = startButton.closest("form");
-      if (form && form.reportValidity()) createCareer(new FormData(form));
-    });
+    const startFromButton = (event) => {
+      event.preventDefault();
+      startCareerFromForm(startButton.closest("form"));
+    };
+    startButton.addEventListener("click", startFromButton);
+    startButton.addEventListener("pointerup", startFromButton);
+    startButton.addEventListener("touchend", startFromButton, { passive: false });
   }
 
   const continueButton = document.querySelector("[data-continue]");
@@ -1158,6 +1182,18 @@ function bindEvents() {
       render();
     });
   });
+}
+
+function startCareerFromForm(form) {
+  if (!form || form.dataset.submitting === "true") return;
+  const valid = typeof form.reportValidity === "function"
+    ? form.reportValidity()
+    : typeof form.checkValidity === "function"
+      ? form.checkValidity()
+      : true;
+  if (!valid) return;
+  form.dataset.submitting = "true";
+  createCareer(new FormData(form));
 }
 
 function setupTemplate() {
@@ -2219,12 +2255,12 @@ function handleAction(action, id) {
     render();
   }
   if (action === "reset" && window.confirm("Reset this career and clear the save?")) {
-    localStorage.removeItem(SAVE_KEY);
+    removeSavedCareer();
     state = null;
     render();
   }
   if (action === "new-career" && window.confirm("Start a new career and clear this browser save?")) {
-    localStorage.removeItem(SAVE_KEY);
+    removeSavedCareer();
     state = null;
     render();
   }
