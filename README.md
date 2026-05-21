@@ -22,6 +22,7 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 - `styles.css`: all layout and UI styles.
 - `app.js`: full game simulation and UI rendering.
 - `README.md`: project documentation and memory.
+- `vercel.json`: Vercel static hosting headers.
 
 Current asset/save version at last update:
 
@@ -54,11 +55,26 @@ http://127.0.0.1:4173/?v=next
 
 The repo is already connected to GitHub Pages. Push to `main`, then the live site updates after GitHub Pages rebuilds.
 
+The repo is also prepared for Vercel static hosting with `vercel.json`. To publish on Vercel, import:
+
+```text
+https://github.com/HederaChild/Football-Career-Simulator
+```
+
+Use these Vercel settings:
+
+- Framework Preset: `Other`
+- Build Command: leave empty
+- Output Directory: `.`
+- Install Command: leave empty
+
+Vercel and GitHub Pages play the same browser game, but saves are separate because browser local storage is tied to the domain.
+
 Useful publish flow:
 
 ```powershell
 git status -sb
-git add README.md app.js index.html styles.css
+git add README.md app.js index.html styles.css vercel.json
 git commit -m "Short description"
 git push
 ```
