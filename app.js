@@ -1,4 +1,4 @@
-const SAVE_KEY = "full-time-life-save-v12";
+const SAVE_KEY = "full-time-life-save-v13";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 
 const attributeGroups = {
@@ -507,6 +507,10 @@ const broadcasters = [
   { name: "Samba Report", country: "Brazil", focus: "League" },
   { name: "Rio Plata News", country: "Argentina", focus: "League" }
 ];
+
+if (new URLSearchParams(window.location.search).has("new")) {
+  localStorage.removeItem(SAVE_KEY);
+}
 
 let state = loadState();
 let selected = { career: "technical", life: "family", agent: "none" };
@@ -1061,6 +1065,14 @@ function bindEvents() {
     });
   }
 
+  const startButton = document.querySelector("[data-start-button]");
+  if (startButton) {
+    startButton.addEventListener("click", () => {
+      const form = startButton.closest("form");
+      if (form && form.reportValidity()) createCareer(new FormData(form));
+    });
+  }
+
   const continueButton = document.querySelector("[data-continue]");
   if (continueButton) {
     continueButton.addEventListener("click", () => {
@@ -1133,7 +1145,7 @@ function setupTemplate() {
               <option value="strained">Strained home, less support</option>
             </select>
           </label>
-          <button class="primary-btn" type="submit">Start academy offers</button>
+          <button class="primary-btn" type="button" data-start-button>Start academy offers</button>
           ${hasSave ? `<button class="secondary-btn" type="button" data-continue>Continue saved career</button>` : ""}
           <p class="footer-note">${RANKING_NOTE} Lower-ranked nations give bigger home-hero fame when you perform.</p>
         </form>
@@ -1460,6 +1472,7 @@ function topbarTemplate() {
         <span class="pill">Season ${state.career.season}, Week ${state.career.week}</span>
         <span class="pill">Fame ${round(player.fame)}</span>
         <span class="pill">Attitude ${attitudeLabel()}</span>
+        <button class="small-btn" type="button" data-action="new-career">New career</button>
       </div>
     </header>
   `;
@@ -2038,6 +2051,11 @@ function handleAction(action, id) {
     render();
   }
   if (action === "reset" && window.confirm("Reset this career and clear the save?")) {
+    localStorage.removeItem(SAVE_KEY);
+    state = null;
+    render();
+  }
+  if (action === "new-career" && window.confirm("Start a new career and clear this browser save?")) {
     localStorage.removeItem(SAVE_KEY);
     state = null;
     render();
