@@ -1,9 +1,20 @@
-const SAVE_KEY = "full-time-life-save-v17";
+const SAVE_KEY = "full-time-life-save-v18";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v18",
+    title: "Wallet, agent fees, and match incidents",
+    date: "2026-05-23",
+    notes: [
+      "Added scorers, assists, yellow cards, and red cards under played scoreboard matches.",
+      "Added a wallet overview on the dashboard so weekly salary, agent fees, and savings matter.",
+      "Reworked Agents & Contracts to show current contract terms and always-available agent choices.",
+      "Changed agent stats to beneficial traits with salary-fee percentages instead of a pressure stance."
+    ]
+  },
   {
     version: "v17",
     title: "Real scorelines, tables, and league stats",
@@ -429,11 +440,12 @@ const continentalConfigs = {
 };
 
 const agentPool = [
-  { name: "Maya Fernandes", style: "Patient builder", quality: 62, loyalty: 78, connections: 55, pushiness: 23, patience: 82 },
-  { name: "Leon Clarke", style: "Connected negotiator", quality: 72, loyalty: 58, connections: 78, pushiness: 44, patience: 55 },
-  { name: "Bruno Silva", style: "Commission hunter", quality: 67, loyalty: 34, connections: 74, pushiness: 82, patience: 27 },
-  { name: "Samira Holt", style: "Family-first adviser", quality: 58, loyalty: 82, connections: 47, pushiness: 18, patience: 74 },
-  { name: "Owen Mercer", style: "Big move specialist", quality: 76, loyalty: 45, connections: 86, pushiness: 70, patience: 38 }
+  { name: "Samira Holt", style: "Family-first adviser", quality: 54, negotiation: 52, connections: 48, care: 82, loyalty: 84, feeRate: 3, minOverall: 0 },
+  { name: "Maya Fernandes", style: "Patient builder", quality: 62, negotiation: 60, connections: 56, care: 76, loyalty: 78, feeRate: 4, minOverall: 12 },
+  { name: "Leon Clarke", style: "Connected negotiator", quality: 72, negotiation: 77, connections: 78, care: 58, loyalty: 66, feeRate: 6, minOverall: 35 },
+  { name: "Owen Mercer", style: "Big move specialist", quality: 79, negotiation: 84, connections: 88, care: 54, loyalty: 62, feeRate: 8, minOverall: 55 },
+  { name: "Valeria Conte", style: "Elite pathway director", quality: 88, negotiation: 91, connections: 93, care: 68, loyalty: 70, feeRate: 10, minOverall: 72 },
+  { name: "Rafael Stein", style: "Global star manager", quality: 94, negotiation: 96, connections: 98, care: 64, loyalty: 74, feeRate: 12, minOverall: 84 }
 ];
 
 const careerActions = {
@@ -450,14 +462,6 @@ const lifeActions = {
   relationship: { title: "Relationship", text: "Build trust with someone close.", family: -2, friends: 0, relationship: 8, loneliness: -7, stress: -2, wellbeing: 5 },
   support: { title: "Rest and Support", text: "Sleep, reflect, talk honestly.", family: 1, friends: 0, relationship: 0, loneliness: -5, stress: -10, wellbeing: 9 },
   focus: { title: "Isolate and Focus", text: "More football time, real social cost.", family: -5, friends: -6, relationship: -5, loneliness: 10, stress: 5, wellbeing: -5 }
-};
-
-const agentActions = {
-  none: { title: "Stay Patient", text: "Let football speak. Agents may approach if ratings rise." },
-  ask: { title: "Ask Around", text: "Quietly let people know you would listen." },
-  pathway: { title: "Demand a Pathway", text: "Push for a role, loan, or better minutes." },
-  boundaries: { title: "Set Boundaries", text: "Tell the agent not to force a move." },
-  market: { title: "Explore Market", text: "Ask for offers and interest." }
 };
 
 const pseudoStars = {
@@ -589,7 +593,7 @@ if (new URLSearchParams(window.location.search).has("new")) {
 }
 
 let state = loadState();
-let selected = { career: "technical", life: "family", agent: "none" };
+let selected = { career: "technical", life: "family" };
 
 function clamp(value, min = 0, max = 100) {
   return Math.max(min, Math.min(max, value));
@@ -1017,6 +1021,7 @@ function createRoundSchedule(competition, clubNames, config) {
         away,
         homeScore: null,
         awayScore: null,
+        events: [],
         played: false
       });
     }
@@ -1105,6 +1110,14 @@ function createCareer(formData) {
       stage: "Academy Applicant",
       wage: 0,
       savings: 80,
+      totalEarnings: 0,
+      agentFeesPaid: 0,
+      livingCostsPaid: 0,
+      lastGrossPay: 0,
+      lastAgentFee: 0,
+      lastLivingCost: 0,
+      lastNetPay: 0,
+      contractStarted: GAME_START_DATE,
       fame: clamp(8 + (nation.rank > 80 ? 6 : 0)),
       attitude: 42,
       countryAwards: 0,
@@ -1162,8 +1175,9 @@ function createCareer(formData) {
   };
 
   state.academyOffers = generateAcademyContracts();
+  state.agent.candidates = createAgentCandidates(4);
   addLog("Academy contracts arrived", "Choose your first academy carefully. Pathway, pressure, and distance will shape your early years.", "good");
-  selected = { career: "technical", life: "family", agent: "none" };
+  selected = { career: "technical", life: "family" };
   saveState();
   render();
 }
@@ -1174,6 +1188,7 @@ function generateAcademyContracts() {
     const sameCountry = program.country === homeCountry;
     const sameRegion = ["Malaysia", "Japan", "Korea Republic"].includes(program.country) && ["Malaysia", "Japan", "Korea Republic", "Indonesia", "Thailand", "Philippines", "Singapore"].includes(homeCountry);
     const fit = clamp(round(44 + program.pathway * 0.28 + program.academyQuality * 0.18 + (sameCountry ? 17 : 0) + (sameRegion ? 7 : 0) - program.pressure * 0.08 + randomBetween(-8, 8)));
+    const wage = round(clamp(70 + program.academyQuality * 1.15 + program.pathway * 0.85 + (sameCountry ? 18 : 0) + randomBetween(-20, 35), 90, 310));
     return {
       id: uid("academy"),
       club: program.name,
@@ -1181,7 +1196,7 @@ function generateAcademyContracts() {
       city: program.city,
       tier: "Academy",
       role: fit > 72 ? "U16 scholar with early U18 pathway" : fit > 58 ? "U16 academy scholar" : "Development prospect",
-      wage: 0,
+      wage,
       quality: program.academyQuality,
       pathway: program.pathway,
       pressure: program.pressure,
@@ -1397,6 +1412,7 @@ function academyOfferTemplate(offer) {
         <span class="tag">${escapeHtml(offer.country)}</span>
         <span class="tag">${escapeHtml(offer.role)}</span>
         <span class="tag">${escapeHtml(offer.distance)}</span>
+        <span class="tag">$${formatMoney(offer.wage)}/wk</span>
         <span class="tag">Fit ${offer.fit}</span>
       </div>
       <div class="meters compact-meters">
@@ -1486,6 +1502,7 @@ function dashboardTab(age, ratingText) {
         ${notificationsPanel()}
         ${matchCenterPanel()}
         ${playerPanel(age, ratingText)}
+        ${walletPanel()}
       </div>
       <div class="column">
         ${weeklyPanel()}
@@ -1621,6 +1638,7 @@ function postMatchTemplate() {
                 <strong>${result.homeScore} - ${result.awayScore}</strong>
                 <span>${escapeHtml(result.awayTeam)}</span>
               </div>
+              ${matchEventsTemplate(result.events || [])}
             ` : ""}
             <div class="manager-note">
               <strong>Manager thoughts</strong>
@@ -1751,7 +1769,7 @@ function matchCenterPanel() {
 function playerPanel(age, ratingText) {
   const pos = positions[state.player.position];
   return `
-    <section class="panel">
+    <section class="panel player-panel">
       <div class="panel-header">
         <div>
           <h2>Player</h2>
@@ -1762,6 +1780,32 @@ function playerPanel(age, ratingText) {
       <div class="pitch" aria-label="Football pitch showing player position">
         <span class="player-dot" style="--x:${pos.x}; --y:${pos.y};">${pos.short}</span>
         <span class="pitch-label">${escapeHtml(state.player.club)}</span>
+      </div>
+    </section>
+  `;
+}
+
+function walletPanel() {
+  const contract = currentContractSummary();
+  const net = projectedWeeklyNet();
+  return `
+    <section class="panel wallet-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Wallet</h2>
+          <p>Salary is paid weekly after agent fees and living costs.</p>
+        </div>
+        <span class="tag">$${formatMoney(state.player.savings)}</span>
+      </div>
+      <div class="wallet-total">
+        <span>Balance</span>
+        <strong>$${formatMoney(state.player.savings)}</strong>
+      </div>
+      <div class="stat-grid compact-stat-grid">
+        ${statLine("Gross/wk", `$${formatMoney(contract.wage)}`, contract.role)}
+        ${statLine("Net/wk", `$${formatMoney(net.net)}`, net.agentFee ? `Agent fee $${formatMoney(net.agentFee)}` : "No agent fee")}
+        ${statLine("Last paid", `$${formatMoney(state.player.lastNetPay || 0)}`, "Last week net")}
+        ${statLine("Earned", `$${formatMoney(state.player.totalEarnings || 0)}`, "Career gross")}
       </div>
     </section>
   `;
@@ -1864,13 +1908,14 @@ function attributeGroupTemplate(groupKey) {
 
 function agentPanel() {
   const agent = state.agent.current;
+  ensureAgentCandidates();
   const candidates = state.agent.candidates;
   return `
     <section class="panel">
       <div class="panel-header">
         <div>
           <h2>Agent room</h2>
-          <p>Agents approach automatically when ratings and fame rise.</p>
+          <p>Agents are always available. Better performances attract stronger representatives with higher fees.</p>
         </div>
       </div>
       ${agent ? `
@@ -1878,12 +1923,16 @@ function agentPanel() {
           <strong>${escapeHtml(agent.name)}</strong>
           <span class="microcopy">${escapeHtml(agent.style)}</span>
           ${meter("Quality", agent.quality)}
-          ${meter("Loyalty", agent.loyalty, "blue")}
+          ${meter("Negotiation", agent.negotiation, "blue")}
           ${meter("Connections", agent.connections, "purple")}
-          ${meter("Pressure to move", agent.pressure, agent.pressure > 70 ? "risk" : agent.pressure > 45 ? "warn" : "")}
+          ${meter("Care", agent.care)}
+          <div class="offer-meta">
+            <span class="tag">${agent.feeRate}% salary fee</span>
+            <span class="tag">Est. $${formatMoney(Math.round((state.player.wage || 0) * agent.feeRate / 100))}/wk</span>
+          </div>
           <button class="danger-btn" type="button" data-action="sack-agent">Sack agent</button>
         </div>
-      ` : `<div class="empty">No agent yet. Strong academy ratings will make agents approach you.</div>`}
+      ` : `<div class="empty">No agent hired yet. Compare representatives and choose when it makes sense.</div>`}
       ${candidates.length ? `<div class="candidates">${candidates.map(candidateTemplate).join("")}</div>` : ""}
     </section>
   `;
@@ -2072,8 +2121,30 @@ function matchCardTemplate(match) {
       <span>${escapeHtml(match.home)}</span>
       <strong>${score}</strong>
       <span>${escapeHtml(match.away)}</span>
+      ${match.played ? matchEventsTemplate(match.events || []) : `<div class="match-events muted-events">Incidents appear after full time.</div>`}
     </article>
   `;
+}
+
+function matchEventsTemplate(events) {
+  if (!events.length) return `<div class="match-events muted-events">No major incidents recorded.</div>`;
+  return `
+    <div class="match-events">
+      ${events.map((event) => `
+        <div class="match-event ${event.type}">
+          <span>${event.minute}'</span>
+          <strong>${eventLabel(event)}</strong>
+          <p>${escapeHtml(event.player)}${event.assist ? `, assist ${escapeHtml(event.assist)}` : ""} <small>${escapeHtml(event.team)}</small></p>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function eventLabel(event) {
+  if (event.type === "goal") return "Goal";
+  if (event.type === "red") return "Red card";
+  return "Yellow card";
 }
 
 function latestRoundNumber(league) {
@@ -2177,20 +2248,34 @@ function rosterTableTemplate(roster, club) {
   `;
 }
 
+function currentContractPanel() {
+  const contract = currentContractSummary();
+  const pay = projectedWeeklyNet();
+  return `
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h2>Current contract</h2>
+          <p>${escapeHtml(contract.club)} - signed ${formatDisplayDate(contract.started)}</p>
+        </div>
+        <span class="tag">$${formatMoney(contract.wage)}/wk</span>
+      </div>
+      <div class="stat-grid compact-stat-grid">
+        ${statLine("Stage", contract.stage, contract.tier)}
+        ${statLine("Role", contract.role, "Squad pathway")}
+        ${statLine("Gross pay", `$${formatMoney(pay.gross)}/wk`, "Before fees")}
+        ${statLine("Net pay", `$${formatMoney(pay.net)}/wk`, `Costs $${formatMoney(pay.livingCost)}${pay.agentFee ? `, agent $${formatMoney(pay.agentFee)}` : ""}`)}
+      </div>
+    </section>
+  `;
+}
+
 function contractsTab() {
   return `
     <div class="dashboard contract-dashboard">
       <div class="column">
+        ${currentContractPanel()}
         ${agentPanel()}
-        <section class="panel">
-          <div class="panel-header">
-            <div>
-              <h2>Agent stance</h2>
-              <p>Use this when you want market action or boundaries.</p>
-            </div>
-          </div>
-          ${choiceSection("Agent stance", "agent", availableAgentActions())}
-        </section>
       </div>
       <div class="column wide-column">
         ${offersPanel()}
@@ -2327,6 +2412,52 @@ function formatMoney(value) {
   return String(value);
 }
 
+function currentContractSummary() {
+  return {
+    club: state.player.club,
+    tier: state.player.tier,
+    stage: state.player.stage,
+    role: state.player.role,
+    wage: state.player.wage || 0,
+    started: state.player.contractStarted || GAME_START_DATE
+  };
+}
+
+function weeklyLivingCost() {
+  if (state.player.stage.includes("Academy") || state.player.tier === "Academy") return 18;
+  if (state.player.stage.includes("Reserve") || state.player.stage.includes("U18")) return 45;
+  const level = leagueConfigs[state.player.tier]?.level || 1;
+  return level === 1 ? 180 : level === 2 ? 105 : 70;
+}
+
+function projectedWeeklyNet() {
+  const gross = state.player.wage || 0;
+  const agentFee = state.agent.current ? Math.round(gross * (state.agent.current.feeRate || 0) / 100) : 0;
+  const livingCost = gross > 0 ? Math.min(gross, weeklyLivingCost()) : 0;
+  return {
+    gross,
+    agentFee,
+    livingCost,
+    net: Math.max(0, gross - agentFee - livingCost)
+  };
+}
+
+function processWeeklyPay() {
+  const player = state.player;
+  const pay = projectedWeeklyNet();
+  player.lastGrossPay = pay.gross;
+  player.lastAgentFee = pay.agentFee;
+  player.lastLivingCost = pay.livingCost;
+  player.lastNetPay = pay.net;
+  player.totalEarnings = (player.totalEarnings || 0) + pay.gross;
+  player.agentFeesPaid = (player.agentFeesPaid || 0) + pay.agentFee;
+  player.livingCostsPaid = (player.livingCostsPaid || 0) + pay.livingCost;
+  player.savings += pay.net;
+  if (pay.gross > 0 && (state.career.totalWeeks || 1) % 4 === 0) {
+    addLog("Wallet updated", `Weekly pay is $${formatMoney(pay.gross)} gross, $${formatMoney(pay.net)} after fees and costs.`, "");
+  }
+}
+
 function ladderStep(number, title, text) {
   return `
     <div class="ladder-step">
@@ -2365,20 +2496,6 @@ function choiceSection(title, group, options) {
   `;
 }
 
-function availableAgentActions() {
-  if (!state.agent.current) {
-    return {
-      none: agentActions.none,
-      ask: agentActions.ask
-    };
-  }
-  return {
-    pathway: agentActions.pathway,
-    boundaries: agentActions.boundaries,
-    market: agentActions.market
-  };
-}
-
 function candidateTemplate(candidate) {
   return `
     <article class="candidate">
@@ -2386,9 +2503,10 @@ function candidateTemplate(candidate) {
       <p class="microcopy">${escapeHtml(candidate.style)}</p>
       <div class="candidate-meta">
         <span class="tag">Quality ${candidate.quality}</span>
-        <span class="tag">Loyalty ${candidate.loyalty}</span>
+        <span class="tag">Negotiation ${candidate.negotiation}</span>
         <span class="tag">Connections ${candidate.connections}</span>
-        <span class="tag">Pushiness ${candidate.pushiness}</span>
+        <span class="tag">Care ${candidate.care}</span>
+        <span class="tag">${candidate.feeRate}% fee</span>
       </div>
       <button class="small-btn" type="button" data-action="hire-agent" data-id="${candidate.id}">Hire agent</button>
     </article>
@@ -2491,6 +2609,8 @@ function acceptAcademy(id) {
   state.player.tier = offer.tier;
   state.player.role = offer.role;
   state.player.stage = "Academy Scholar";
+  state.player.wage = offer.wage;
+  state.player.contractStarted = currentGameDate();
   state.career.coachTrust = clamp(offer.fit * 0.55);
   state.career.reputation = clamp(state.career.reputation + offer.quality / 20);
 
@@ -2510,7 +2630,7 @@ function acceptAcademy(id) {
   state.ui.scoreRound = latestRoundNumber("Academy League");
   state.ui.club = "current";
   ensureCurrentAcademyInWorld();
-  addLog("Academy contract signed", `You joined ${offer.club}. Fit ${offer.fit}, pathway ${offer.pathway}, pressure ${offer.pressure}.`, "good");
+  addLog("Academy contract signed", `You joined ${offer.club}. Fit ${offer.fit}, pathway ${offer.pathway}, wage $${formatMoney(offer.wage)}/wk.`, "good");
   addNews(offer.country, "Academy", `${state.player.name} chooses ${offer.club}`, `The ${state.player.nationality} prospect signed a youth deal after weighing pathway, pressure, and distance.`);
   saveState();
   render();
@@ -2749,7 +2869,8 @@ function simulateMatch() {
   const rating = clamp(5.0 + academyFloor + academyAbilityFit + (ability - 34) / 18 + career.form / 105 + career.confidence / 150 - mentalDrag - fitnessDrag - opponentDrag + prepBonus + randomBetween(isAcademy ? -0.35 : -0.75, isAcademy ? 0.85 : 0.9), 3.8, 10);
   const mvp = rating >= 8.1 || (rating >= 7.7 && Math.random() < 0.28);
   const seasonTotal = career.avgRating * career.appearances;
-  const scoreline = simulatePlayerFixtureScore(rating);
+  const endProduct = applyEndProduct(rating);
+  const scoreline = simulatePlayerFixtureScore(rating, endProduct);
 
   career.appearances += 1;
   career.lastRating = rating;
@@ -2762,7 +2883,6 @@ function simulateMatch() {
   career.confidence = clamp(career.confidence + (rating - 6.1) * 3.2);
   career.fitness = clamp(career.fitness - randomBetween(3, 8));
 
-  const endProduct = applyEndProduct(rating);
   const highlights = generateMatchHighlights(rating, mvp, endProduct);
   updateFameFromRating(rating, mvp);
 
@@ -2815,7 +2935,7 @@ function applyEndProduct(rating) {
   return impact;
 }
 
-function simulatePlayerFixtureScore(rating) {
+function simulatePlayerFixtureScore(rating, endProduct = {}) {
   const match = state.pendingMatch;
   const team = state.player.club;
   const opponent = match.opponent;
@@ -2838,12 +2958,30 @@ function simulatePlayerFixtureScore(rating) {
     else homeScore = Math.max(homeScore, awayScore);
   }
 
+  if (endProduct.goal || endProduct.assist) {
+    const minimumTeamGoals = endProduct.goal && endProduct.assist ? 2 : 1;
+    if (match.home) homeScore = Math.max(homeScore, minimumTeamGoals);
+    else awayScore = Math.max(awayScore, minimumTeamGoals);
+  }
+
+  if (endProduct.cleanSheet) {
+    if (match.home) awayScore = 0;
+    else homeScore = 0;
+  }
+
+  const events = generateMatchEvents(homeTeam, awayTeam, homeScore, awayScore, {
+    team,
+    goal: endProduct.goal,
+    assist: endProduct.assist
+  });
+
   return {
     scoreline: `${homeScore}-${awayScore}`,
     homeTeam,
     awayTeam,
     homeScore,
     awayScore,
+    events,
     teamScore: match.home ? homeScore : awayScore,
     opponentScore: match.home ? awayScore : homeScore
   };
@@ -3075,6 +3213,7 @@ function simulateScheduledRound(league, table) {
     const score = injected || simulateFixtureScore(match.home, match.away);
     match.homeScore = score.homeScore;
     match.awayScore = score.awayScore;
+    match.events = score.events?.length ? score.events : generateMatchEvents(match.home, match.away, match.homeScore, match.awayScore);
     match.played = true;
     applyMatchToRows(rows, match.home, match.away, match.homeScore, match.awayScore);
   });
@@ -3088,9 +3227,9 @@ function playerResultForFixture(league, round, match) {
   const teams = [state.player.club, state.pendingMatch.opponent];
   if (!teams.includes(match.home) || !teams.includes(match.away)) return null;
   if (match.home === result.homeTeam && match.away === result.awayTeam) {
-    return { homeScore: result.homeScore, awayScore: result.awayScore };
+    return { homeScore: result.homeScore, awayScore: result.awayScore, events: result.events || [] };
   }
-  return { homeScore: result.awayScore, awayScore: result.homeScore };
+  return { homeScore: result.awayScore, awayScore: result.homeScore, events: flipMatchEvents(result.events || [], result.homeTeam, result.awayTeam) };
 }
 
 function applyMatchToRows(rows, home, away, homeScore, awayScore) {
@@ -3127,10 +3266,143 @@ function simulateFixtureScore(home, away, homeOverride = null, awayOverride = nu
   const awayNoise = randomBetween(-12, 12);
   const homeExpected = clamp(1.22 + (homeStrength + homeNoise - awayStrength) / 42 + 0.18, 0.12, 3.2);
   const awayExpected = clamp(1.04 + (awayStrength + awayNoise - homeStrength) / 44, 0.1, 2.9);
+  const homeScore = poisson(homeExpected);
+  const awayScore = poisson(awayExpected);
   return {
-    homeScore: poisson(homeExpected),
-    awayScore: poisson(awayExpected)
+    homeScore,
+    awayScore,
+    events: generateMatchEvents(home, away, homeScore, awayScore)
   };
+}
+
+function flipMatchEvents(events) {
+  return events.map((event) => ({ ...event }));
+}
+
+function generateMatchEvents(home, away, homeScore, awayScore, forced = {}) {
+  const events = [];
+  const homeGoalMinutes = goalMinutes(homeScore);
+  const awayGoalMinutes = goalMinutes(awayScore);
+  const forcedUsed = { playerGoal: false, playerAssist: false };
+
+  homeGoalMinutes.forEach((minute, index) => {
+    events.push(goalEvent(home, minute, forcedForTeam(home, forced, forcedUsed, index)));
+  });
+  awayGoalMinutes.forEach((minute, index) => {
+    events.push(goalEvent(away, minute, forcedForTeam(away, forced, forcedUsed, index)));
+  });
+
+  const yellowCount = randomCardCount(homeScore + awayScore);
+  for (let index = 0; index < yellowCount; index += 1) {
+    const team = Math.random() < 0.5 ? home : away;
+    events.push(cardEvent(team, "yellow"));
+  }
+
+  if (Math.random() < 0.11) {
+    events.push(cardEvent(Math.random() < 0.5 ? home : away, "red"));
+  }
+
+  return events.sort((a, b) => a.minute - b.minute || eventOrder(a.type) - eventOrder(b.type));
+}
+
+function forcedForTeam(team, forced, forcedUsed, index) {
+  if (!forced.team || forced.team !== team) return null;
+  if (forced.goal && !forcedUsed.playerGoal) {
+    forcedUsed.playerGoal = true;
+    return { scorer: state.player.name };
+  }
+  if (forced.assist && !forcedUsed.playerAssist && (forced.goal ? index > 0 : true)) {
+    forcedUsed.playerAssist = true;
+    return { assist: state.player.name };
+  }
+  return null;
+}
+
+function goalMinutes(count) {
+  return Array.from({ length: count }, () => randomBetween(7, 90))
+    .map((minute) => Math.round(minute))
+    .sort((a, b) => a - b);
+}
+
+function goalEvent(team, minute, forced = null) {
+  const scorer = forced?.scorer || pickMatchPlayer(team, "scorer").name;
+  const assist = forced?.assist || (Math.random() < 0.72 ? pickMatchPlayer(team, "assist", scorer).name : "");
+  return {
+    minute,
+    team,
+    type: "goal",
+    player: scorer,
+    assist
+  };
+}
+
+function cardEvent(team, type) {
+  const player = pickMatchPlayer(team, "card").name;
+  return {
+    minute: Math.round(randomBetween(12, 89)),
+    team,
+    type,
+    player,
+    assist: ""
+  };
+}
+
+function pickMatchPlayer(team, role, avoidName = "") {
+  const roster = playersForMatchTeam(team);
+  const weighted = roster
+    .filter((player) => player.name !== avoidName)
+    .map((player) => ({ ...player, weight: Math.max(1, matchPlayerWeight(player, role) - 38) }));
+  const total = weighted.reduce((sum, player) => sum + player.weight, 0);
+  let draw = randomBetween(0, total || 1);
+  for (const player of weighted) {
+    draw -= player.weight;
+    if (draw <= 0) return player;
+  }
+  return weighted[0] || { name: "Academy Player", position: "CM", overall: 50 };
+}
+
+function playersForMatchTeam(team) {
+  const baseName = team.replace(" Academy", "");
+  const club = state.world.clubs.find((item) => item.name === baseName);
+  if (!club) return fallbackMatchPlayers(team);
+  const roster = team.includes("Academy") ? club.academyRoster : club.roster;
+  return roster.slice(0, 18).map((player) => ({
+    name: player.name,
+    position: player.position,
+    overall: player.overall
+  }));
+}
+
+function fallbackMatchPlayers(team) {
+  const seed = team.length;
+  return Array.from({ length: 11 }, (_, index) => ({
+    name: `${["Ari", "Leo", "Mika", "Noah", "Yusuf", "Oscar", "Theo", "Joao", "Kenji", "Adam", "Ryan"][(seed + index) % 11]} ${["Halim", "Silva", "Turner", "Park", "Lim", "Mendoza", "Dubois", "Foden", "Yamada", "Khan", "Moreno"][(seed + index * 2) % 11]}`,
+    position: ["GK", "FB", "CB", "CB", "FB", "CM", "CM", "WG", "WG", "ST", "ST"][index],
+    overall: 50 + ((seed + index * 3) % 24)
+  }));
+}
+
+function matchPlayerWeight(player, role) {
+  const pos = player.position;
+  if (role === "scorer") {
+    return player.overall + (pos === "ST" ? 26 : pos === "WG" ? 18 : pos === "CM" ? 9 : pos === "CB" ? 3 : 1);
+  }
+  if (role === "assist") {
+    return player.overall + (pos === "CM" ? 22 : pos === "WG" ? 18 : pos === "FB" ? 12 : pos === "ST" ? 6 : 2);
+  }
+  return player.overall + (pos === "CB" ? 18 : pos === "FB" ? 14 : pos === "CM" ? 8 : pos === "GK" ? 3 : 5);
+}
+
+function randomCardCount(goals) {
+  const base = Math.floor(randomBetween(0, 3.2));
+  const heated = goals >= 4 && Math.random() < 0.28 ? 1 : 0;
+  return clamp(base + heated, 0, 5);
+}
+
+function eventOrder(type) {
+  if (type === "goal") return 1;
+  if (type === "yellow") return 2;
+  return 3;
 }
 
 function poisson(lambda) {
@@ -3385,78 +3657,63 @@ function applyAgentAction(logs) {
   const agent = state.agent.current;
 
   if (!agent) {
-    if (selected.agent === "ask" && Math.random() < 0.18 + state.player.fame / 500) {
-      state.agent.candidates = createAgentCandidates(2);
-      logs.push(["Agent interest", "Word got around that you would listen. A couple of agents made contact.", "good"]);
-    }
+    ensureAgentCandidates();
     return;
   }
 
-  if (selected.agent === "boundaries") {
-    agent.pressure = clamp(agent.pressure - agent.loyalty / 10 - agent.patience / 14);
-    agent.loyalty = clamp(agent.loyalty + 2);
-    logs.push(["Agent boundaries", "You made it clear that role fit and wellbeing matter. A loyal agent respects that.", "good"]);
+  if (agent.care > 68 && Math.random() < agent.care / 450) {
+    state.life.stress = clamp(state.life.stress - 2);
+    state.life.familyPressure = clamp(state.life.familyPressure - 1);
   }
 
-  if (selected.agent === "pathway") {
-    const successChance = (agent.quality + agent.connections + state.career.reputation + state.player.fame * 0.4) / 350;
-    if (Math.random() < successChance) {
-      createOffer("Pathway request", true);
-      agent.pressure = clamp(agent.pressure + agent.pushiness / 20);
-      logs.push(["Pathway found", "Your agent found a concrete role conversation. Judge the fit, not only the badge.", "good"]);
-    } else {
-      agent.pressure = clamp(agent.pressure + 6 + agent.pushiness / 16);
-      logs.push(["No clear pathway", "Your agent could not find a better role this week. Pressure started to build.", "warning"]);
-    }
+  const chance = clamp((agent.connections + agent.negotiation + state.career.reputation * 0.7 + state.player.fame * 0.35 + overall() * 0.4) / 430, 0.08, 0.64);
+  if (state.agent.offers.length < 3 && Math.random() < chance) {
+    createOffer("Agent pathway work", true);
+    logs.push(["Agent update", `${agent.name} found a role conversation. Check the contract fit and wages before deciding.`, "good"]);
   }
 
-  if (selected.agent === "market") {
-    const chance = (agent.connections + agent.quality + state.career.reputation * 0.7 + state.player.fame * 0.35) / 310;
-    if (Math.random() < chance) {
-      createOffer("Market exploration", true);
-      logs.push(["Offer generated", "Your agent brought an option to the table. Bigger is not always better.", "good"]);
-    } else {
-      agent.pressure = clamp(agent.pressure + 4);
-      logs.push(["Quiet market", "There was not much interest this week. Ratings change the conversation.", ""]);
-    }
-  }
-
-  agent.pressure = clamp(agent.pressure + agent.pushiness / 44 - agent.loyalty / 90);
-  if (agent.pressure > 76 && Math.random() < 0.3) {
-    state.career.reputation = clamp(state.career.reputation - 3);
-    state.life.stress = clamp(state.life.stress + 8);
-    logs.push(["Agent pressure leaked", `${agent.name} pushed the idea that you should leave. It annoyed the club and raised stress.`, "risk"]);
-  }
+  ensureAgentCandidates();
 }
 
 function maybeAgentApproach() {
-  if (state.agent.current || state.agent.candidates.length) return;
-  const avg = recentAverage();
-  const chance = clamp((avg - 6.7) * 0.18 + state.career.reputation / 450 + state.player.fame / 650, 0, 0.55);
-  if (avg >= 6.8 && Math.random() < chance) {
-    state.agent.candidates = createAgentCandidates(avg >= 7.6 ? 3 : 2);
-    addLog("Agents approached", "Your academy ratings brought representatives to the family table. Hiring one is optional.", "good");
+  const previousBest = Math.max(0, ...(state.agent.candidates || []).map((agent) => agent.quality || 0));
+  ensureAgentCandidates();
+  const newBest = Math.max(0, ...(state.agent.candidates || []).map((agent) => agent.quality || 0));
+  if (newBest > previousBest + 6 && recentAverage() >= 6.8) {
+    addLog("Agent list improved", "Your ratings attracted stronger representation options with better negotiation and connections.", "good");
   }
 }
 
 function createAgentCandidates(count = 3) {
-  return [...agentPool]
-    .sort(() => Math.random() - 0.5)
+  const attraction = overall() + state.career.reputation * 0.35 + state.player.fame * 0.22 + recentAverage() * 2.4;
+  const eligible = agentPool
+    .filter((agent) => agent.minOverall <= attraction + 12)
+    .map((agent) => ({
+      ...agent,
+      draw: agent.quality + agent.negotiation + agent.connections - agent.feeRate * 1.4 - Math.max(0, agent.minOverall - attraction) * 2 + randomBetween(-6, 6)
+    }))
+    .sort((a, b) => b.draw - a.draw);
+
+  return eligible
     .slice(0, count)
     .map((agent) => ({
       ...agent,
-      id: uid("agent"),
-      pressure: 6 + agent.pushiness / 9
+      id: uid("agent")
     }));
+}
+
+function ensureAgentCandidates() {
+  const currentName = state.agent.current?.name;
+  const candidates = createAgentCandidates(4).filter((agent) => agent.name !== currentName);
+  state.agent.candidates = candidates;
 }
 
 function hireAgent(id) {
   const candidate = state.agent.candidates.find((item) => item.id === id);
   if (!candidate) return;
   state.agent.current = { ...candidate };
-  state.agent.candidates = [];
-  selected.agent = "pathway";
-  addLog("Agent hired", `${candidate.name} now represents you. Their values will shape career choices.`, "good");
+  ensureAgentCandidates();
+  addLog("Agent hired", `${candidate.name} now represents you for a ${candidate.feeRate}% salary fee. Their strengths will shape offers.`, "good");
   saveState();
   render();
 }
@@ -3466,10 +3723,9 @@ function sackAgent() {
   if (!agent) return;
   const damage = agent.connections > 72 ? 5 : 2;
   state.agent.current = null;
-  state.agent.candidates = [];
+  ensureAgentCandidates();
   state.career.reputation = clamp(state.career.reputation - damage);
   state.life.stress = clamp(state.life.stress + 5);
-  selected.agent = "none";
   addLog("Agent sacked", `${agent.name} was dismissed. You took back control, but the market may cool briefly.`, "warning");
   saveState();
   render();
@@ -3504,6 +3760,7 @@ function evaluateContractsAndMilestones() {
     player.stage = "Reserve Prospect";
     player.role = "Reserve prospect";
     player.wage = Math.max(player.wage, 260);
+    player.contractStarted = currentGameDate();
     addLog("First pro development deal", "The club gave you money and expectation. Family pressure may change now.", "good");
   }
 
@@ -3517,6 +3774,7 @@ function evaluateContractsAndMilestones() {
       state.ui.league = seniorClub.tier;
     }
     player.wage = Math.max(player.wage, 900);
+    player.contractStarted = currentGameDate();
     career.reputation = clamp(career.reputation + 10);
     addLog("First-team breakthrough", `Senior staff gave you a real role${seniorClub ? ` in ${seniorClub.tier}` : ""}. Every choice is louder now.`, "good");
   }
@@ -3526,7 +3784,7 @@ function createOffer(reason, viaAgent) {
   const player = state.player;
   const career = state.career;
   const agent = state.agent.current;
-  const marketPower = overall() + career.reputation * 0.45 + player.fame * 0.22 + career.form * 0.14 + (agent ? agent.connections * 0.16 : 0);
+  const marketPower = overall() + career.reputation * 0.45 + player.fame * 0.22 + career.form * 0.14 + (agent ? (agent.connections + agent.negotiation) * 0.11 : 0);
   const worldClubs = state.world?.clubs?.length ? state.world.clubs : clubCatalog;
   const possible = worldClubs
     .map((club) => ({ ...club, adjustedOverall: clubOverall(club) }))
@@ -3537,7 +3795,7 @@ function createOffer(reason, viaAgent) {
   const fit = clamp(round(42 + club.pathway * 0.22 + (marketPower - clubOverall(club)) * 0.45 + randomBetween(-10, 12)));
   const role = offerRole(club, fit, player.ageYears);
   const wage = logicalWageOffer(club, fit, marketPower);
-  const pressureReason = viaAgent && agent && agent.pushiness > 65 ? "Your agent is strongly recommending this move." : "The club explained a possible pathway.";
+  const pressureReason = viaAgent && agent ? `${agent.name} helped improve the package, but role fit still matters.` : "The club explained a possible pathway.";
 
   state.agent.offers.unshift({
     id: uid("offer"),
@@ -3584,6 +3842,7 @@ function acceptOffer(id) {
   state.player.tier = offer.tier;
   state.player.role = offer.role;
   state.player.wage = Math.max(state.player.wage, offer.wage);
+  state.player.contractStarted = currentGameDate();
   state.career.coachTrust = clamp(offer.fit + randomBetween(-6, 7));
   state.career.reputation = clamp(state.career.reputation + offer.fit / 13);
   state.career.form = clamp(state.career.form - (offer.fit < 55 ? 7 : 1));
@@ -3610,8 +3869,6 @@ function acceptOffer(id) {
 function rejectOffer(id) {
   const offer = state.agent.offers.find((item) => item.id === id);
   if (!offer) return;
-  const agent = state.agent.current;
-  if (agent && offer.fit > 58) agent.pressure = clamp(agent.pressure + agent.pushiness / 10);
   state.agent.offers = state.agent.offers.filter((item) => item.id !== id);
   addLog("Offer rejected", `You turned down ${offer.club}. Fit, timing, and life balance still matter.`, "");
   saveState();
@@ -3625,7 +3882,7 @@ function advanceCalendar() {
   career.totalWeeks += 1;
   career.week += 1;
   player.ageWeeks += 1;
-  player.savings += player.wage;
+  processWeeklyPay();
 
   if (player.ageWeeks >= 52) {
     player.ageYears += 1;

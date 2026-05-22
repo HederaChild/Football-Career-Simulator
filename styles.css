@@ -376,6 +376,38 @@ select {
   overflow: hidden;
 }
 
+.player-panel .pitch {
+  min-height: 150px;
+}
+
+.wallet-panel {
+  border-top: 5px solid var(--blue);
+}
+
+.wallet-total {
+  display: grid;
+  gap: 3px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: #122017;
+  color: white;
+}
+
+.wallet-total span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+}
+
+.wallet-total strong {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.compact-stat-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .pitch:before,
 .pitch:after {
   content: "";
@@ -742,6 +774,57 @@ select {
   color: var(--grass-dark);
 }
 
+.match-events {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid #e4eae3;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.match-event {
+  display: grid;
+  grid-template-columns: 38px 78px 1fr;
+  gap: 7px;
+  align-items: start;
+}
+
+.match-event > span {
+  color: var(--grass-dark);
+  font-weight: 800;
+  text-align: left;
+}
+
+.match-event strong {
+  min-width: 0;
+  text-align: left;
+  color: var(--ink);
+  font-size: 0.78rem;
+}
+
+.match-event p {
+  margin: 0;
+}
+
+.match-event small {
+  display: block;
+  color: var(--muted);
+}
+
+.match-event.yellow strong {
+  color: #8a6500;
+}
+
+.match-event.red strong {
+  color: var(--red);
+}
+
+.muted-events {
+  color: var(--muted);
+}
+
 .fixture-round {
   display: grid;
   gap: 10px;
@@ -1032,8 +1115,13 @@ select {
   .choice-grid,
   .week-actions,
   .stat-grid,
+  .compact-stat-grid,
   .scoreboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .match-event {
+    grid-template-columns: 34px 74px 1fr;
   }
 
   .substat-grid {

@@ -29,8 +29,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=17` and `app.js?v=17`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v17"`.
+- `index.html` loads `styles.css?v=18` and `app.js?v=18`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v18"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -169,12 +169,20 @@ Life choices affect training quality, confidence, form, and match consistency.
 
 ### Agents and Contracts
 
-- Agents can approach automatically based on ratings/fame.
+- Agents are always available to compare and hire.
 - Player can hire or sack agents.
-- Agents have quality, loyalty, connections, pushiness, patience, and pressure.
-- Bad agents can push moves or create stress.
+- Agents have beneficial stats: quality, negotiation, connections, care, and loyalty.
+- Agents charge salary fee percentages, so stronger agents cost more but can improve opportunities.
+- Higher overall, reputation, ratings, and fame attract stronger agents.
 - Offers have role fit, wage, tier, distance, and career/life consequences.
 - Wages scale by age, stage, market power, club finance, league level, fit, and overspending.
+
+### Wallet
+
+- Dashboard now has a compact player panel plus a wallet overview.
+- Contract salary is paid weekly.
+- Wallet tracks balance, weekly gross pay, estimated net pay, last paid amount, total career earnings, agent fees, and living costs.
+- Academy contracts now include realistic small weekly wages.
 
 ### Clubs and Squads
 
@@ -258,6 +266,7 @@ League results now come from generated matchday fixtures instead of each team up
 - GF, GA, and GD should tally across the whole table.
 - Form starts as `-----` and only fills as matches are played.
 - Top scorer and assist totals scale from actual goals in played matches, so one matchday cannot create an 11-goal leader.
+- Played scoreboard fixtures now show scorers, assists, yellow cards, and red cards under the scoreline.
 
 ### News
 
@@ -290,10 +299,21 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v17`.
+Last verified local build: asset/save version `v18`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=18-local`.
+- Start academy offers advanced and academy contract cards showed weekly wages.
+- After signing an academy deal, the dashboard showed a smaller Player panel plus Wallet overview.
+- Wallet showed balance, gross weekly pay, net weekly pay, last paid, and total earned.
+- Agents & Contracts showed `Current contract`, `Agent room`, and available agents with fee percentages.
+- The old `Agent stance` section was removed.
+- Hiring an agent showed salary fee details and a `Sack agent` button.
+- After one match and `Continue career`, wallet balance increased by weekly net pay after agent fee and living cost.
+- Post-match and league scoreboards showed match incidents such as goals, assists, and yellow cards.
+- Academy League scoreboard still showed all 10 Matchday 1 fixtures after one simulated round.
+- Browser console had no errors during v18 start, academy signing, wallet, agent hiring, match, and scoreboard checks.
 - Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=17-formcheck`.
 - `Start academy offers` advanced to the academy contract screen.
 - Signing the first academy offer advanced into the weekly loop.
