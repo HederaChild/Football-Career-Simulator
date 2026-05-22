@@ -29,8 +29,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=18` and `app.js?v=18`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v18"`.
+- `index.html` loads `styles.css?v=19` and `app.js?v=19`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v19"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -134,17 +134,29 @@ Main groups are calculated from sub-stats:
 
 Growth is slow and capped by age/level. Stress, loneliness, poor wellbeing, and fatigue reduce development.
 
-### Weekly Loop
+### Daily Activity Loop
 
 Current flow:
 
-1. Choose weekly career focus.
-2. Choose weekly life focus.
-3. Advance to matchday.
-4. Proceed to game.
-5. Receive rating and manager thoughts.
-6. If MVP, choose press conference response.
-7. Finish week and update world state.
+1. The manager creates a weekly activity plan.
+2. `Advance` moves one day/activity at a time.
+3. Training days may offer normal training, extra work, life trade-off, or no-show.
+4. Strict managers can remove the life trade-off and only allow training or absence.
+5. Life days let the player focus on family, friends, relationship, support, or isolation.
+6. After seven activities, the game advances to matchday.
+7. Proceed to game, receive scoreline, incidents, rating, and manager thoughts.
+8. If MVP, choose press conference response.
+9. Finish week and update world state.
+
+Managers now have training styles:
+
+- High press: more physical/tactical, usually strict and more training days.
+- Possession: technical/tactical.
+- Counter attack: tactical/physical.
+- Youth trust: technical/mentality, more flexible.
+- Pragmatic: tactical/mentality, fewer but stricter sessions.
+
+Fitness and trust affect selection. Low fitness, missed training, or low trust can lead to being unused or not selected.
 
 ### Life System
 
@@ -183,6 +195,14 @@ Life choices affect training quality, confidence, form, and match consistency.
 - Contract salary is paid weekly.
 - Wallet tracks balance, weekly gross pay, estimated net pay, last paid amount, total career earnings, agent fees, and living costs.
 - Academy contracts now include realistic small weekly wages.
+
+### Activities
+
+- Activities tab appears after News.
+- Wallet money can be used for randomized investments and side activities.
+- Each investment has a minimum amount, risk percentage, upside percentage, downside percentage, and duration in weeks.
+- Investment names are fictionalized, for example `Nivida AI shares`.
+- Matured investments can return profit or lose money based on the listed risk.
 
 ### Clubs and Squads
 
@@ -293,16 +313,26 @@ League results now come from generated matchday fixtures instead of each team up
 - Squad
 - Agents & Contracts
 - News
+- Activities
 - Updates
 
 Notifications Center should remain prominent because the user specifically asked for it to be first.
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v18`.
+Last verified local build: asset/save version `v19`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=19-local`.
+- Start academy offers advanced and the first academy deal could be signed.
+- Dashboard showed the new daily activity panel with `Today`, `Day 1/7`, manager training summary, and `Advance to next activity`.
+- Daily advance moved through Day 1 to Day 7 and then opened Matchday.
+- Proceed to game worked after the daily activity week.
+- Finishing the match reset the next week to `Day 1/7`.
+- Activities tab appeared after News.
+- Activities tab showed randomized investment options with risk, upside, duration, and minimum buy-in.
+- Clicking `Invest minimum` created an active investment with weeks remaining and no console errors.
 - Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=18-local`.
 - Start academy offers advanced and academy contract cards showed weekly wages.
 - After signing an academy deal, the dashboard showed a smaller Player panel plus Wallet overview.

@@ -1,9 +1,20 @@
-const SAVE_KEY = "full-time-life-save-v18";
+const SAVE_KEY = "full-time-life-save-v19";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v19",
+    title: "Daily training, manager plans, and activities",
+    date: "2026-05-23",
+    notes: [
+      "Changed weekly focus into daily activities that advance one day at a time.",
+      "Managers now have training styles, strictness, weekly session counts, and focus areas.",
+      "Skipping training can reduce loneliness but hurts trust and selection, especially under strict managers.",
+      "Added an Activities tab where wallet money can be invested into risk-based opportunities."
+    ]
+  },
   {
     version: "v18",
     title: "Wallet, agent fees, and match incidents",
@@ -464,6 +475,23 @@ const lifeActions = {
   focus: { title: "Isolate and Focus", text: "More football time, real social cost.", family: -5, friends: -6, relationship: -5, loneliness: 10, stress: 5, wellbeing: -5 }
 };
 
+const managerTrainingProfiles = {
+  "High press": { focus: "physical", secondary: "tactical", sessions: 5, strictness: 78, label: "High press conditioning" },
+  "Possession": { focus: "technical", secondary: "tactical", sessions: 4, strictness: 62, label: "Possession circuits" },
+  "Counter attack": { focus: "tactical", secondary: "physical", sessions: 4, strictness: 68, label: "Transition strategy" },
+  "Youth trust": { focus: "technical", secondary: "mentality", sessions: 4, strictness: 48, label: "Youth development" },
+  "Pragmatic": { focus: "tactical", secondary: "mentality", sessions: 3, strictness: 72, label: "Match strategy" }
+};
+
+const investmentTemplates = [
+  { name: "Nivida AI shares", type: "Stock", min: 420, weeks: 12, upside: 30, risk: 15, downside: 22, note: "High-growth tech can rise fast, but hype can turn quickly." },
+  { name: "Boot Room Cafe", type: "Business", min: 260, weeks: 10, upside: 18, risk: 10, downside: 16, note: "Local business, steadier returns, smaller ceiling." },
+  { name: "Streetwear Drop", type: "Brand", min: 650, weeks: 8, upside: 42, risk: 28, downside: 40, note: "Big upside if the drop catches attention." },
+  { name: "Family Rental Room", type: "Property", min: 900, weeks: 18, upside: 20, risk: 8, downside: 14, note: "Slow, stable, and tied to family expectations." },
+  { name: "Boots Resale Group", type: "Side business", min: 180, weeks: 6, upside: 12, risk: 12, downside: 18, note: "Small cash flow with reputation risk if it gets messy." },
+  { name: "Green Energy Fund", type: "Fund", min: 500, weeks: 14, upside: 24, risk: 14, downside: 20, note: "Medium risk, more patience required." }
+];
+
 const pseudoStars = {
   "Madrid White": [
     ["Lylian Mbappo", "ST", 94],
@@ -806,9 +834,15 @@ function createChairman(club, index) {
 }
 
 function createManager(club, index) {
+  const style = ["High press", "Possession", "Counter attack", "Youth trust", "Pragmatic"][index % 5];
+  const profile = managerTrainingProfiles[style];
   return {
     name: `${managerFirstNames[(index * 2) % managerFirstNames.length]} ${managerLastNames[(index * 5) % managerLastNames.length]}`,
-    style: ["High press", "Possession", "Counter attack", "Youth trust", "Pragmatic"][index % 5],
+    style,
+    trainingFocus: profile.focus,
+    secondaryFocus: profile.secondary,
+    weeklySessions: clamp(profile.sessions + Math.round(randomBetween(-0.4, 0.9)), 3, 5),
+    strictness: clamp(profile.strictness + randomBetween(-9, 9)),
     reputation: clamp(club.base + randomBetween(-8, 8)),
     tactics: clamp(club.base + randomBetween(-10, 10)),
     patience: clamp(52 + club.pathway / 3 - club.pressure / 5 + randomBetween(-10, 10)),
@@ -1142,7 +1176,16 @@ function createCareer(formData) {
       avgRating: 0,
       lastRating: null,
       ratingHistory: [],
-      awards: []
+      awards: [],
+      activityIndex: 0,
+      weekPlan: [],
+      missedTrainingThisWeek: 0,
+      lifeChoicesThisWeek: 0
+    },
+    activities: {
+      investments: [],
+      offers: generateInvestmentOptions(4),
+      history: []
     },
     life: {
       family: clamp(62 + supportBoost),
@@ -1442,6 +1485,7 @@ function gameTemplate() {
       ${tab === "squad" ? squadTab() : ""}
       ${tab === "contracts" ? contractsTab() : ""}
       ${tab === "news" ? newsTab() : ""}
+      ${tab === "activities" ? activitiesTab() : ""}
       ${tab === "updates" ? updatesTab() : ""}
     </section>
   `;
@@ -1455,6 +1499,7 @@ function tabNav(active) {
     ["squad", "Squad"],
     ["contracts", "Agents & Contracts"],
     ["news", "News"],
+    ["activities", "Activities"],
     ["updates", "Updates"]
   ];
   return `<nav class="tabbar">${tabs.map(([id, label]) => `<button class="tab-btn ${active === id ? "active" : ""}" type="button" data-action="tab" data-id="${id}">${label}</button>`).join("")}</nav>`;
@@ -1523,23 +1568,144 @@ function dashboardTab(age, ratingText) {
 }
 
 function weeklyPanel() {
+  ensureWeekPlan();
+  const activity = currentActivity();
+  const manager = currentWorldClub()?.manager;
+  if (!activity) {
+    return `
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Matchday ready</h2>
+            <p>The week is complete. Advance to enter the next fixture.</p>
+          </div>
+          <span class="tag">Day ${Math.min((state.career.activityIndex || 0) + 1, 7)}/7</span>
+        </div>
+        <button class="primary-btn" type="button" data-action="advance">Advance to matchday</button>
+      </section>
+    `;
+  }
   return `
     <section class="panel">
       <div class="panel-header">
         <div>
-          <h2>This week</h2>
-          <p>Set your routine, then enter matchday.</p>
+          <h2>Today</h2>
+          <p>${escapeHtml(activity.day)} - ${escapeHtml(activity.title)}</p>
+        </div>
+        <span class="tag">Day ${(state.career.activityIndex || 0) + 1}/7</span>
+      </div>
+      <div class="manager-note">
+        <strong>${escapeHtml(manager?.name || "Manager")} - ${escapeHtml(manager?.style || "Balanced")}</strong>
+        <p>${escapeHtml(managerTrainingSummary(manager))}</p>
+      </div>
+      <div class="choice-section">
+        <h3>${activity.type === "training" ? "Choose your response" : "Choose your life focus"}</h3>
+        <div class="choice-grid">
+          ${activityChoices(activity).map(activityChoiceTemplate).join("")}
         </div>
       </div>
-      ${choiceSection("Career focus", "career", careerActions)}
-      ${choiceSection("Life focus", "life", lifeActions)}
       <div class="week-actions">
-        <button class="primary-btn" type="button" data-action="advance">Advance to matchday</button>
+        <button class="primary-btn" type="button" data-action="advance">Advance to next activity</button>
         <button class="secondary-btn" type="button" data-action="save">Save</button>
       </div>
-      <p class="footer-note">Growth is capped by age and level. Main groups rise slowly and sub-stats carry the details.</p>
+      <p class="footer-note">Skipping training can reduce loneliness, but trust drops fast. Low fitness affects selection and minutes.</p>
     </section>
   `;
+}
+
+function activityChoiceTemplate(choice) {
+  const active = (selected.activity || "") === choice.id;
+  return `
+    <button class="choice-btn ${active ? "active" : ""}" type="button" data-action="activity-choice" data-id="${choice.id}">
+      <strong>${escapeHtml(choice.title)}</strong>
+      <span>${escapeHtml(choice.text)}</span>
+    </button>
+  `;
+}
+
+function ensureWeekPlan() {
+  if (!state.career.weekPlan?.length || state.career.weekPlanWeek !== state.career.week) {
+    state.career.weekPlan = createWeeklyPlan();
+    state.career.weekPlanWeek = state.career.week;
+    state.career.activityIndex = 0;
+    state.career.missedTrainingThisWeek = 0;
+    state.career.lifeChoicesThisWeek = 0;
+    state.career.trainingDaysThisWeek = state.career.weekPlan.filter((item) => item.type === "training").length;
+  }
+  const activity = currentActivity();
+  const choices = activity ? activityChoices(activity) : [];
+  if (choices.length && !choices.some((choice) => choice.id === selected.activity)) {
+    selected.activity = choices[0].id;
+  }
+}
+
+function currentActivity() {
+  return state.career.weekPlan?.[state.career.activityIndex || 0] || null;
+}
+
+function createWeeklyPlan() {
+  const manager = currentWorldClub()?.manager || {};
+  const focus = manager.trainingFocus || "technical";
+  const secondary = manager.secondaryFocus || "tactical";
+  const sessions = clamp(Math.round(manager.weeklySessions || 4), 3, 5);
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const plan = [];
+  const focusCycle = [focus, secondary, focus, "matchprep", manager.style === "Youth trust" ? "technical" : "physical"];
+
+  for (let index = 0; index < sessions; index += 1) {
+    const day = days[index];
+    const trainingFocus = focusCycle[index % focusCycle.length];
+    plan.push({
+      type: "training",
+      day,
+      focus: trainingFocus,
+      title: trainingTitle(trainingFocus, manager),
+      strict: (manager.strictness || 55) > 68 && Math.random() < 0.58
+    });
+  }
+
+  while (plan.length < 7) {
+    const day = days[plan.length];
+    plan.push({ type: "life", day, title: "Life window", focus: "life", strict: false });
+  }
+
+  return plan;
+}
+
+function trainingTitle(focus, manager) {
+  if (focus === "matchprep") return "Match strategy";
+  const group = attributeGroups[focus]?.title || "Training";
+  return `${group} session${manager?.strictness > 72 ? " (strict)" : ""}`;
+}
+
+function managerTrainingSummary(manager) {
+  if (!manager) return "Balanced staff schedule.";
+  const focus = attributeGroups[manager.trainingFocus]?.title || "Technical";
+  const secondary = attributeGroups[manager.secondaryFocus]?.title || "Tactical";
+  return `${manager.style} manager. Usually ${manager.weeklySessions || 4} training days, main focus ${focus}, secondary focus ${secondary}, strictness ${round(manager.strictness || 50)}.`;
+}
+
+function activityChoices(activity) {
+  if (activity.type === "life") {
+    return Object.entries(lifeActions).map(([id, action]) => ({
+      id: `life:${id}`,
+      title: action.title,
+      text: action.text
+    }));
+  }
+
+  const focusTitle = activity.focus === "matchprep" ? "Match Prep" : attributeGroups[activity.focus]?.title || "Training";
+  const choices = [
+    { id: "train:attend", title: `Attend ${focusTitle}`, text: "Normal session. Trust rises and development follows the manager plan." },
+    { id: "train:extra", title: "Extra work", text: "More growth and trust, but fitness and stress take a bigger hit." },
+    { id: "train:absent", title: "Do not appear", text: "Protect life or avoid the session. Manager trust drops heavily." }
+  ];
+
+  if (!activity.strict) {
+    choices.splice(2, 0, { id: "train:life", title: "Choose life today", text: "Reduce loneliness and stress, but staff see you missing football work." });
+  }
+
+  return choices;
 }
 
 function lifePanel() {
@@ -1599,7 +1765,7 @@ function matchdayTemplate() {
               <p>${escapeHtml(match.previewThought)}</p>
             </div>
             <div class="offer-meta">
-              <span class="tag">Selected focus: ${careerActions[selected.career].title}</span>
+              <span class="tag">Week prep: ${(careerActions[selected.career] || careerActions.matchprep).title}</span>
               <span class="tag">Fitness ${round(state.career.fitness)}</span>
               <span class="tag">Form ${round(state.career.form)}</span>
               <span class="tag">Stress ${round(state.life.stress)}</span>
@@ -2323,6 +2489,80 @@ function newsTab() {
   `;
 }
 
+function activitiesTab() {
+  ensureActivities();
+  const activities = state.activities;
+  return `
+    <div class="page-grid">
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Activities</h2>
+            <p>Use earned money carefully. Investments can help your future or punish bad timing.</p>
+          </div>
+          <span class="tag">Wallet $${formatMoney(state.player.savings)}</span>
+        </div>
+        <div class="offers">
+          ${activities.offers.map(investmentOfferTemplate).join("")}
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Active investments</h2>
+            <p>Returns resolve after their duration.</p>
+          </div>
+        </div>
+        <div class="events">
+          ${activities.investments.length ? activities.investments.map(activeInvestmentTemplate).join("") : `<div class="empty">No active investments yet.</div>`}
+        </div>
+        <div class="panel-header compact-header activity-history-head">
+          <div>
+            <h2>History</h2>
+          </div>
+        </div>
+        <div class="events">
+          ${activities.history.length ? activities.history.slice(0, 6).map((item) => `
+            <article class="event-item ${item.type}">
+              <h3>${escapeHtml(item.title)}</h3>
+              <p class="microcopy">${escapeHtml(item.body)}</p>
+            </article>
+          `).join("") : `<div class="empty">No settled activity yet.</div>`}
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function investmentOfferTemplate(offer) {
+  const affordable = state.player.savings >= offer.min;
+  return `
+    <article class="offer">
+      <h3>${escapeHtml(offer.name)}</h3>
+      <p class="microcopy">${escapeHtml(offer.note)}</p>
+      <div class="offer-meta">
+        <span class="tag">${escapeHtml(offer.type)}</span>
+        <span class="tag">Min $${formatMoney(offer.min)}</span>
+        <span class="tag">${offer.weeks} weeks</span>
+        <span class="tag">Upside ${offer.upside}%</span>
+        <span class="tag">Risk ${offer.risk}%</span>
+      </div>
+      <button class="small-btn" type="button" data-action="invest" data-id="${offer.id}" ${affordable ? "" : "disabled"}>${affordable ? "Invest minimum" : "Not enough cash"}</button>
+    </article>
+  `;
+}
+
+function activeInvestmentTemplate(item) {
+  const remaining = Math.max(0, item.maturesWeek - state.career.totalWeeks);
+  return `
+    <article class="event-item">
+      <h3>${escapeHtml(item.name)}</h3>
+      <p class="microcopy">$${formatMoney(item.amount)} invested. ${remaining} weeks remaining. Upside ${item.upside}%, risk ${item.risk}%.</p>
+      <span class="tag">${escapeHtml(item.type)}</span>
+    </article>
+  `;
+}
+
 function newsTemplate(item) {
   return `
     <article class="news-card">
@@ -2421,6 +2661,70 @@ function currentContractSummary() {
     wage: state.player.wage || 0,
     started: state.player.contractStarted || GAME_START_DATE
   };
+}
+
+function ensureActivities() {
+  state.activities ||= { investments: [], offers: [], history: [] };
+  state.activities.investments ||= [];
+  state.activities.history ||= [];
+  if (!state.activities.offers?.length || state.activities.offers.length < 3) {
+    state.activities.offers = generateInvestmentOptions(4);
+  }
+}
+
+function generateInvestmentOptions(count = 4) {
+  return [...investmentTemplates]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count)
+    .map((template) => ({
+      ...template,
+      id: uid("investment"),
+      min: Math.round(template.min * randomBetween(0.86, 1.24)),
+      weeks: Math.max(4, Math.round(template.weeks * randomBetween(0.82, 1.18))),
+      upside: Math.max(4, Math.round(template.upside * randomBetween(0.78, 1.25))),
+      risk: clamp(Math.round(template.risk * randomBetween(0.75, 1.28)), 2, 65),
+      downside: clamp(Math.round(template.downside * randomBetween(0.75, 1.25)), 5, 75)
+    }));
+}
+
+function investInActivity(id) {
+  ensureActivities();
+  const offer = state.activities.offers.find((item) => item.id === id);
+  if (!offer || state.player.savings < offer.min) return;
+  state.player.savings -= offer.min;
+  state.activities.investments.unshift({
+    ...offer,
+    amount: offer.min,
+    startedWeek: state.career.totalWeeks,
+    maturesWeek: state.career.totalWeeks + offer.weeks
+  });
+  state.activities.offers = state.activities.offers.filter((item) => item.id !== id);
+  if (state.activities.offers.length < 3) state.activities.offers.push(...generateInvestmentOptions(1));
+  addLog("Investment started", `You put $${formatMoney(offer.min)} into ${offer.name}. It matures in ${offer.weeks} weeks.`, "");
+  saveState();
+  render();
+}
+
+function resolveInvestments() {
+  ensureActivities();
+  const matured = state.activities.investments.filter((item) => item.maturesWeek <= state.career.totalWeeks);
+  if (!matured.length) return;
+
+  matured.forEach((item) => {
+    const failed = Math.random() * 100 < item.risk;
+    const payout = failed
+      ? Math.round(item.amount * (1 - item.downside / 100))
+      : Math.round(item.amount * (1 + item.upside / 100));
+    state.player.savings += Math.max(0, payout);
+    const profit = payout - item.amount;
+    const type = failed ? "warning" : "good";
+    const title = failed ? "Investment loss" : "Investment return";
+    const body = `${item.name} settled at $${formatMoney(payout)} (${profit >= 0 ? "+" : ""}$${formatMoney(profit)}).`;
+    state.activities.history.unshift({ title, body, type });
+    addLog(title, body, type);
+  });
+
+  state.activities.investments = state.activities.investments.filter((item) => item.maturesWeek > state.career.totalWeeks);
 }
 
 function weeklyLivingCost() {
@@ -2570,6 +2874,11 @@ function handleAction(action, id) {
     saveState();
     render();
   }
+  if (action === "activity-choice") {
+    selected.activity = id;
+    saveState();
+    render();
+  }
   if (action === "news-filter") {
     state.ui.newsCountry = id;
     saveState();
@@ -2599,6 +2908,7 @@ function handleAction(action, id) {
   if (action === "sack-agent") sackAgent();
   if (action === "accept-offer") acceptOffer(id);
   if (action === "reject-offer") rejectOffer(id);
+  if (action === "invest") investInActivity(id);
 }
 
 function acceptAcademy(id) {
@@ -2638,9 +2948,14 @@ function acceptAcademy(id) {
 
 function advanceToMatchday() {
   if (state.phase !== "weekly") return;
-  applyWeeklyRoutine();
-  state.pendingMatch = createMatchContext();
-  state.phase = "matchday";
+  ensureWeekPlan();
+  if (currentActivity()) {
+    applyDailyActivity();
+  }
+  if (!currentActivity()) {
+    state.pendingMatch = createMatchContext();
+    state.phase = "matchday";
+  }
   saveState();
   render();
 }
@@ -2658,17 +2973,78 @@ function ensureCurrentAcademyInWorld() {
   state.world.leaders[league] = emptyLeaderboards();
 }
 
-function applyWeeklyRoutine() {
-  const careerAction = careerActions[selected.career];
-  const lifeAction = lifeActions[selected.life];
+function applyDailyActivity() {
+  const activity = currentActivity();
+  if (!activity) return;
   const logs = [];
+  const choices = activityChoices(activity);
+  const choice = choices.find((item) => item.id === selected.activity) || choices[0];
 
-  applyTraining(careerAction, logs);
-  applyLife(lifeAction, logs);
+  if (activity.type === "training") {
+    applyTrainingActivity(activity, choice, logs);
+  } else {
+    const lifeId = (choice.id || "life:family").split(":")[1] || "family";
+    selected.life = lifeId;
+    applyLife(lifeActions[lifeId], logs, lifeId);
+    state.career.lifeChoicesThisWeek += 1;
+    logs.push(["Life day used", `${lifeActions[lifeId].title} helped keep the person behind the player stable.`, "good"]);
+  }
+
   applyAgentAction(logs);
   applySupportConsequences(logs);
 
+  state.career.activityIndex += 1;
+  selected.activity = "";
   logs.reverse().forEach(([title, body, type]) => addLog(title, body, type));
+}
+
+function applyTrainingActivity(activity, choice, logs) {
+  const manager = currentWorldClub()?.manager || { strictness: 55 };
+  const focusAction = activity.focus === "matchprep" ? { ...careerActions.matchprep, id: "matchprep" } : trainingActionForFocus(activity.focus);
+
+  if (choice.id === "train:attend") {
+    selected.career = focusAction.id;
+    applyTraining(focusAction, logs);
+    state.career.coachTrust = clamp(state.career.coachTrust + 1.4 + (manager.strictness || 50) / 95);
+    logs.push(["Training attended", `${activity.title} matched the manager plan. Trust ticked upward.`, "good"]);
+    return;
+  }
+
+  if (choice.id === "train:extra") {
+    selected.career = focusAction.id;
+    applyTraining({ ...focusAction, intensity: focusAction.intensity * 1.28, fitness: focusAction.fitness - 4, stress: focusAction.stress + 3, confidence: focusAction.confidence + 1 }, logs);
+    state.career.coachTrust = clamp(state.career.coachTrust + 2.5 + (manager.strictness || 50) / 100);
+    logs.push(["Extra work", "The staff loved the effort, but your legs paid for it.", "good"]);
+    return;
+  }
+
+  if (choice.id === "train:life") {
+    selected.life = "support";
+    applyLife(lifeActions.support, logs, "support");
+    state.career.lifeChoicesThisWeek += 1;
+    state.career.missedTrainingThisWeek += 1;
+    state.career.coachTrust = clamp(state.career.coachTrust - (activity.strict ? 10 : 4.5));
+    logs.push(["Training traded for life", "You protected your headspace, but the staff marked the missed session.", "warning"]);
+    return;
+  }
+
+  state.career.missedTrainingThisWeek += 1;
+  state.career.coachTrust = clamp(state.career.coachTrust - 8 - (manager.strictness || 50) / 9);
+  state.career.form = clamp(state.career.form - 3);
+  state.life.stress = clamp(state.life.stress - 2);
+  state.life.loneliness = clamp(state.life.loneliness - 3);
+  logs.push(["Did not appear", "You missed training. Trust dropped hard, especially under a strict manager.", "risk"]);
+}
+
+function trainingActionForFocus(focus) {
+  const map = {
+    technical: "technical",
+    physical: "physical",
+    tactical: "tactical",
+    mentality: "matchprep"
+  };
+  const id = map[focus] || "technical";
+  return { ...careerActions[id], id };
 }
 
 function applyTraining(action, logs) {
@@ -2683,14 +3059,14 @@ function applyTraining(action, logs) {
 
   addAttribute(action.focus, mainGain);
   Object.keys(player.attributes).forEach((key) => {
-    if (key !== action.focus && selected.career !== "recovery") addAttribute(key, secondaryGain / 3);
+    if (key !== action.focus && action.id !== "recovery") addAttribute(key, secondaryGain / 3);
   });
 
   career.fitness = clamp(career.fitness + action.fitness);
   career.confidence = clamp(career.confidence + action.confidence);
   life.stress = clamp(life.stress + action.stress);
 
-  if (selected.career === "recovery") {
+  if (action.id === "recovery") {
     life.wellbeing = clamp(life.wellbeing + (life.supportPlan ? 14 : 7));
     life.supportPlan = false;
     logs.push(["Recovery focus", "You protected your body. That may matter more than a tiny attribute jump.", "good"]);
@@ -2721,7 +3097,7 @@ function ageSoftCap() {
   return 90;
 }
 
-function applyLife(action, logs) {
+function applyLife(action, logs, lifeId = selected.life) {
   const life = state.life;
   life.family = clamp(life.family + action.family);
   life.friends = clamp(life.friends + action.friends);
@@ -2730,11 +3106,11 @@ function applyLife(action, logs) {
   life.stress = clamp(life.stress + action.stress);
   life.wellbeing = clamp(life.wellbeing + action.wellbeing);
 
-  if (selected.life !== "family") life.family = clamp(life.family - 1.3);
-  if (selected.life !== "friends") life.friends = clamp(life.friends - 1.5);
-  if (selected.life !== "relationship") life.relationship = clamp(life.relationship - 1.2);
+  if (lifeId !== "family") life.family = clamp(life.family - 1.3);
+  if (lifeId !== "friends") life.friends = clamp(life.friends - 1.5);
+  if (lifeId !== "relationship") life.relationship = clamp(life.relationship - 1.2);
 
-  if (selected.life === "focus") {
+  if (lifeId === "focus") {
     addAttribute("mentality", 0.35);
     logs.push(["Isolation trade-off", "Extra focus helped mentality, but support outside football took a hit.", "warning"]);
   }
@@ -2838,20 +3214,24 @@ function simulateMatch() {
   }
 
   const academySelectionBoost = state.player.tier === "Academy" || state.player.club.includes("Academy") ? 24 : 0;
-  const chanceToPlay = clamp(34 + academySelectionBoost + career.coachTrust * 0.5 + career.fitness * 0.16 + career.form * 0.12 - life.stress * 0.08);
+  const fitnessSelectionDrag = career.fitness < 25 ? 24 : career.fitness < 40 ? 14 : career.fitness < 55 ? 6 : 0;
+  const missedTrainingDrag = (career.missedTrainingThisWeek || 0) * 7;
+  const chanceToPlay = clamp(34 + academySelectionBoost + career.coachTrust * 0.58 + career.fitness * 0.18 + career.form * 0.12 - life.stress * 0.08 - fitnessSelectionDrag - missedTrainingDrag, 2, 92);
   if (Math.random() * 100 > chanceToPlay) {
     career.form = clamp(career.form - 1);
     career.coachTrust = clamp(career.coachTrust + 0.6);
+    const notFit = career.fitness < 42;
+    const notTrusted = career.coachTrust < 34 || (career.missedTrainingThisWeek || 0) > 0;
     const result = {
       rating: 0,
       mvp: false,
       ...simulatePlayerFixtureScore(6),
-      headline: "Unused substitute",
-      summary: "You did not get meaningful minutes. Your week still counted in training.",
-      managerThought: "You are close, but I need to trust the habits before I trust the minutes.",
+      headline: notFit || notTrusted ? "Not selected" : "Unused substitute",
+      summary: notFit ? "Your fitness was too low for the manager to risk you." : notTrusted ? "Trust and missed work kept you outside the plan." : "You did not get meaningful minutes. Your week still counted in training.",
+      managerThought: notFit ? "I cannot use you if your body is not ready." : "You are close, but I need to trust the habits before I trust the minutes.",
       highlights: []
     };
-    addLog("Limited minutes", "The manager kept you on the edge of the squad. Keep building trust.", "");
+    addLog(notFit ? "Fitness cost selection" : "Limited minutes", notFit ? "Low fitness kept you out of the match plan." : "The manager kept you on the edge of the squad. Keep building trust.", notFit || notTrusted ? "warning" : "");
     return result;
   }
 
@@ -3184,11 +3564,29 @@ function finishWeek() {
   updateLeagueTables();
   updateClubEconomies();
   updateClubPolitics();
+  applyPlayerManagerPressure();
   advanceCalendar();
   state.phase = "weekly";
   state.pendingMatch = null;
   saveState();
   render();
+}
+
+function applyPlayerManagerPressure() {
+  const result = state.pendingMatch?.result;
+  const club = currentWorldClub();
+  if (!result || !club?.manager) return;
+  const playerTeamLost = result.teamScore < result.opponentScore;
+  const important = /Important|First-team|Starter/i.test(state.player.role) || state.career.reputation > 52;
+  const excluded = result.rating === 0 || state.career.missedTrainingThisWeek > 1 || state.career.coachTrust < 22;
+  const heat = (club.manager.fanPressure || 50) + (club.chairman?.pressure || 50) / 2 - (club.manager.patience || 50) / 2;
+  if (playerTeamLost && important && excluded && Math.random() < clamp((heat - 45) / 80, 0.04, 0.38)) {
+    const oldManager = club.manager.name;
+    club.manager = createManager(club, Math.floor(randomBetween(1, 999)));
+    state.career.coachTrust = clamp(state.career.coachTrust + 8);
+    addLog("Manager changed", `${oldManager} paid for poor results and selection decisions. A new manager resets part of the trust picture.`, "warning");
+    addNews(club.country, "Manager", `${club.name} replace ${oldManager}`, `Fan pressure rose after a loss where key selection calls were questioned.`);
+  }
 }
 
 function updateLeagueTables() {
@@ -3883,6 +4281,7 @@ function advanceCalendar() {
   career.week += 1;
   player.ageWeeks += 1;
   processWeeklyPay();
+  resolveInvestments();
 
   if (player.ageWeeks >= 52) {
     player.ageYears += 1;

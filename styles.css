@@ -215,6 +215,13 @@ select {
   box-shadow: 0 10px 20px rgba(23, 33, 27, 0.11);
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+}
+
 .intro-board {
   display: grid;
   gap: 14px;
@@ -1008,6 +1015,10 @@ select {
 
 .compact-header {
   align-items: start;
+}
+
+.activity-history-head {
+  margin-top: 18px;
 }
 
 .highlight-list {
