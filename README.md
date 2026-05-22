@@ -5,6 +5,9 @@ A free browser-based football career simulator prototype.
 Live site:
 https://hederachild.github.io/Football-Career-Simulator/
 
+Vercel share link:
+https://football-career-simulator.vercel.app/
+
 Repository:
 https://github.com/HederaChild/Football-Career-Simulator
 
@@ -26,8 +29,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=16` and `app.js?v=16`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v16"`.
+- `index.html` loads `styles.css?v=17` and `app.js?v=17`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v17"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -55,7 +58,13 @@ http://127.0.0.1:4173/?v=next
 
 The repo is already connected to GitHub Pages. Push to `main`, then the live site updates after GitHub Pages rebuilds.
 
-The repo is also prepared for Vercel static hosting with `vercel.json`. To publish on Vercel, import:
+The repo is also connected to Vercel at:
+
+```text
+https://football-career-simulator.vercel.app/
+```
+
+Vercel auto-deploys from the GitHub repository after pushes to `main`. If the project ever needs to be re-imported, use:
 
 ```text
 https://github.com/HederaChild/Football-Career-Simulator
@@ -242,6 +251,14 @@ Leaderboards:
 - Red cards
 - Ratings
 
+League results now come from generated matchday fixtures instead of each team updating alone. This means:
+
+- Scorelines are stored for every matchday.
+- League tables update from the same scorelines players can see.
+- GF, GA, and GD should tally across the whole table.
+- Form starts as `-----` and only fills as matches are played.
+- Top scorer and assist totals scale from actual goals in played matches, so one matchday cannot create an 11-goal leader.
+
 ### News
 
 - News tab with country filters.
@@ -273,10 +290,21 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v16`.
+Last verified local build: asset/save version `v17`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=17-formcheck`.
+- `Start academy offers` advanced to the academy contract screen.
+- Signing the first academy offer advanced into the weekly loop.
+- Matchday advanced into a post-match report with a visible final scoreline.
+- The player match scoreline appeared in Academy League matchday results.
+- Leagues tab now has `Table & Scores`, `Fixtures`, and `Stats` views.
+- Matchday 1 scoreboard showed all 10 Academy League fixtures and 10/10 played after one simulated round.
+- Academy League table after one round had 20 teams, every team at `P 1`, and total GD exactly `0`.
+- Form after one round showed realistic fresh form values such as `W----`, `D----`, and `L----`.
+- Stats after one round showed realistic scorer totals (`1` in the last verification run), not impossible early totals like 11.
+- Browser console had no errors during start, academy signing, matchday, scoreline, league table, scoreboard, fixtures, or stats checks.
 - Fresh start loaded on the live GitHub Pages site.
 - Local fresh start loaded at `http://127.0.0.1:4174/?new=1&v=14`.
 - Start page title now says `Football Career Simulator by Jeff Adkins`.
@@ -311,14 +339,15 @@ Checks performed:
 - Some lower tiers are compressed into one playable table even when the real system uses groups.
 - No persistent cloud save or user accounts yet.
 - No real transfer windows yet.
-- Schedule is now present but still simplified and generated, not a full real fixture engine.
+- Schedule and fixture scorelines are now present, but still generated and simplified rather than imported from live football data.
+- Continental competition rules are real-style but simplified.
 - No tactical position/depth chart yet.
 
 ## Likely Next Steps
 
 - Add promotion playoffs and group-specific lower divisions where real competitions use them.
 - Make match highlights more interactive before the final rating, with the player watching key phases resolve one by one.
-- Build a full fixture engine so scheduled opponents stay fixed instead of being generated for previews.
+- Deepen the fixture engine with cup draws, replay/extra-time logic, and more competition-specific rules.
 - Add real-style transfer windows.
 - Add player contract expiry and negotiation screens.
 - Add loans.

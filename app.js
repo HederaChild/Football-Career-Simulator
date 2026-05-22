@@ -1,9 +1,20 @@
-const SAVE_KEY = "full-time-life-save-v16";
+const SAVE_KEY = "full-time-life-save-v17";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v17",
+    title: "Real scorelines, tables, and league stats",
+    date: "2026-05-22",
+    notes: [
+      "Changed league tables to update from actual scheduled scorelines so GF, GA, and GD tally correctly.",
+      "Added player match scorelines and league matchday scoreboards.",
+      "Split the Leagues page into Table & Scores, Fixtures, and Stats views.",
+      "Reduced stat growth so top scorers cannot jump to unrealistic totals after one matchday."
+    ]
+  },
   {
     version: "v16",
     title: "Mobile start reliability",
@@ -682,15 +693,20 @@ function buildWorld() {
       facilities,
       chairman,
       manager: createManager(club, index),
+      seasonMood: randomBetween(-5, 5),
       roster: createRoster(club, false),
       academyRoster: createRoster(club, true)
     };
   });
 
+  const leagues = buildLeagueTables(clubs);
+  const competitions = buildContinentalCompetitions(clubs);
+
   return {
     clubs,
-    leagues: buildLeagueTables(clubs),
-    competitions: buildContinentalCompetitions(clubs),
+    leagues,
+    competitions,
+    fixtures: buildMatchSchedules(leagues, competitions),
     leaders: buildLeaderboards(),
     news: createOpeningNews(clubs),
     filters: {
@@ -927,7 +943,7 @@ function createTableRow(club, league, maxMatches) {
     ga,
     gd: gf - ga,
     pts: wins * 3 + draws,
-    form: ["W", "D", "L", "W", "W"].sort(() => Math.random() - 0.5).slice(0, 5).join("")
+    form: "-----"
   };
 }
 
@@ -963,6 +979,62 @@ function createCompetitionRow(club, competition, maxMatches) {
   };
 }
 
+function buildMatchSchedules(leagues, competitions) {
+  const schedules = {};
+  Object.entries(leagues).forEach(([league, table]) => {
+    const config = league === "Academy League"
+      ? { country: "Global", clubs: table.length, matches: 30, level: 0 }
+      : leagueConfigs[league] || { country: "Global", clubs: table.length, matches: 30 };
+    schedules[league] = createRoundSchedule(league, table.map((row) => row.club), config);
+  });
+  Object.entries(competitions).forEach(([competition, data]) => {
+    schedules[competition] = createRoundSchedule(competition, data.table.map((row) => row.club), data);
+  });
+  return schedules;
+}
+
+function createRoundSchedule(competition, clubNames, config) {
+  const teams = [...clubNames];
+  if (teams.length % 2) teams.push(null);
+  const rounds = [];
+  let rotation = [...teams];
+  const cycleLength = Math.max(1, rotation.length - 1);
+  const maxMatches = config.matches || 30;
+  const calendar = config.rule ? continentalCalendar(config) : leagueCalendar(config);
+
+  for (let roundIndex = 0; roundIndex < maxMatches; roundIndex += 1) {
+    const matches = [];
+    const reverse = Math.floor(roundIndex / cycleLength) % 2 === 1;
+    for (let index = 0; index < rotation.length / 2; index += 1) {
+      const first = rotation[index];
+      const second = rotation[rotation.length - 1 - index];
+      if (!first || !second) continue;
+      const home = (roundIndex + index + (reverse ? 1 : 0)) % 2 === 0 ? first : second;
+      const away = home === first ? second : first;
+      matches.push({
+        id: `${slug(competition)}-${roundIndex + 1}-${index}`,
+        home,
+        away,
+        homeScore: null,
+        awayScore: null,
+        played: false
+      });
+    }
+    rounds.push({
+      round: roundIndex + 1,
+      date: addDays(calendar.start, roundIndex * 7),
+      matches
+    });
+
+    const fixed = rotation[0];
+    const rest = rotation.slice(1);
+    rest.unshift(rest.pop());
+    rotation = [fixed, ...rest];
+  }
+
+  return rounds;
+}
+
 function buildLeaderboards() {
   const names = [...Object.keys(leagueConfigs), "Academy League", ...Object.keys(continentalConfigs)];
   return Object.fromEntries(names.map((name) => [name, emptyLeaderboards()]));
@@ -975,14 +1047,16 @@ function emptyLeaderboards() {
 function leaderRecord(player, type, matchesPlayed = 0) {
   if (!matchesPlayed) return { name: player.name, club: player.club, league: player.league, position: player.position, value: 0 };
   const roleBonus = player.position === "ST" || player.position === "WG" ? 1.25 : player.position === "CM" ? 0.75 : 0.28;
-  const oneSeasonWonder = Math.random() < 0.025 ? randomBetween(4, 10) : 0;
+  const oneSeasonWonder = matchesPlayed > 10 && Math.random() < 0.025 ? randomBetween(2, 6) : 0;
   const flop = player.overall > 84 && Math.random() < 0.04 ? randomBetween(0.35, 0.65) : 1;
   let value = 0;
   const sample = Math.max(1, matchesPlayed);
-  if (type === "goals") value = Math.round((player.overall - 48) * roleBonus * randomBetween(0.015, 0.055) * sample * flop + oneSeasonWonder);
-  if (type === "assists") value = Math.round((player.overall - 45) * (player.position === "CM" || player.position === "WG" ? 1.1 : 0.45) * randomBetween(0.012, 0.045) * sample * flop + oneSeasonWonder / 2);
-  if (type === "redCards") value = Math.max(0, Math.round(randomBetween(-0.7, 0.08 * sample) + (player.position === "CB" ? 0.25 : 0)));
+  if (type === "goals") value = Math.round((player.overall - 48) * roleBonus * randomBetween(0.006, 0.024) * sample * flop + oneSeasonWonder);
+  if (type === "assists") value = Math.round((player.overall - 45) * (player.position === "CM" || player.position === "WG" ? 1.1 : 0.45) * randomBetween(0.005, 0.019) * sample * flop + oneSeasonWonder / 2);
+  if (type === "redCards") value = Math.max(0, Math.round(randomBetween(-0.95, 0.035 * sample) + (player.position === "CB" ? 0.16 : 0)));
   if (type === "rating") value = Number(clamp(5.7 + (player.overall - 60) / 18 + randomBetween(-0.45, 0.55) + oneSeasonWonder / 22 - (flop < 1 ? 0.45 : 0), 5.2, 8.9).toFixed(2));
+  if (type === "goals") value = Math.min(value, Math.max(0, sample * 2));
+  if (type === "assists") value = Math.min(value, Math.max(0, sample * 2));
   return {
     name: player.name,
     club: player.club,
@@ -1078,6 +1152,8 @@ function createCareer(formData) {
     ui: {
       tab: "dashboard",
       league: "Academy League",
+      leagueView: "table",
+      scoreRound: 1,
       leaderboard: "scorers",
       newsCountry: "All",
       club: "current"
@@ -1193,7 +1269,14 @@ function startCareerFromForm(form) {
       : true;
   if (!valid) return;
   form.dataset.submitting = "true";
-  createCareer(new FormData(form));
+  try {
+    createCareer(new FormData(form));
+  } catch (error) {
+    console.error("Could not start academy offers.", error);
+    form.dataset.submitting = "false";
+    const errorBox = document.querySelector("[data-start-error]");
+    if (errorBox) errorBox.textContent = "Something blocked the start. Please refresh once and try again.";
+  }
 }
 
 function setupTemplate() {
@@ -1241,6 +1324,7 @@ function setupTemplate() {
             </select>
           </label>
           <button class="primary-btn" type="submit" data-start-button>Start academy offers</button>
+          <p class="form-error" data-start-error aria-live="polite"></p>
           ${hasSave ? `<button class="secondary-btn" type="button" data-continue>Continue saved career</button>` : ""}
           <p class="footer-note">${RANKING_NOTE} Lower-ranked nations give bigger home-hero fame when you perform.</p>
         </form>
@@ -1488,6 +1572,11 @@ function matchdayTemplate() {
               <strong>vs</strong>
               <span>${escapeHtml(match.opponent)}</span>
             </div>
+            <div class="offer-meta">
+              <span class="tag">${formatDisplayDate(match.date)}</span>
+              <span class="tag">Matchday ${match.round}</span>
+              <span class="tag">${match.home ? "Home" : "Away"}</span>
+            </div>
             <div class="manager-note">
               <strong>Manager before the game</strong>
               <p>${escapeHtml(match.previewThought)}</p>
@@ -1526,6 +1615,13 @@ function postMatchTemplate() {
               <span class="tag">${result.mvp ? "MVP" : "Team rating"}</span>
             </div>
             <div class="rating-big">${ratingDisplay}</div>
+            ${result.scoreline ? `
+              <div class="scoreline final-score">
+                <span>${escapeHtml(result.homeTeam)}</span>
+                <strong>${result.homeScore} - ${result.awayScore}</strong>
+                <span>${escapeHtml(result.awayTeam)}</span>
+              </div>
+            ` : ""}
             <div class="manager-note">
               <strong>Manager thoughts</strong>
               <p>${escapeHtml(result.managerThought)}</p>
@@ -1817,13 +1913,14 @@ function leaguesTab() {
   const config = isCompetition ? state.world.competitions[activeLeague] : leagueConfigs[activeLeague] || { clubs: 20, matches: 30 };
   const competitionNames = Object.keys(state.world.competitions);
   const activeLeaders = state.world.leaders?.[activeLeague] || emptyLeaderboards();
+  const view = state.ui.leagueView || "table";
   return `
     <div class="page-grid">
-      <section class="panel">
+      <section class="panel full-span">
         <div class="panel-header">
           <div>
-            <h2>Tables</h2>
-            <p>Domestic leagues use realistic club counts and match totals. Continental competitions use fictional names with real-style formats.</p>
+            <h2>Leagues</h2>
+            <p>Tables now update from real scorelines, so GD balances across each matchday.</p>
           </div>
           <span class="tag">${escapeHtml(activeLeague)}</span>
         </div>
@@ -1831,25 +1928,47 @@ function leaguesTab() {
           ${leagues.map((league) => `<button class="filter-btn ${activeLeague === league ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(league)}">${escapeHtml(league)}</button>`).join("")}
           ${competitionNames.map((competition) => `<button class="filter-btn ${activeLeague === competition ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(competition)}">${escapeHtml(competition)}</button>`).join("")}
         </div>
+        <div class="filter-row compact-filters">
+          ${[
+            ["table", "Table & Scores"],
+            ["fixtures", "Fixtures"],
+            ["stats", "Stats"]
+          ].map(([id, label]) => `<button class="filter-btn ${view === id ? "active" : ""}" type="button" data-action="league-view" data-id="${id}">${label}</button>`).join("")}
+        </div>
         <div class="offer-meta">
           <span class="tag">${config.clubs} clubs</span>
           <span class="tag">${config.matches} matches each</span>
           ${config.rule ? `<span class="tag">${escapeHtml(config.rule)}</span>` : ""}
         </div>
-        ${leagueTableTemplate(table)}
       </section>
-      <section class="panel">
+      ${view === "table" ? `
+        <section class="panel full-span">
+          <h2>Table</h2>
+          ${leagueTableTemplate(table)}
+        </section>
+        <section class="panel full-span">
+          ${scoreboardTemplate(activeLeague)}
+        </section>
+      ` : ""}
+      ${view === "fixtures" ? `
+        <section class="panel full-span">
+          ${fixturesTemplate(activeLeague)}
+        </section>
+      ` : ""}
+      ${view === "stats" ? `
+        <section class="panel full-span">
+          <div class="panel-header">
+            <div>
+              <h2>${escapeHtml(activeLeague)} stats</h2>
+              <p>Stats scale with matches played. After matchday one, nobody should look like they played half a season.</p>
+            </div>
+          </div>
+          ${leaderboardsTemplate(activeLeaders)}
+        </section>
+      ` : ""}
+      <section class="panel full-span">
         <h2>Current club direction</h2>
         ${clubDirectionTemplate(currentWorldClub())}
-      </section>
-      <section class="panel full-span">
-        <div class="panel-header">
-          <div>
-            <h2>${escapeHtml(activeLeague)} leaders</h2>
-            <p>Stats stay empty until that league has played matches.</p>
-          </div>
-        </div>
-        ${leaderboardsTemplate(activeLeaders)}
       </section>
     </div>
   `;
@@ -1880,6 +1999,89 @@ function leagueTableTemplate(table) {
       </table>
     </div>
   `;
+}
+
+function scoreboardTemplate(league) {
+  const rounds = state.world.fixtures?.[league] || [];
+  if (!rounds.length) return `<div class="empty">No fixtures generated for this competition yet.</div>`;
+  const activeRound = clamp(Number(state.ui.scoreRound || latestRoundNumber(league)), 1, rounds.length);
+  const round = rounds[activeRound - 1] || rounds[0];
+  return `
+    <div class="panel-header">
+      <div>
+        <h2>Matchday ${round.round} scoreline</h2>
+        <p>${formatDisplayDate(round.date)} - completed scores appear after that round is played.</p>
+      </div>
+      <span class="tag">${round.matches.filter((match) => match.played).length}/${round.matches.length} played</span>
+    </div>
+    ${roundSelectorTemplate(league, activeRound, rounds.length)}
+    <div class="scoreboard-grid">
+      ${round.matches.map(matchCardTemplate).join("")}
+    </div>
+  `;
+}
+
+function fixturesTemplate(league) {
+  const rounds = state.world.fixtures?.[league] || [];
+  if (!rounds.length) return `<div class="empty">No fixtures generated for this competition yet.</div>`;
+  const activeRound = clamp(Number(state.ui.scoreRound || latestRoundNumber(league)), 1, rounds.length);
+  const start = Math.max(1, activeRound - 2);
+  const end = Math.min(rounds.length, activeRound + 3);
+  return `
+    <div class="panel-header">
+      <div>
+        <h2>Fixtures</h2>
+        <p>Browse each matchweek to see who plays next and which results already happened.</p>
+      </div>
+      <span class="tag">Matchday ${activeRound}</span>
+    </div>
+    ${roundSelectorTemplate(league, activeRound, rounds.length)}
+    <div class="schedule-list">
+      ${rounds.slice(start - 1, end).map((round) => `
+        <article class="fixture-round ${round.round === activeRound ? "active" : ""}">
+          <div class="fixture-round-head">
+            <strong>Matchday ${round.round}</strong>
+            <span>${formatDisplayDate(round.date)}</span>
+          </div>
+          <div class="scoreboard-grid">
+            ${round.matches.slice(0, 10).map(matchCardTemplate).join("")}
+          </div>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function roundSelectorTemplate(league, activeRound, totalRounds) {
+  const start = Math.max(1, Math.min(activeRound - 5, totalRounds - 11));
+  const end = Math.min(totalRounds, start + 11);
+  const options = Array.from({ length: end - start + 1 }, (_, index) => start + index);
+  return `
+    <div class="filter-row compact-filters">
+      ${activeRound > 1 ? `<button class="filter-btn" type="button" data-action="score-round" data-id="${activeRound - 1}">Prev</button>` : ""}
+      ${options.map((round) => `<button class="filter-btn ${round === activeRound ? "active" : ""}" type="button" data-action="score-round" data-id="${round}">MD ${round}</button>`).join("")}
+      ${activeRound < totalRounds ? `<button class="filter-btn" type="button" data-action="score-round" data-id="${activeRound + 1}">Next</button>` : ""}
+    </div>
+  `;
+}
+
+function matchCardTemplate(match) {
+  const score = match.played ? `${match.homeScore} - ${match.awayScore}` : "vs";
+  return `
+    <article class="score-card ${match.played ? "played" : ""}">
+      <span>${escapeHtml(match.home)}</span>
+      <strong>${score}</strong>
+      <span>${escapeHtml(match.away)}</span>
+    </article>
+  `;
+}
+
+function latestRoundNumber(league) {
+  const rounds = state.world?.fixtures?.[league] || [];
+  if (!rounds.length) return 1;
+  const firstUnplayed = rounds.find((round) => round.matches.some((match) => !match.played));
+  if (firstUnplayed) return firstUnplayed.round;
+  return rounds[rounds.length - 1].round;
 }
 
 function leaderboardsTemplate(leaders) {
@@ -2231,6 +2433,17 @@ function handleAction(action, id) {
   }
   if (action === "league-filter") {
     state.ui.league = id;
+    state.ui.scoreRound = latestRoundNumber(id);
+    saveState();
+    render();
+  }
+  if (action === "league-view") {
+    state.ui.leagueView = id;
+    saveState();
+    render();
+  }
+  if (action === "score-round") {
+    state.ui.scoreRound = Number(id);
     saveState();
     render();
   }
@@ -2294,7 +2507,9 @@ function acceptAcademy(id) {
   state.phase = "weekly";
   state.academyOffers = [];
   state.ui.league = "Academy League";
+  state.ui.scoreRound = latestRoundNumber("Academy League");
   state.ui.club = "current";
+  ensureCurrentAcademyInWorld();
   addLog("Academy contract signed", `You joined ${offer.club}. Fit ${offer.fit}, pathway ${offer.pathway}, pressure ${offer.pressure}.`, "good");
   addNews(offer.country, "Academy", `${state.player.name} chooses ${offer.club}`, `The ${state.player.nationality} prospect signed a youth deal after weighing pathway, pressure, and distance.`);
   saveState();
@@ -2308,6 +2523,19 @@ function advanceToMatchday() {
   state.phase = "matchday";
   saveState();
   render();
+}
+
+function ensureCurrentAcademyInWorld() {
+  const league = "Academy League";
+  const table = state.world.leagues[league];
+  if (!table || table.some((row) => row.club === state.player.club)) return;
+  const baseClub = currentWorldClub();
+  if (!baseClub) return;
+  const row = createTableRow({ ...baseClub, name: state.player.club, overall: clamp(baseClub.overall - 21, 30, 78) }, league, 30);
+  table[table.length - 1] = row;
+  state.world.leagues[league] = table.sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+  state.world.fixtures[league] = createRoundSchedule(league, state.world.leagues[league].map((item) => item.club), { country: "Global", clubs: state.world.leagues[league].length, matches: 30, level: 0 });
+  state.world.leaders[league] = emptyLeaderboards();
 }
 
 function applyWeeklyRoutine() {
@@ -2421,9 +2649,10 @@ function applySupportConsequences(logs) {
 }
 
 function createMatchContext() {
-  const opponent = pickOpponent();
+  const fixture = nextFixture();
+  const opponentName = fixture.opponent.replace(" Academy", "");
+  const opponent = state.world.clubs.find((club) => club.name === opponentName) || pickOpponent();
   const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
-  const fixture = nextFixture(opponent);
   const thought = state.career.fitness < 45
     ? "You are in the squad, but I need you to manage your body. Do not chase every ball if your legs are gone."
     : state.career.form > 62
@@ -2431,9 +2660,9 @@ function createMatchContext() {
       : "Keep it simple early. I want concentration, discipline, and bravery when the moment arrives.";
 
   return {
-    opponent: isAcademy ? `${opponent.name} Academy` : opponent.name,
+    opponent: fixture.opponent,
     opponentOverall: clamp(clubOverall(opponent) - (isAcademy ? 20 : 0), 28, 96),
-    competition: isAcademy ? "Academy League" : opponent.tier,
+    competition: fixture.competition,
     date: fixture.date,
     round: fixture.round,
     home: fixture.home,
@@ -2478,6 +2707,7 @@ function simulateMatch() {
     const result = {
       rating: 0,
       mvp: false,
+      ...simulatePlayerFixtureScore(6),
       headline: "Rehab week",
       summary: "You missed the game and stayed with the medical staff.",
       managerThought: "Availability is part of a career. Get fit properly before asking for minutes.",
@@ -2495,6 +2725,7 @@ function simulateMatch() {
     const result = {
       rating: 0,
       mvp: false,
+      ...simulatePlayerFixtureScore(6),
       headline: "Unused substitute",
       summary: "You did not get meaningful minutes. Your week still counted in training.",
       managerThought: "You are close, but I need to trust the habits before I trust the minutes.",
@@ -2518,6 +2749,7 @@ function simulateMatch() {
   const rating = clamp(5.0 + academyFloor + academyAbilityFit + (ability - 34) / 18 + career.form / 105 + career.confidence / 150 - mentalDrag - fitnessDrag - opponentDrag + prepBonus + randomBetween(isAcademy ? -0.35 : -0.75, isAcademy ? 0.85 : 0.9), 3.8, 10);
   const mvp = rating >= 8.1 || (rating >= 7.7 && Math.random() < 0.28);
   const seasonTotal = career.avgRating * career.appearances;
+  const scoreline = simulatePlayerFixtureScore(rating);
 
   career.appearances += 1;
   career.lastRating = rating;
@@ -2553,6 +2785,7 @@ function simulateMatch() {
   return {
     rating,
     mvp,
+    ...scoreline,
     headline: matchHeadline(rating, mvp),
     summary: matchSummary(rating, mvp),
     managerThought: managerThought(rating),
@@ -2580,6 +2813,53 @@ function applyEndProduct(rating) {
     }
   }
   return impact;
+}
+
+function simulatePlayerFixtureScore(rating) {
+  const match = state.pendingMatch;
+  const team = state.player.club;
+  const opponent = match.opponent;
+  const teamStrength = currentPlayerClubStrength();
+  const opponentStrength = match.opponentOverall;
+  const homeTeam = match.home ? team : opponent;
+  const awayTeam = match.home ? opponent : team;
+  const score = simulateFixtureScore(homeTeam, awayTeam, teamStrengthForFixture(homeTeam, team, opponent, teamStrength, opponentStrength), teamStrengthForFixture(awayTeam, team, opponent, teamStrength, opponentStrength));
+  let homeScore = score.homeScore;
+  let awayScore = score.awayScore;
+  const playerTeamWon = match.home ? homeScore > awayScore : awayScore > homeScore;
+
+  if (rating >= 8 && !playerTeamWon && Math.random() < 0.65) {
+    if (match.home) homeScore = Math.max(homeScore, awayScore + 1);
+    else awayScore = Math.max(awayScore, homeScore + 1);
+  }
+
+  if (rating < 5.3 && playerTeamWon && Math.random() < 0.55) {
+    if (match.home) awayScore = Math.max(awayScore, homeScore);
+    else homeScore = Math.max(homeScore, awayScore);
+  }
+
+  return {
+    scoreline: `${homeScore}-${awayScore}`,
+    homeTeam,
+    awayTeam,
+    homeScore,
+    awayScore,
+    teamScore: match.home ? homeScore : awayScore,
+    opponentScore: match.home ? awayScore : homeScore
+  };
+}
+
+function currentPlayerClubStrength() {
+  const club = currentWorldClub();
+  const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
+  if (!club) return overall();
+  return isAcademy ? clamp(club.overall - 21, 28, 78) : club.overall;
+}
+
+function teamStrengthForFixture(name, playerTeam, opponent, teamStrength, opponentStrength) {
+  if (name === playerTeam) return teamStrength;
+  if (name === opponent) return opponentStrength;
+  return clubStrengthByTableName(name);
 }
 
 function updateFameFromRating(rating, mvp) {
@@ -2774,45 +3054,94 @@ function finishWeek() {
 }
 
 function updateLeagueTables() {
+  state.world.fixtures ||= buildMatchSchedules(state.world.leagues, state.world.competitions);
   Object.keys(state.world.leagues).forEach((league) => {
-    state.world.leagues[league] = state.world.leagues[league]
-      .map((row) => simulateTableRow(row))
-      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+    state.world.leagues[league] = simulateScheduledRound(league, state.world.leagues[league]);
   });
   Object.keys(state.world.competitions).forEach((competition) => {
-    state.world.competitions[competition].table = state.world.competitions[competition].table
-      .map((row) => simulateTableRow(row))
-      .sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+    state.world.competitions[competition].table = simulateScheduledRound(competition, state.world.competitions[competition].table);
   });
   refreshLeaderboards();
 }
 
-function simulateTableRow(row) {
-  if (row.p >= row.maxMatches) return row;
-  const strength = clubStrengthByTableName(row.club);
-  const invincibleBoost = strength > 88 && Math.random() < 0.018 ? 0.12 : 0;
-  const upsetNoise = randomBetween(-0.16, 0.16);
-  const winChance = clamp(0.26 + (strength - 55) / 125 + invincibleBoost + upsetNoise, 0.08, 0.74);
-  const roll = Math.random();
-  const scored = Math.max(0, Math.round(randomBetween(0, 2.2) + (strength - 50) / 28));
-  const conceded = Math.max(0, Math.round(randomBetween(0, 2.3) + (70 - strength) / 35));
-  const updated = { ...row, p: row.p + 1, gf: row.gf + scored, ga: row.ga + conceded };
+function simulateScheduledRound(league, table) {
+  const rounds = state.world.fixtures?.[league] || [];
+  const round = rounds.find((item) => item.matches.some((match) => !match.played));
+  if (!round) return table;
+  const rows = new Map(table.map((row) => [row.club, { ...row }]));
+  round.matches.forEach((match) => {
+    if (match.played) return;
+    const injected = playerResultForFixture(league, round.round, match);
+    const score = injected || simulateFixtureScore(match.home, match.away);
+    match.homeScore = score.homeScore;
+    match.awayScore = score.awayScore;
+    match.played = true;
+    applyMatchToRows(rows, match.home, match.away, match.homeScore, match.awayScore);
+  });
+  state.ui.scoreRound = round.round;
+  return [...rows.values()].sort((a, b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf);
+}
 
-  if (roll < winChance) {
-    updated.w += 1;
-    updated.pts += 3;
-    updated.form = `W${row.form}`.slice(0, 5);
-  } else if (roll < winChance + 0.27) {
-    updated.d += 1;
-    updated.pts += 1;
-    updated.form = `D${row.form}`.slice(0, 5);
-  } else {
-    updated.l += 1;
-    updated.form = `L${row.form}`.slice(0, 5);
+function playerResultForFixture(league, round, match) {
+  const result = state.pendingMatch?.result;
+  if (!result || state.pendingMatch.competition !== league || state.pendingMatch.round !== round) return null;
+  const teams = [state.player.club, state.pendingMatch.opponent];
+  if (!teams.includes(match.home) || !teams.includes(match.away)) return null;
+  if (match.home === result.homeTeam && match.away === result.awayTeam) {
+    return { homeScore: result.homeScore, awayScore: result.awayScore };
   }
+  return { homeScore: result.awayScore, awayScore: result.homeScore };
+}
 
-  updated.gd = updated.gf - updated.ga;
-  return updated;
+function applyMatchToRows(rows, home, away, homeScore, awayScore) {
+  const homeRow = rows.get(home);
+  const awayRow = rows.get(away);
+  if (!homeRow || !awayRow) return;
+  updateRowFromScore(homeRow, homeScore, awayScore);
+  updateRowFromScore(awayRow, awayScore, homeScore);
+}
+
+function updateRowFromScore(row, gf, ga) {
+  row.p += 1;
+  row.gf += gf;
+  row.ga += ga;
+  row.gd = row.gf - row.ga;
+  if (gf > ga) {
+    row.w += 1;
+    row.pts += 3;
+    row.form = `W${row.form}`.slice(0, 5);
+  } else if (gf === ga) {
+    row.d += 1;
+    row.pts += 1;
+    row.form = `D${row.form}`.slice(0, 5);
+  } else {
+    row.l += 1;
+    row.form = `L${row.form}`.slice(0, 5);
+  }
+}
+
+function simulateFixtureScore(home, away, homeOverride = null, awayOverride = null) {
+  const homeStrength = homeOverride ?? clubStrengthByTableName(home);
+  const awayStrength = awayOverride ?? clubStrengthByTableName(away);
+  const homeNoise = randomBetween(-12, 12);
+  const awayNoise = randomBetween(-12, 12);
+  const homeExpected = clamp(1.22 + (homeStrength + homeNoise - awayStrength) / 42 + 0.18, 0.12, 3.2);
+  const awayExpected = clamp(1.04 + (awayStrength + awayNoise - homeStrength) / 44, 0.1, 2.9);
+  return {
+    homeScore: poisson(homeExpected),
+    awayScore: poisson(awayExpected)
+  };
+}
+
+function poisson(lambda) {
+  const limit = Math.exp(-lambda);
+  let product = 1;
+  let goals = 0;
+  do {
+    goals += 1;
+    product *= Math.random();
+  } while (product > limit && goals < 8);
+  return goals - 1;
 }
 
 function refreshLeaderboards() {
@@ -2842,24 +3171,52 @@ function refreshLeaderboards() {
 function generatedLeadersForTable(league, table) {
   const played = Math.max(0, ...table.map((row) => row.p || 0));
   if (!played) return emptyLeaderboards();
-  const clubs = table
-    .map((row) => state.world.clubs.find((club) => club.name === row.club.replace(" Academy", "")))
-    .filter(Boolean);
-  const players = clubs.flatMap((club) => {
+  const scorers = [];
+  const assists = [];
+  const redCards = [];
+  const ratings = [];
+
+  table.forEach((row, rowIndex) => {
+    const club = state.world.clubs.find((item) => item.name === row.club.replace(" Academy", ""));
+    if (!club) return;
     const academy = league === "Academy League";
     const roster = academy ? club.academyRoster : club.roster;
-    return roster.slice(0, 16).map((player) => ({
+    const players = roster.slice(0, 16).map((player) => ({
       ...player,
       club: academy ? `${club.name} Academy` : club.name,
       league
     }));
+    const attacking = [...players].sort((a, b) => attackingWeight(b) - attackingWeight(a));
+    const creators = [...players].sort((a, b) => creatorWeight(b) - creatorWeight(a));
+
+    let remainingGoals = row.gf;
+    let scorerIndex = 0;
+    while (remainingGoals > 0 && scorerIndex < Math.min(5, attacking.length)) {
+      const maxShare = Math.max(1, Math.ceil(row.gf * (0.48 - scorerIndex * 0.08)));
+      const value = Math.min(remainingGoals, maxShare, Math.max(1, played * 2));
+      scorers.push({ ...leaderRecord(attacking[scorerIndex], "goals", played), value });
+      remainingGoals -= value;
+      scorerIndex += 1;
+    }
+
+    const assistTotal = Math.max(0, row.gf - Math.round(row.gf * 0.24));
+    let remainingAssists = assistTotal;
+    let assistIndex = 0;
+    while (remainingAssists > 0 && assistIndex < Math.min(4, creators.length)) {
+      const value = Math.min(remainingAssists, Math.max(1, Math.ceil(assistTotal * (0.45 - assistIndex * 0.08))));
+      assists.push({ ...leaderRecord(creators[assistIndex], "assists", played), value });
+      remainingAssists -= value;
+      assistIndex += 1;
+    }
+
+    if (rowIndex % 7 === 0 && row.p > 0 && Math.random() < 0.22) {
+      const defender = players.find((player) => player.position === "CB" || player.position === "FB") || players[0];
+      redCards.push({ ...leaderRecord(defender, "redCards", played), value: 1 });
+    }
+    players.slice(0, 8).forEach((player) => ratings.push(leaderRecord(player, "rating", played)));
   });
-  return sortLeaderSet({
-    scorers: players.map((player) => leaderRecord(player, "goals", played)).filter((row) => row.value > 0),
-    assists: players.map((player) => leaderRecord(player, "assists", played)).filter((row) => row.value > 0),
-    redCards: players.map((player) => leaderRecord(player, "redCards", played)).filter((row) => row.value > 0),
-    ratings: players.map((player) => leaderRecord(player, "rating", played)).filter((row) => row.value > 0)
-  });
+
+  return sortLeaderSet({ scorers, assists, redCards, ratings });
 }
 
 function sortLeaderSet(leaders) {
@@ -2869,6 +3226,16 @@ function sortLeaderSet(leaders) {
     redCards: [...leaders.redCards].sort((a, b) => b.value - a.value).slice(0, 15),
     ratings: [...leaders.ratings].sort((a, b) => b.value - a.value).slice(0, 15)
   };
+}
+
+function attackingWeight(player) {
+  const role = player.position === "ST" ? 16 : player.position === "WG" ? 12 : player.position === "CM" ? 6 : 2;
+  return player.overall + role;
+}
+
+function creatorWeight(player) {
+  const role = player.position === "CM" ? 15 : player.position === "WG" ? 13 : player.position === "FB" ? 7 : 3;
+  return player.overall + role;
 }
 
 function clubStrengthByTableName(name) {
@@ -2890,8 +3257,10 @@ function nextFixture(opponent = null) {
   const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
   const competition = isAcademy ? "Academy League" : state.player.tier;
   const config = isAcademy ? { matches: 30, clubs: 20, country: state.player.nationality, level: 0 } : leagueConfigs[competition] || { matches: 30, clubs: 20 };
-  const calendar = leagueCalendar(config);
   const round = Math.min(config.matches, Math.max(1, state.career.week || 1));
+  const scheduled = scheduledFixtureForPlayer(competition, round);
+  if (scheduled) return scheduled;
+  const calendar = leagueCalendar(config);
   const fixtureDate = addDays(calendar.start, (round - 1) * 7);
   const chosenOpponent = opponent || pickOpponent();
   const opponentName = isAcademy ? `${chosenOpponent.name} Academy` : chosenOpponent.name;
@@ -2905,6 +3274,23 @@ function nextFixture(opponent = null) {
   };
 }
 
+function scheduledFixtureForPlayer(competition, roundNumber) {
+  const rounds = state.world.fixtures?.[competition] || [];
+  const round = rounds[Math.max(0, roundNumber - 1)] || rounds.find((item) => item.matches.some((match) => !match.played));
+  if (!round) return null;
+  const teamName = state.player.club;
+  const match = round.matches.find((item) => item.home === teamName || item.away === teamName);
+  if (!match) return null;
+  return {
+    date: round.date,
+    opponent: match.home === teamName ? match.away : match.home,
+    competition,
+    round: round.round,
+    maxMatches: rounds.length,
+    home: match.home === teamName
+  };
+}
+
 function upcomingFixtures(count = 6) {
   const isAcademy = state.player.tier === "Academy" || state.player.club.includes("Academy");
   const competition = isAcademy ? "Academy League" : state.player.tier;
@@ -2913,6 +3299,8 @@ function upcomingFixtures(count = 6) {
   const baseRound = Math.max(1, state.career.week || 1);
   return Array.from({ length: count }, (_, index) => {
     const round = Math.min(config.matches, baseRound + index);
+    const scheduled = scheduledFixtureForPlayer(competition, round);
+    if (scheduled) return scheduled;
     const opponent = pickOpponent();
     return {
       date: addDays(calendar.start, (round - 1) * 7),
@@ -2926,13 +3314,20 @@ function upcomingFixtures(count = 6) {
 }
 
 function leagueCalendar(config) {
-  const year = Number((state.career.startDate || GAME_START_DATE).slice(0, 4));
+  const year = Number((state?.career?.startDate || GAME_START_DATE).slice(0, 4));
   const country = config.country;
   let start = `${year}-08-10`;
   if (["Brazil", "Argentina", "Japan", "Korea Republic", "Malaysia"].includes(country)) start = `${year}-02-15`;
   if (country === "Malaysia") start = `${year}-05-10`;
   if (config.level === 0) start = `${year}-07-20`;
   const end = addDays(start, Math.max(0, (config.matches || 30) - 1) * 7);
+  return { start, end };
+}
+
+function continentalCalendar(config) {
+  const year = Number((state?.career?.startDate || GAME_START_DATE).slice(0, 4));
+  const start = config.region === "South America" ? `${year}-03-05` : `${year}-09-10`;
+  const end = addDays(start, Math.max(0, (config.matches || 8) - 1) * 21);
   return { start, end };
 }
 
@@ -3269,6 +3664,7 @@ function endSeason() {
   applyPromotionRelegation();
   state.world.leagues = buildLeagueTables(state.world.clubs);
   state.world.competitions = buildContinentalCompetitions(state.world.clubs);
+  state.world.fixtures = buildMatchSchedules(state.world.leagues, state.world.competitions);
   state.world.leaders = buildLeaderboards();
 }
 
