@@ -29,8 +29,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=19` and `app.js?v=19`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v19"`.
+- `index.html` loads `styles.css?v=20` and `app.js?v=20`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v20"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -218,6 +218,8 @@ Life choices affect training quality, confidence, form, and match consistency.
 - Squad generation now considers club revenue, reputation, standing, and league level.
 - Top clubs have a small number of elite players, normal starters, backups, and lower-rated depth.
 - Player names are generated with nationality variety.
+- Name pools were expanded to reduce repeated names.
+- Generated squads now bias toward roughly 60% local nationality for the club's country, with foreign players still present.
 - Squad tables show nationality and value.
 - Academy squads are much lower rated for long career progression.
 
@@ -287,6 +289,8 @@ League results now come from generated matchday fixtures instead of each team up
 - Form starts as `-----` and only fills as matches are played.
 - Top scorer and assist totals scale from actual goals in played matches, so one matchday cannot create an 11-goal leader.
 - Played scoreboard fixtures now show scorers, assists, yellow cards, and red cards under the scoreline.
+- Post-match reports now include team match stats such as possession, shots, shots on target, passes, pass accuracy, corners, fouls, and cards.
+- Post-match reports also include user stats such as minutes, passes, pass accuracy, key passes, distance covered, shots, tackles, and role-specific stats like saves or interceptions.
 
 ### News
 
@@ -320,10 +324,16 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v19`.
+Last verified local build: asset/save version `v20`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=20-local`.
+- Fresh squad check showed 24 unique names from 24 displayed rows and a better first-name spread.
+- Squad generation still showed local league nationality bias, with foreign players mixed in.
+- Fresh match flow reached post-match with no console errors.
+- Post-match showed team `Match stats`, including possession and pass accuracy.
+- Post-match showed `Your match stats`, including minutes, key passes, and distance.
 - Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=19-local`.
 - Start academy offers advanced and the first academy deal could be signed.
 - Dashboard showed the new daily activity panel with `Today`, `Day 1/7`, manager training summary, and `Advance to next activity`.

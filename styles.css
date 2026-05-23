@@ -832,6 +832,46 @@ button:disabled {
   color: var(--muted);
 }
 
+.match-stat-card,
+.player-match-card {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid #dce3da;
+  border-radius: 8px;
+  background: #fbfcfa;
+}
+
+.match-stat-head,
+.match-stat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+
+.match-stat-head strong:first-child,
+.match-stat-row strong:first-child {
+  text-align: left;
+}
+
+.match-stat-head strong:last-child,
+.match-stat-row strong:last-child {
+  text-align: right;
+}
+
+.match-stat-head span,
+.match-stat-row span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.match-stat-row {
+  padding-top: 7px;
+  border-top: 1px solid #e4eae3;
+}
+
 .fixture-round {
   display: grid;
   gap: 10px;

@@ -1,9 +1,20 @@
-const SAVE_KEY = "full-time-life-save-v19";
+const SAVE_KEY = "full-time-life-save-v20";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v20",
+    title: "Better squad names and real match stats",
+    date: "2026-05-23",
+    notes: [
+      "Expanded player name pools so squads no longer repeat the same few names.",
+      "Changed league nationality logic so around 60% of generated players come from the club's country.",
+      "Added team match stats after games: possession, shots, passes, corners, fouls, and cards.",
+      "Added user match stats under the rating, including minutes, passes, key passes, distance covered, and role stats."
+    ]
+  },
   {
     version: "v19",
     title: "Daily training, manager plans, and activities",
@@ -585,6 +596,32 @@ const lastNames = [
   "Yamada", "Lim", "Kovacs", "Bennett", "Alonso", "Nakamura", "Salleh", "Diallo", "Mendoza", "Ito"
 ];
 
+const countryNamePools = {
+  England: [["Archie", "Oliver", "Jude", "Harry", "Mason", "Callum", "Alfie", "Reece", "Elliot", "Finley", "Lewis", "Charlie", "Harvey", "Toby", "Jamie", "Kieran"], ["Bennett", "Hughes", "Walker", "Turner", "Cooper", "Walsh", "Carter", "Ellis", "Morgan", "Bailey", "Foster", "Reed", "Palmer", "Wells", "Barker", "Knight"]],
+  Spain: [["Pablo", "Iker", "Unai", "Sergio", "Mateo", "Nico", "Dani", "Hugo", "Alejandro", "Gavi", "Marc", "Adrian", "Ruben", "Ismael"], ["Garcia", "Alonso", "Navarro", "Moreno", "Soler", "Vidal", "Castro", "Molina", "Rojas", "Herrera", "Campos", "Santos", "Marin", "Vega"]],
+  Italy: [["Luca", "Marco", "Nico", "Andrea", "Matteo", "Davide", "Federico", "Alessio", "Gianluca", "Enzo", "Simone", "Riccardo"], ["Rossi", "Bianchi", "Moretti", "Conti", "Ferraro", "Gallo", "Rizzo", "Romano", "Greco", "Vitale", "Lombardi", "Marino"]],
+  Germany: [["Lukas", "Felix", "Jonas", "Timo", "Florian", "Noah", "Emil", "Leon", "Mats", "Niklas", "Julian", "Kai"], ["Muller", "Schmidt", "Keller", "Weber", "Fischer", "Brandt", "Vogel", "Klein", "Hartmann", "Wolf", "Becker", "Kruger"]],
+  France: [["Theo", "Hugo", "Rayan", "Lucas", "Jules", "Mathis", "Kylio", "Enzo", "Maxime", "Noe", "Amine", "Yanis"], ["Dubois", "Moreau", "Laurent", "Blanc", "Garnier", "Roux", "Lefevre", "Girard", "Henry", "Perrin", "Marchand", "Renard"]],
+  Portugal: [["Joao", "Diogo", "Tiago", "Ruben", "Goncalo", "Andre", "Nuno", "Tomas", "Miguel", "Rafael"], ["Silva", "Costa", "Pereira", "Fernandes", "Martins", "Santos", "Carvalho", "Ramos", "Mendes", "Neves"]],
+  Netherlands: [["Daan", "Sem", "Luuk", "Milan", "Jasper", "Noah", "Xavi", "Tijmen", "Bram", "Lars"], ["Bakker", "De Jong", "Van Dijk", "Visser", "Smit", "Meijer", "Bos", "Mulder", "Kok", "Vos"]],
+  Malaysia: [["Aiman", "Hakim", "Syafiq", "Rafiq", "Akmal", "Faris", "Arif", "Safwan", "Danish", "Irfan", "Zul", "Haziq", "Amirul", "Ikhwan"], ["Rahman", "Salleh", "Halim", "Azmi", "Zainal", "Yusof", "Nordin", "Hamzah", "Ibrahim", "Ismail", "Razak", "Shah", "Mazlan", "Latif"]],
+  Indonesia: [["Rizky", "Bagas", "Evan", "Witan", "Dimas", "Arhan", "Fajar", "Saddam"], ["Pratama", "Santoso", "Saputra", "Wijaya", "Putra", "Ramadhan", "Nugroho", "Hidayat"]],
+  Singapore: [["Irfan", "Hariss", "Ikhsan", "Adam", "Danish", "Faris", "Shakir", "Zulqarnaen"], ["Fandi", "Sulaiman", "Hassan", "Rahim", "Mahmud", "Lim", "Tan", "Salleh"]],
+  Thailand: [["Suphanat", "Teerasil", "Chanathip", "Kritsada", "Peeradon", "Saranon", "Ekanit", "Bordin"], ["Mueanta", "Dangda", "Songkrasin", "Kaman", "Chamratsamee", "Anuin", "Panya", "Phala"]],
+  Japan: [["Haruto", "Ren", "Riku", "Kaito", "Sota", "Yuma", "Daichi", "Takumi", "Shota", "Keito", "Ryo", "Kosei"], ["Tanaka", "Ito", "Yamada", "Nakamura", "Kobayashi", "Saito", "Suzuki", "Watanabe", "Mori", "Endo", "Fujita", "Ishikawa"]],
+  "Korea Republic": [["Min-Jun", "Ji-Hoon", "Seo-Jun", "Hyun-Woo", "Jae-Min", "Do-Yun", "Sung-Min", "Tae-Hyun", "Jin-Woo", "Min-Jae"], ["Kim", "Park", "Lee", "Choi", "Jung", "Han", "Kang", "Yoon", "Lim", "Seo"]],
+  Brazil: [["Joao", "Lucas", "Matheus", "Rafael", "Bruno", "Caio", "Vitor", "Andre", "Felipe", "Thiago", "Gabriel", "Henrique"], ["Silva", "Santos", "Costa", "Araujo", "Pereira", "Lima", "Oliveira", "Souza", "Rocha", "Barbosa", "Cardoso", "Moura"]],
+  Argentina: [["Mateo", "Thiago", "Nico", "Lautaro", "Tomas", "Facundo", "Julian", "Enzo", "Franco", "Santiago"], ["Mendoza", "Romero", "Acosta", "Paz", "Ferreyra", "Sosa", "Rojas", "Vega", "Gimenez", "Correa"]],
+  Uruguay: [["Agustin", "Diego", "Facundo", "Matias", "Rodrigo", "Sebastian"], ["Suarez", "Nunez", "Gimenez", "Bentancur", "Valverde", "Caceres"]],
+  Colombia: [["Juan", "Luis", "Jhon", "Daniel", "Yaser", "Kevin"], ["Quintero", "Munoz", "Diaz", "Arias", "Lerma", "Carrascal"]],
+  Paraguay: [["Miguel", "Angel", "Oscar", "Ramon", "Julio", "Hector"], ["Almiron", "Gomez", "Rojas", "Ortiz", "Romero", "Benitez"]],
+  Nigeria: [["Kelechi", "Samuel", "Victor", "Moses", "Taiwo", "Chidera"], ["Okafor", "Balogun", "Adebayo", "Iheanacho", "Onyeka", "Eze"]],
+  Morocco: [["Youssef", "Achraf", "Bilal", "Amine", "Sofiane", "Ilias"], ["Hakimi", "Saiss", "El Idrissi", "Bennani", "Ziyech", "Mazraoui"]],
+  Senegal: [["Moussa", "Sadio", "Ismaila", "Pape", "Cheikh", "Habib"], ["Diop", "Sarr", "Ndiaye", "Gueye", "Diallo", "Cisse"]],
+  Algeria: [["Riyad", "Islam", "Youcef", "Said", "Farid", "Nabil"], ["Mahrez", "Bennacer", "Brahimi", "Mandi", "Slimani", "Atal"]],
+  Australia: [["Lachlan", "Noah", "Cooper", "Jackson", "Riley", "Mitchell"], ["Goodwin", "Irvine", "Ryan", "Behich", "Burgess", "Duke"]]
+};
+
 const chairmanFirstNames = ["Victor", "Helena", "Rafael", "Darius", "Amelia", "Farid", "Clara", "Kenji", "Ismail", "Leon"];
 const chairmanLastNames = ["Marwick", "Solano", "Tan", "Keller", "Rahman", "Okada", "Moreau", "Silvestre", "Hughes", "Nordin"];
 const managerFirstNames = ["Julian", "Marco", "Hassan", "Miguel", "Andre", "Paolo", "Thomas", "Daniel", "Seo-Jun", "Riku"];
@@ -877,14 +914,25 @@ function createRoster(club, academy = false) {
 
 function uniquifyRosterNames(roster) {
   const seen = new Map();
-  return roster.map((player) => {
+  return roster.map((player, index) => {
     const count = seen.get(player.name) || 0;
-    seen.set(player.name, count + 1);
-    if (!count) return player;
+    if (!count) {
+      seen.set(player.name, 1);
+      return player;
+    }
     const parts = player.name.split(" ");
     const first = parts[0];
-    const replacement = lastNames[(player.name.length + count * 9) % lastNames.length];
-    return { ...player, name: `${first} ${replacement}` };
+    const pool = countryNamePools[player.nationality] || [firstNames, lastNames];
+    let nextName = player.name;
+    let attempt = count;
+    while (seen.has(nextName) && attempt < count + pool[1].length + lastNames.length) {
+      const replacementPool = attempt - count < pool[1].length ? pool[1] : lastNames;
+      const replacement = replacementPool[(player.name.length + attempt * 13 + index * 5) % replacementPool.length];
+      nextName = `${first} ${replacement}`;
+      attempt += 1;
+    }
+    seen.set(nextName, 1);
+    return { ...player, name: nextName };
   });
 }
 
@@ -904,41 +952,30 @@ function createPlayerRecord(name, position, rating, country, index, academy) {
 }
 
 function randomPlayerName(country, index, academy) {
-  const countryPools = {
-    England: [["Archie", "Oliver", "Jude", "Harry", "Mason", "Callum"], ["Bennett", "Hughes", "Walker", "Turner", "Cooper", "Walsh"]],
-    Spain: [["Pablo", "Iker", "Unai", "Sergio", "Mateo", "Nico"], ["Garcia", "Alonso", "Navarro", "Moreno", "Soler", "Vidal"]],
-    Italy: [["Luca", "Marco", "Nico", "Andrea", "Matteo", "Davide"], ["Rossi", "Bianchi", "Moretti", "Conti", "Ferraro", "Gallo"]],
-    Germany: [["Lukas", "Felix", "Jonas", "Timo", "Florian", "Noah"], ["Muller", "Schmidt", "Keller", "Weber", "Fischer", "Brandt"]],
-    France: [["Theo", "Hugo", "Rayan", "Lucas", "Jules", "Mathis"], ["Dubois", "Moreau", "Laurent", "Blanc", "Garnier", "Roux"]],
-    Malaysia: [["Aiman", "Hakim", "Syafiq", "Rafiq", "Akmal", "Faris"], ["Rahman", "Salleh", "Halim", "Azmi", "Zainal", "Yusof"]],
-    Japan: [["Haruto", "Ren", "Riku", "Kaito", "Sota", "Yuma"], ["Tanaka", "Ito", "Yamada", "Nakamura", "Kobayashi", "Saito"]],
-    "Korea Republic": [["Min-Jun", "Ji-Hoon", "Seo-Jun", "Hyun-Woo", "Jae-Min", "Do-Yun"], ["Kim", "Park", "Lee", "Choi", "Jung", "Han"]],
-    Brazil: [["Joao", "Lucas", "Matheus", "Rafael", "Bruno", "Caio"], ["Silva", "Santos", "Costa", "Araujo", "Pereira", "Lima"]],
-    Argentina: [["Mateo", "Thiago", "Nico", "Lautaro", "Tomas", "Facundo"], ["Mendoza", "Romero", "Acosta", "Paz", "Ferreyra", "Sosa"]]
-  };
-  const pool = countryPools[country] || [firstNames, lastNames];
-  const first = pool[0][(index * 3 + country.length) % pool[0].length];
-  const last = pool[1][(index * 5 + country.charCodeAt(0)) % pool[1].length];
-  const suffix = academy ? "" : index > 18 ? ` ${String.fromCharCode(65 + (index % 26))}` : "";
-  return `${first} ${last}${suffix}`;
+  const pool = countryNamePools[country] || [firstNames, lastNames];
+  const seed = Math.abs((country || "Global").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0));
+  const first = pool[0][(index * 5 + seed + (academy ? 3 : 0)) % pool[0].length];
+  const last = pool[1][(index * 9 + seed * 2 + (academy ? 5 : 0)) % pool[1].length];
+  return `${first} ${last}`;
 }
 
 function likelyNationality(clubCountry, index, star = false) {
   if (star) return clubCountry;
   const foreignPools = {
-    England: ["England", "France", "Spain", "Brazil", "Portugal", "Netherlands", "Nigeria", "Japan", "Korea Republic"],
-    Spain: ["Spain", "Argentina", "Brazil", "France", "Portugal", "Uruguay", "Morocco"],
-    Italy: ["Italy", "Argentina", "France", "Brazil", "Netherlands", "Nigeria"],
-    Germany: ["Germany", "France", "Austria", "Netherlands", "Denmark", "Japan"],
-    France: ["France", "Morocco", "Senegal", "Algeria", "Brazil", "Portugal"],
-    Malaysia: ["Malaysia", "Indonesia", "Singapore", "Thailand", "Brazil", "Japan"],
-    Japan: ["Japan", "Brazil", "Korea Republic", "Australia", "Thailand"],
-    "Korea Republic": ["Korea Republic", "Brazil", "Japan", "Australia", "Malaysia"],
-    Brazil: ["Brazil", "Argentina", "Uruguay", "Colombia", "Paraguay"],
-    Argentina: ["Argentina", "Uruguay", "Brazil", "Colombia", "Paraguay"]
+    England: ["France", "Spain", "Brazil", "Portugal", "Netherlands", "Nigeria", "Japan", "Korea Republic"],
+    Spain: ["Argentina", "Brazil", "France", "Portugal", "Uruguay", "Morocco"],
+    Italy: ["Argentina", "France", "Brazil", "Netherlands", "Nigeria", "Senegal"],
+    Germany: ["France", "Austria", "Netherlands", "Denmark", "Japan", "Korea Republic"],
+    France: ["Morocco", "Senegal", "Algeria", "Brazil", "Portugal", "Netherlands"],
+    Malaysia: ["Indonesia", "Singapore", "Thailand", "Brazil", "Japan", "Korea Republic"],
+    Japan: ["Brazil", "Korea Republic", "Australia", "Thailand", "Malaysia"],
+    "Korea Republic": ["Brazil", "Japan", "Australia", "Malaysia", "Thailand"],
+    Brazil: ["Argentina", "Uruguay", "Colombia", "Paraguay", "Portugal"],
+    Argentina: ["Uruguay", "Brazil", "Colombia", "Paraguay", "Chile"]
   };
-  const pool = foreignPools[clubCountry] || [clubCountry, "Brazil", "France", "Spain"];
-  return pool[index % pool.length];
+  if (index % 10 < 6) return clubCountry;
+  const pool = foreignPools[clubCountry] || ["Brazil", "France", "Spain", "Portugal"];
+  return pool[(index * 3 + clubCountry.length) % pool.length];
 }
 
 function buildLeagueTables(clubs) {
@@ -1805,6 +1842,8 @@ function postMatchTemplate() {
                 <span>${escapeHtml(result.awayTeam)}</span>
               </div>
               ${matchEventsTemplate(result.events || [])}
+              ${matchStatsTemplate(result.teamStats)}
+              ${playerMatchStatsTemplate(result.playerStats)}
             ` : ""}
             <div class="manager-note">
               <strong>Manager thoughts</strong>
@@ -2303,6 +2342,63 @@ function matchEventsTemplate(events) {
           <p>${escapeHtml(event.player)}${event.assist ? `, assist ${escapeHtml(event.assist)}` : ""} <small>${escapeHtml(event.team)}</small></p>
         </div>
       `).join("")}
+    </div>
+  `;
+}
+
+function matchStatsTemplate(stats) {
+  if (!stats) return "";
+  const rows = [
+    ["Possession", `${stats.home.possession}%`, `${stats.away.possession}%`],
+    ["Shots", stats.home.shots, stats.away.shots],
+    ["On target", stats.home.onTarget, stats.away.onTarget],
+    ["Passes", stats.home.passes, stats.away.passes],
+    ["Pass accuracy", `${stats.home.passAccuracy}%`, `${stats.away.passAccuracy}%`],
+    ["Corners", stats.home.corners, stats.away.corners],
+    ["Fouls", stats.home.fouls, stats.away.fouls],
+    ["Cards", `${stats.home.yellow}Y ${stats.home.red}R`, `${stats.away.yellow}Y ${stats.away.red}R`]
+  ];
+  return `
+    <div class="match-stat-card">
+      <div class="match-stat-head">
+        <strong>${escapeHtml(stats.home.team)}</strong>
+        <span>Match stats</span>
+        <strong>${escapeHtml(stats.away.team)}</strong>
+      </div>
+      ${rows.map(([label, home, away]) => `
+        <div class="match-stat-row">
+          <strong>${home}</strong>
+          <span>${label}</span>
+          <strong>${away}</strong>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function playerMatchStatsTemplate(stats) {
+  if (!stats) return "";
+  const rows = [
+    ["Minutes", stats.minutes],
+    ["Passes", stats.passes],
+    ["Pass accuracy", `${stats.passAccuracy}%`],
+    ["Key passes", stats.keyPasses],
+    ["Distance", `${stats.kmCovered} km`],
+    ["Shots", stats.shots],
+    ["Tackles", stats.tackles],
+    [state.player.position === "Goalkeeper" ? "Saves" : "Interceptions", state.player.position === "Goalkeeper" ? stats.saves : stats.interceptions]
+  ];
+  return `
+    <div class="player-match-card">
+      <div class="panel-header compact-header">
+        <div>
+          <h3>Your match stats</h3>
+          <p>${escapeHtml(stats.role)} - ${stats.started ? "started" : stats.minutes > 0 ? "substitute" : "not used"}</p>
+        </div>
+      </div>
+      <div class="stat-grid compact-stat-grid">
+        ${rows.map(([label, value]) => statLine(label, value, "Match")).join("")}
+      </div>
     </div>
   `;
 }
@@ -3200,10 +3296,13 @@ function simulateMatch() {
   if (career.injuryWeeks > 0) {
     career.injuryWeeks -= 1;
     career.fitness = clamp(career.fitness + 9);
+    const scoreline = simulatePlayerFixtureScore(6);
     const result = {
       rating: 0,
       mvp: false,
-      ...simulatePlayerFixtureScore(6),
+      ...scoreline,
+      teamStats: simulateTeamMatchStats(scoreline),
+      playerStats: simulateUserMatchStats(0, {}, scoreline, "rehab"),
       headline: "Rehab week",
       summary: "You missed the game and stayed with the medical staff.",
       managerThought: "Availability is part of a career. Get fit properly before asking for minutes.",
@@ -3222,10 +3321,13 @@ function simulateMatch() {
     career.coachTrust = clamp(career.coachTrust + 0.6);
     const notFit = career.fitness < 42;
     const notTrusted = career.coachTrust < 34 || (career.missedTrainingThisWeek || 0) > 0;
+    const scoreline = simulatePlayerFixtureScore(6);
     const result = {
       rating: 0,
       mvp: false,
-      ...simulatePlayerFixtureScore(6),
+      ...scoreline,
+      teamStats: simulateTeamMatchStats(scoreline),
+      playerStats: simulateUserMatchStats(0, {}, scoreline, notFit || notTrusted ? "not selected" : "unused sub"),
       headline: notFit || notTrusted ? "Not selected" : "Unused substitute",
       summary: notFit ? "Your fitness was too low for the manager to risk you." : notTrusted ? "Trust and missed work kept you outside the plan." : "You did not get meaningful minutes. Your week still counted in training.",
       managerThought: notFit ? "I cannot use you if your body is not ready." : "You are close, but I need to trust the habits before I trust the minutes.",
@@ -3251,6 +3353,8 @@ function simulateMatch() {
   const seasonTotal = career.avgRating * career.appearances;
   const endProduct = applyEndProduct(rating);
   const scoreline = simulatePlayerFixtureScore(rating, endProduct);
+  const teamStats = simulateTeamMatchStats(scoreline);
+  const playerStats = simulateUserMatchStats(rating, endProduct, scoreline);
 
   career.appearances += 1;
   career.lastRating = rating;
@@ -3286,6 +3390,8 @@ function simulateMatch() {
     rating,
     mvp,
     ...scoreline,
+    teamStats,
+    playerStats,
     headline: matchHeadline(rating, mvp),
     summary: matchSummary(rating, mvp),
     managerThought: managerThought(rating),
@@ -3365,6 +3471,72 @@ function simulatePlayerFixtureScore(rating, endProduct = {}) {
     teamScore: match.home ? homeScore : awayScore,
     opponentScore: match.home ? awayScore : homeScore
   };
+}
+
+function simulateTeamMatchStats(scoreline) {
+  const homeStrength = teamStrengthForStats(scoreline.homeTeam);
+  const awayStrength = teamStrengthForStats(scoreline.awayTeam);
+  const totalStrength = Math.max(1, homeStrength + awayStrength);
+  const baseHomePossession = clamp(Math.round(48 + (homeStrength - awayStrength) / 3 + randomBetween(-6, 6)), 34, 66);
+  const homeShots = Math.max(scoreline.homeScore + 2, Math.round(randomBetween(6, 14) + (homeStrength - 55) / 14 + scoreline.homeScore * 1.4));
+  const awayShots = Math.max(scoreline.awayScore + 2, Math.round(randomBetween(5, 13) + (awayStrength - 55) / 15 + scoreline.awayScore * 1.35));
+  const homeEvents = scoreline.events.filter((event) => event.team === scoreline.homeTeam);
+  const awayEvents = scoreline.events.filter((event) => event.team === scoreline.awayTeam);
+
+  return {
+    home: teamStatLine(scoreline.homeTeam, homeShots, scoreline.homeScore, baseHomePossession, homeStrength / totalStrength, homeEvents),
+    away: teamStatLine(scoreline.awayTeam, awayShots, scoreline.awayScore, 100 - baseHomePossession, awayStrength / totalStrength, awayEvents)
+  };
+}
+
+function teamStatLine(team, shots, goals, possession, strengthShare, events) {
+  const onTarget = clamp(Math.max(goals, Math.round(shots * randomBetween(0.28, 0.52))), goals, shots);
+  return {
+    team,
+    possession,
+    shots,
+    onTarget,
+    passes: Math.round(245 + possession * 4.1 + strengthShare * 120 + randomBetween(-28, 36)),
+    passAccuracy: clamp(Math.round(68 + possession / 4 + strengthShare * 11 + randomBetween(-5, 5)), 58, 93),
+    corners: Math.max(0, Math.round(shots / 3 + randomBetween(-1, 2))),
+    fouls: Math.max(4, Math.round(randomBetween(7, 15))),
+    yellow: events.filter((event) => event.type === "yellow").length,
+    red: events.filter((event) => event.type === "red").length
+  };
+}
+
+function simulateUserMatchStats(rating, endProduct, scoreline, status = "") {
+  const position = state.player.position;
+  const short = positions[position]?.short || "CM";
+  const started = rating > 0 && state.career.fitness > 48 && Math.random() > 0.18;
+  const minutes = rating <= 0 ? 0 : started ? Math.round(randomBetween(state.career.fitness < 55 ? 58 : 76, 90)) : Math.round(randomBetween(14, 38));
+  const ability = overall();
+  const role = short;
+  const passBase = short === "GK" ? 18 : short === "FB" || short === "CB" ? 42 : short === "CM" ? 55 : short === "WG" ? 34 : 25;
+  const passes = minutes ? Math.max(2, Math.round(passBase * (minutes / 90) + ability / 5 + randomBetween(-6, 8))) : 0;
+  const shots = minutes && short !== "GK" ? Math.max(endProduct.goal ? 1 : 0, Math.round(randomBetween(0, short === "ST" ? 3.4 : short === "WG" ? 2.3 : 1.2))) : 0;
+  const keyPasses = minutes ? Math.max(endProduct.assist ? 1 : 0, Math.round(randomBetween(0, short === "CM" || short === "WG" ? 3.2 : 1.4))) : 0;
+
+  return {
+    role: status || role,
+    started,
+    minutes,
+    passes,
+    passAccuracy: minutes ? clamp(Math.round(64 + rating * 3 + ability / 8 + randomBetween(-6, 6)), 48, 96) : 0,
+    keyPasses,
+    kmCovered: minutes ? Number(clamp(minutes / 90 * randomBetween(7.2, 11.8), 1.2, 13.2).toFixed(1)) : 0,
+    shots,
+    shotsOnTarget: Math.min(shots, Math.max(endProduct.goal ? 1 : 0, Math.round(shots * randomBetween(0.25, 0.7)))),
+    tackles: minutes ? Math.round(randomBetween(short === "FB" || short === "CB" ? 2 : 0, short === "ST" ? 2.2 : 4.2)) : 0,
+    interceptions: minutes ? Math.round(randomBetween(short === "FB" || short === "CB" ? 1 : 0, short === "CM" ? 3.4 : 2.4)) : 0,
+    saves: minutes && short === "GK" ? Math.round(randomBetween(1, 6) + Math.max(0, scoreline.opponentScore - 1)) : 0
+  };
+}
+
+function teamStrengthForStats(team) {
+  if (team === state.player.club) return currentPlayerClubStrength();
+  if (team === state.pendingMatch?.opponent) return state.pendingMatch.opponentOverall;
+  return clubStrengthByTableName(team);
 }
 
 function currentPlayerClubStrength() {
