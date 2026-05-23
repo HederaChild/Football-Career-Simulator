@@ -199,6 +199,11 @@ select {
   padding: 9px 12px;
 }
 
+.full-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
 .danger-btn {
   background: #f1dedb;
   color: #842f2f;
@@ -622,6 +627,28 @@ button:disabled {
 .save-actions {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.save-slot-card {
+  display: grid;
+  gap: 12px;
+}
+
+.save-slot-card > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.save-slot-card > div:first-child span {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.save-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -1189,6 +1216,10 @@ button:disabled {
   }
 
   .leaderboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .save-slot-grid {
     grid-template-columns: 1fr;
   }
 

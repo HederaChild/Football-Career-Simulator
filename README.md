@@ -29,7 +29,7 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=21` and `app.js?v=21`.
+- `index.html` loads `styles.css?v=22` and `app.js?v=22`.
 - `app.js` uses `SAVE_KEY = "full-time-life-save-v21"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
@@ -79,6 +79,9 @@ Use these Vercel settings:
 
 Vercel and GitHub Pages play the same browser game, but saves are separate because browser local storage is tied to the domain.
 
+The current save system supports one career slot per browser/domain. `Save career` overwrites that single slot, and `Load career` restores it. There is no multi-save profile system yet.
+Older versioned save keys are cleared when saving or resetting so the browser does not waste storage on outdated career slots.
+
 Useful publish flow:
 
 ```powershell
@@ -122,6 +125,15 @@ https://hederachild.github.io/Football-Career-Simulator/?deploy=<commit>
 - Lower-ranked nations give bigger home-hero fame boosts when the player performs well.
 - Player starts as an academy applicant and receives academy contract offers first.
 - Academy contracts vary by academy quality, pathway, pressure, distance, and fit.
+
+### Save and Load
+
+- The game currently supports one career slot per browser/domain.
+- The start screen shows whether a saved career exists and lets the player choose to load it.
+- In-game Dashboard has `Save career` and `Load career` controls.
+- Manual saves record the player, club, stage, game date, OVR, and last saved time.
+- Starting a new career clears/replaces the single saved career slot.
+- Old versioned save keys are cleared before retrying a save if browser storage is full.
 
 ### Player Attributes
 
@@ -339,10 +351,18 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v21`.
+Last verified local build: asset version `v22`, save key `v21`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=22-retest`.
+- Start screen showed the new `One career slot` panel with an empty-save message.
+- Starting academy offers and signing an academy deal still worked.
+- Clicking `Save career` showed the positive one-slot save message and did not hit the old browser quota error after legacy-key cleanup.
+- In-game Dashboard showed `Save and load`, `Save career`, and `Load career`.
+- Reloading without `?new=1` returned to the start screen with `Save found` and `Load saved career`.
+- Clicking `Load saved career` restored the saved dashboard for the same player.
+- Browser console had no errors during the v22 save/load flow.
 - Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=21-local`.
 - `Start academy offers` advanced to the academy contract screen.
 - Signing an academy deal advanced into the dashboard weekly loop.

@@ -1,9 +1,23 @@
 const SAVE_KEY = "full-time-life-save-v21";
+const LEGACY_SAVE_KEYS = Array.from({ length: 21 }, (_, index) => `full-time-life-save-v${index + 1}`)
+  .filter((key) => key !== SAVE_KEY);
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v22",
+    title: "One-slot save and load",
+    date: "2026-05-23",
+    notes: [
+      "Added a visible one-career save slot on the start screen.",
+      "Added Load career beside Save career in the in-game save controls.",
+      "Changed startup so players choose whether to load the one saved career.",
+      "Saved career cards now show player, club, stage, game date, and last saved time.",
+      "Kept the game limited to one browser career for now."
+    ]
+  },
   {
     version: "v21",
     title: "Aligned minutes, varied names, and mobile league filters",
@@ -661,14 +675,16 @@ const broadcasters = [
   { name: "Rio Plata News", country: "Argentina", focus: "League" }
 ];
 
-if (new URLSearchParams(window.location.search).has("new")) {
+const launchParams = new URLSearchParams(window.location.search);
+
+if (launchParams.has("new")) {
   removeSavedCareer();
   const cleanUrl = new URL(window.location.href);
   cleanUrl.searchParams.delete("new");
   window.history.replaceState({}, "", cleanUrl);
 }
 
-let state = loadState();
+let state = launchParams.has("load") ? loadState() : null;
 let selected = { career: "technical", life: "family" };
 
 function clamp(value, min = 0, max = 100) {
@@ -732,17 +748,43 @@ function overall(player = state.player) {
   return average(Object.keys(attributeGroups).map((group) => groupOverall(group, player)));
 }
 
+function overallFromAttributes(attributes) {
+  return round(average(Object.keys(attributeGroups).map((group) => {
+    const values = Object.values(attributes[group] || {});
+    return values.length ? average(values) : 0;
+  })));
+}
+
 function recentAverage() {
   const ratings = state.career.ratingHistory.slice(0, 5);
   if (!ratings.length) return 0;
   return average(ratings);
 }
 
-function saveState() {
+function saveState(options = {}) {
   try {
+    if (state) {
+      state.save = {
+        ...(state.save || {}),
+        version: updateHistory[0].version,
+        savedAt: new Date().toISOString(),
+        manualSavedAt: options.manual ? new Date().toISOString() : state.save?.manualSavedAt || null
+      };
+    }
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    return true;
   } catch (error) {
+    if (error?.name === "QuotaExceededError") {
+      try {
+        clearLegacySaveKeys();
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+        return true;
+      } catch (retryError) {
+        console.warn("Career could not be saved after clearing old save slots.", retryError);
+      }
+    }
     console.warn("Career could not be saved in this browser, but play can continue.", error);
+    return false;
   }
 }
 
@@ -755,12 +797,37 @@ function loadState() {
   }
 }
 
+function savedCareerSummary(saved = loadState()) {
+  if (!saved?.player) return null;
+  const date = saved.career ? addDays(GAME_START_DATE, Math.max(0, saved.career.totalWeeks || 0) * 7) : GAME_START_DATE;
+  return {
+    name: saved.player.name || "Unnamed player",
+    club: saved.player.club || "Unattached",
+    stage: saved.player.stage || "Academy Applicant",
+    overall: saved.player.attributes ? overallFromAttributes(saved.player.attributes) : null,
+    gameDate: formatDisplayDate(date),
+    savedAt: saved.save?.savedAt ? formatDateTime(saved.save.savedAt) : "Not recorded",
+    manualSavedAt: saved.save?.manualSavedAt ? formatDateTime(saved.save.manualSavedAt) : null
+  };
+}
+
 function removeSavedCareer() {
   try {
     localStorage.removeItem(SAVE_KEY);
+    clearLegacySaveKeys();
   } catch (error) {
     console.warn("Career save could not be cleared in this browser.", error);
   }
+}
+
+function clearLegacySaveKeys() {
+  LEGACY_SAVE_KEYS.forEach((key) => {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      // Ignore individual storage cleanup failures so the active save can still try.
+    }
+  });
 }
 
 function buildWorld() {
@@ -1344,13 +1411,12 @@ function bindEvents() {
     startButton.addEventListener("touchend", startFromButton, { passive: false });
   }
 
-  const continueButton = document.querySelector("[data-continue]");
-  if (continueButton) {
+  document.querySelectorAll("[data-continue]").forEach((continueButton) => {
     continueButton.addEventListener("click", () => {
       state = loadState();
       render();
     });
-  }
+  });
 
   document.querySelectorAll("[data-select]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -1392,7 +1458,8 @@ function startCareerFromForm(form) {
 }
 
 function setupTemplate() {
-  const hasSave = Boolean(loadState());
+  const saveSummary = savedCareerSummary();
+  const hasSave = Boolean(saveSummary);
   return `
     <section class="app-shell">
       <header class="topbar">
@@ -1437,11 +1504,21 @@ function setupTemplate() {
           </label>
           <button class="primary-btn" type="submit" data-start-button>Start academy offers</button>
           <p class="form-error" data-start-error aria-live="polite"></p>
-          ${hasSave ? `<button class="secondary-btn" type="button" data-continue>Continue saved career</button>` : ""}
+          ${hasSave ? `<button class="secondary-btn full-btn" type="button" data-continue>Load saved career</button>` : ""}
           <p class="footer-note">${RANKING_NOTE} Lower-ranked nations give bigger home-hero fame when you perform.</p>
         </form>
 
         <div class="intro-board">
+          <section class="panel save-slot-panel">
+            <div class="panel-header compact-header">
+              <div>
+                <h2>One career slot</h2>
+                <p>For now, this browser can hold one saved career.</p>
+              </div>
+              <span class="tag">${hasSave ? "Save found" : "Empty"}</span>
+            </div>
+            ${hasSave ? saveSlotTemplate(saveSummary, true) : `<div class="empty">No saved career in this browser yet. Starting a career creates the single save slot.</div>`}
+          </section>
           <section class="panel">
             <h2>Career path</h2>
             <div class="career-ladder">
@@ -1462,6 +1539,25 @@ function setupTemplate() {
         </div>
       </div>
     </section>
+  `;
+}
+
+function saveSlotTemplate(summary, includeLoad = false) {
+  if (!summary) return `<div class="empty">No saved career in this browser.</div>`;
+  return `
+    <div class="save-slot-card">
+      <div>
+        <strong>${escapeHtml(summary.name)}</strong>
+        <span>${escapeHtml(summary.stage)}</span>
+      </div>
+      <div class="save-slot-grid">
+        ${statLine("Club", summary.club, "Current team")}
+        ${statLine("Date", summary.gameDate, "Game calendar")}
+        ${statLine("OVR", summary.overall ?? "-", "Player level")}
+        ${statLine("Saved", summary.manualSavedAt || summary.savedAt, summary.manualSavedAt ? "Manual save" : "Latest save")}
+      </div>
+      ${includeLoad ? `<button class="secondary-btn full-btn" type="button" data-continue>Load this career</button>` : ""}
+    </div>
   `;
 }
 
@@ -1595,6 +1691,7 @@ function updatesTab() {
 }
 
 function dashboardTab(age, ratingText) {
+  const saveSummary = savedCareerSummary(state);
   return `
     <div class="dashboard">
       <div class="column">
@@ -1610,9 +1707,17 @@ function dashboardTab(age, ratingText) {
       <div class="column">
         ${footballPanel()}
         <section class="panel">
-          <h2>Save controls</h2>
+          <div class="panel-header compact-header">
+            <div>
+              <h2>Save and load</h2>
+              <p>One career slot is available in this browser.</p>
+            </div>
+            <span class="tag">1 slot</span>
+          </div>
+          ${saveSlotTemplate(saveSummary)}
           <div class="save-actions">
             <button class="secondary-btn" type="button" data-action="save">Save career</button>
+            <button class="secondary-btn" type="button" data-action="load-career">Load career</button>
             <button class="danger-btn" type="button" data-action="reset">Reset career</button>
           </div>
         </section>
@@ -3053,8 +3158,22 @@ function handleAction(action, id) {
   if (action === "finish-week") finishWeek();
   if (action === "press") handlePress(id);
   if (action === "save") {
+    const saved = saveState({ manual: true });
+    addLog("Career saved", saved ? "Your one career slot was updated in this browser." : "This browser blocked the save. Try refreshing or checking storage permissions.", saved ? "good" : "warning");
+    if (saved) saveState();
+    render();
+  }
+  if (action === "load-career") {
+    const saved = loadState();
+    if (!saved) {
+      addLog("No saved career", "This browser does not have a career slot to load yet.", "warning");
+      render();
+      return;
+    }
+    if (!window.confirm("Load the saved career slot? Any unsaved progress on screen will be replaced.")) return;
+    state = saved;
+    addLog("Career loaded", "The one saved career slot was loaded from this browser.", "good");
     saveState();
-    addLog("Career saved", "Your progress is stored in this browser.", "good");
     render();
   }
   if (action === "reset" && window.confirm("Reset this career and clear the save?")) {
@@ -4267,6 +4386,18 @@ function addDays(dateString, days) {
 function formatDisplayDate(dateString) {
   const date = new Date(`${dateString}T00:00:00Z`);
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+}
+
+function formatDateTime(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Not recorded";
+  return date.toLocaleString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 
 function updateClubPolitics() {
