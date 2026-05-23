@@ -1,9 +1,20 @@
-const SAVE_KEY = "full-time-life-save-v20";
+const SAVE_KEY = "full-time-life-save-v21";
 const RANKING_NOTE = "FIFA/Coca-Cola Men's World Ranking baseline: 1 April 2026.";
 const GAME_TITLE = "Football Career Simulator by Jeff Adkins";
 const GAME_START_DATE = "2026-07-01";
 
 const updateHistory = [
+  {
+    version: "v21",
+    title: "Aligned minutes, varied names, and mobile league filters",
+    date: "2026-05-23",
+    notes: [
+      "Made key highlight minutes respect the player's actual minutes played.",
+      "Changed generated player names to use club-specific seeds so clubs stop sharing the same name patterns.",
+      "Grouped domestic leagues by country before showing that nation's tiers.",
+      "Compressed league and squad tables on mobile so phone users do not need to zoom out."
+    ]
+  },
   {
     version: "v20",
     title: "Better squad names and real match stats",
@@ -680,6 +691,10 @@ function uid(prefix) {
   return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+function textSeed(value) {
+  return String(value || "").split("").reduce((sum, char, index) => sum + char.charCodeAt(0) * (index + 3), 0);
+}
+
 function nationByCode(code) {
   return nations.find((nation) => nation.code === code) || nations.find((nation) => nation.code === "MAS");
 }
@@ -780,6 +795,7 @@ function buildWorld() {
     news: createOpeningNews(clubs),
     filters: {
       league: "Academy League",
+      leagueCountry: "Academy",
       newsCountry: "All",
       club: "current"
     }
@@ -906,7 +922,7 @@ function createRoster(club, academy = false) {
     const youngsterDip = !academy && index > 17 ? randomBetween(2, 8) : 0;
     const rating = clamp(baseOverall + squadBand - youngsterDip, academy ? 10 : 32, academy ? 34 : 88);
     const nation = likelyNationality(club.country, index + roster.length, false);
-    roster.push(createPlayerRecord(randomPlayerName(nation, index + roster.length, academy), position, rating, nation, index + roster.length, academy));
+    roster.push(createPlayerRecord(randomPlayerName(nation, index + roster.length, academy, club.name), position, rating, nation, index + roster.length, academy));
   });
 
   return uniquifyRosterNames(roster.sort((a, b) => b.overall - a.overall).slice(0, 23));
@@ -951,11 +967,11 @@ function createPlayerRecord(name, position, rating, country, index, academy) {
   };
 }
 
-function randomPlayerName(country, index, academy) {
+function randomPlayerName(country, index, academy, clubName = "") {
   const pool = countryNamePools[country] || [firstNames, lastNames];
-  const seed = Math.abs((country || "Global").split("").reduce((sum, char) => sum + char.charCodeAt(0), 0));
+  const seed = textSeed(`${country}-${clubName}-${academy ? "academy" : "senior"}`);
   const first = pool[0][(index * 5 + seed + (academy ? 3 : 0)) % pool[0].length];
-  const last = pool[1][(index * 9 + seed * 2 + (academy ? 5 : 0)) % pool[1].length];
+  const last = pool[1][(index * 9 + Math.floor(seed / 3) + (academy ? 5 : 0)) % pool[1].length];
   return `${first} ${last}`;
 }
 
@@ -1245,6 +1261,7 @@ function createCareer(formData) {
     ui: {
       tab: "dashboard",
       league: "Academy League",
+      leagueCountry: "Academy",
       leagueView: "table",
       scoreRound: 1,
       leaderboard: "scorers",
@@ -2160,9 +2177,11 @@ function offersPanel() {
 }
 
 function leaguesTab() {
-  const leagues = Object.keys(state.world.leagues);
   const activeLeague = state.ui.league || currentLeagueName();
   const isCompetition = Boolean(state.world.competitions[activeLeague]);
+  const activeCountry = activeLeagueCountry(activeLeague);
+  const countries = leagueCountries();
+  const countryLeagues = leaguesForCountry(activeCountry);
   const table = isCompetition ? state.world.competitions[activeLeague].table : state.world.leagues[activeLeague] || [];
   const config = isCompetition ? state.world.competitions[activeLeague] : leagueConfigs[activeLeague] || { clubs: 20, matches: 30 };
   const competitionNames = Object.keys(state.world.competitions);
@@ -2179,8 +2198,13 @@ function leaguesTab() {
           <span class="tag">${escapeHtml(activeLeague)}</span>
         </div>
         <div class="filter-row">
-          ${leagues.map((league) => `<button class="filter-btn ${activeLeague === league ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(league)}">${escapeHtml(league)}</button>`).join("")}
-          ${competitionNames.map((competition) => `<button class="filter-btn ${activeLeague === competition ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(competition)}">${escapeHtml(competition)}</button>`).join("")}
+          ${countries.map((country) => `<button class="filter-btn ${activeCountry === country && !isCompetition ? "active" : ""}" type="button" data-action="league-country" data-id="${escapeHtml(country)}">${escapeHtml(country)}</button>`).join("")}
+          <button class="filter-btn ${isCompetition ? "active" : ""}" type="button" data-action="league-country" data-id="Competitions">Competitions</button>
+        </div>
+        <div class="filter-row compact-filters">
+          ${isCompetition
+            ? competitionNames.map((competition) => `<button class="filter-btn ${activeLeague === competition ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(competition)}">${escapeHtml(competition)}</button>`).join("")
+            : countryLeagues.map((league) => `<button class="filter-btn ${activeLeague === league ? "active" : ""}" type="button" data-action="league-filter" data-id="${escapeHtml(league)}">${escapeHtml(league)}</button>`).join("")}
         </div>
         <div class="filter-row compact-filters">
           ${[
@@ -2228,10 +2252,42 @@ function leaguesTab() {
   `;
 }
 
+function leagueCountries() {
+  const countries = Object.keys(state.world.leagues || {})
+    .map((league) => activeLeagueCountry(league))
+    .filter((country) => country !== "Competitions");
+  return [...new Set(countries)].sort((a, b) => {
+    if (a === "Academy") return -1;
+    if (b === "Academy") return 1;
+    return a.localeCompare(b);
+  });
+}
+
+function activeLeagueCountry(league) {
+  if (state.world.competitions?.[league]) return "Competitions";
+  if (league === "Academy League") return "Academy";
+  return leagueConfigs[league]?.country || "Academy";
+}
+
+function leaguesForCountry(country) {
+  if (country === "Competitions") return Object.keys(state.world.competitions || {});
+  return Object.keys(state.world.leagues || {})
+    .filter((league) => activeLeagueCountry(league) === country)
+    .sort((a, b) => {
+      if (a === "Academy League") return -1;
+      if (b === "Academy League") return 1;
+      return (leagueConfigs[a]?.level || 0) - (leagueConfigs[b]?.level || 0) || a.localeCompare(b);
+    });
+}
+
+function firstLeagueForCountry(country) {
+  return leaguesForCountry(country)[0] || currentLeagueName();
+}
+
 function leagueTableTemplate(table) {
   return `
     <div class="table-wrap">
-      <table class="league-table">
+      <table class="league-table compact-league-table">
         <thead>
           <tr><th>#</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th><th>Form</th></tr>
         </thead>
@@ -2378,8 +2434,11 @@ function matchStatsTemplate(stats) {
 
 function playerMatchStatsTemplate(stats) {
   if (!stats) return "";
+  const minutesLabel = stats.minutes && stats.startMinute && stats.endMinute
+    ? `${stats.startMinute}-${stats.endMinute} (${stats.minutes})`
+    : stats.minutes;
   const rows = [
-    ["Minutes", stats.minutes],
+    ["Minutes", minutesLabel],
     ["Passes", stats.passes],
     ["Pass accuracy", `${stats.passAccuracy}%`],
     ["Key passes", stats.keyPasses],
@@ -2489,7 +2548,7 @@ function rosterTableTemplate(roster, club) {
   const rows = [...playerRow, ...roster].slice(0, 26);
   return `
     <div class="table-wrap">
-      <table class="league-table">
+      <table class="league-table squad-table">
         <thead>
           <tr><th>Name</th><th>Pos</th><th>Age</th><th>OVR</th><th>Potential</th><th>Nation / Value</th></tr>
         </thead>
@@ -2949,8 +3008,16 @@ function handleAction(action, id) {
     saveState();
     render();
   }
+  if (action === "league-country") {
+    state.ui.leagueCountry = id;
+    state.ui.league = firstLeagueForCountry(id);
+    state.ui.scoreRound = latestRoundNumber(state.ui.league);
+    saveState();
+    render();
+  }
   if (action === "league-filter") {
     state.ui.league = id;
+    state.ui.leagueCountry = activeLeagueCountry(id);
     state.ui.scoreRound = latestRoundNumber(id);
     saveState();
     render();
@@ -3302,7 +3369,7 @@ function simulateMatch() {
       mvp: false,
       ...scoreline,
       teamStats: simulateTeamMatchStats(scoreline),
-      playerStats: simulateUserMatchStats(0, {}, scoreline, "rehab"),
+      playerStats: simulateUserMatchStats(0, {}, "rehab"),
       headline: "Rehab week",
       summary: "You missed the game and stayed with the medical staff.",
       managerThought: "Availability is part of a career. Get fit properly before asking for minutes.",
@@ -3327,7 +3394,7 @@ function simulateMatch() {
       mvp: false,
       ...scoreline,
       teamStats: simulateTeamMatchStats(scoreline),
-      playerStats: simulateUserMatchStats(0, {}, scoreline, notFit || notTrusted ? "not selected" : "unused sub"),
+      playerStats: simulateUserMatchStats(0, {}, notFit || notTrusted ? "not selected" : "unused sub"),
       headline: notFit || notTrusted ? "Not selected" : "Unused substitute",
       summary: notFit ? "Your fitness was too low for the manager to risk you." : notTrusted ? "Trust and missed work kept you outside the plan." : "You did not get meaningful minutes. Your week still counted in training.",
       managerThought: notFit ? "I cannot use you if your body is not ready." : "You are close, but I need to trust the habits before I trust the minutes.",
@@ -3352,9 +3419,9 @@ function simulateMatch() {
   const mvp = rating >= 8.1 || (rating >= 7.7 && Math.random() < 0.28);
   const seasonTotal = career.avgRating * career.appearances;
   const endProduct = applyEndProduct(rating);
+  const playerStats = simulateUserMatchStats(rating, endProduct);
   const scoreline = simulatePlayerFixtureScore(rating, endProduct);
   const teamStats = simulateTeamMatchStats(scoreline);
-  const playerStats = simulateUserMatchStats(rating, endProduct, scoreline);
 
   career.appearances += 1;
   career.lastRating = rating;
@@ -3367,7 +3434,7 @@ function simulateMatch() {
   career.confidence = clamp(career.confidence + (rating - 6.1) * 3.2);
   career.fitness = clamp(career.fitness - randomBetween(3, 8));
 
-  const highlights = generateMatchHighlights(rating, mvp, endProduct);
+  const highlights = generateMatchHighlights(rating, mvp, endProduct, playerStats);
   updateFameFromRating(rating, mvp);
 
   if (rating >= 8) {
@@ -3505,11 +3572,13 @@ function teamStatLine(team, shots, goals, possession, strengthShare, events) {
   };
 }
 
-function simulateUserMatchStats(rating, endProduct, scoreline, status = "") {
+function simulateUserMatchStats(rating, endProduct, status = "") {
   const position = state.player.position;
   const short = positions[position]?.short || "CM";
   const started = rating > 0 && state.career.fitness > 48 && Math.random() > 0.18;
   const minutes = rating <= 0 ? 0 : started ? Math.round(randomBetween(state.career.fitness < 55 ? 58 : 76, 90)) : Math.round(randomBetween(14, 38));
+  const startMinute = !minutes ? 0 : started ? 1 : Math.max(46, 91 - minutes);
+  const endMinute = !minutes ? 0 : started ? minutes : 90;
   const ability = overall();
   const role = short;
   const passBase = short === "GK" ? 18 : short === "FB" || short === "CB" ? 42 : short === "CM" ? 55 : short === "WG" ? 34 : 25;
@@ -3521,6 +3590,8 @@ function simulateUserMatchStats(rating, endProduct, scoreline, status = "") {
     role: status || role,
     started,
     minutes,
+    startMinute,
+    endMinute,
     passes,
     passAccuracy: minutes ? clamp(Math.round(64 + rating * 3 + ability / 8 + randomBetween(-6, 6)), 48, 96) : 0,
     keyPasses,
@@ -3529,7 +3600,7 @@ function simulateUserMatchStats(rating, endProduct, scoreline, status = "") {
     shotsOnTarget: Math.min(shots, Math.max(endProduct.goal ? 1 : 0, Math.round(shots * randomBetween(0.25, 0.7)))),
     tackles: minutes ? Math.round(randomBetween(short === "FB" || short === "CB" ? 2 : 0, short === "ST" ? 2.2 : 4.2)) : 0,
     interceptions: minutes ? Math.round(randomBetween(short === "FB" || short === "CB" ? 1 : 0, short === "CM" ? 3.4 : 2.4)) : 0,
-    saves: minutes && short === "GK" ? Math.round(randomBetween(1, 6) + Math.max(0, scoreline.opponentScore - 1)) : 0
+    saves: minutes && short === "GK" ? Math.round(randomBetween(1, 6)) : 0
   };
 }
 
@@ -3565,30 +3636,31 @@ function updateFameFromRating(rating, mvp) {
   }
 }
 
-function generateMatchHighlights(rating, mvp, endProduct) {
+function generateMatchHighlights(rating, mvp, endProduct, playerStats = null) {
+  if (playerStats && playerStats.minutes <= 0) return [];
   const player = state.player;
   const role = positions[player.position]?.short || "CM";
-  const minutes = uniqueMinutes(rating >= 8 ? 5 : rating >= 6.5 ? 4 : 3);
+  const minutes = uniqueMinutes(rating >= 8 ? 5 : rating >= 6.5 ? 4 : 3, playerStats);
   const quality = rating >= 7.6 ? "good" : rating < 5.7 ? "warning" : "";
   const moments = [];
 
   if (endProduct.goal) {
-    moments.push(highlight(minutes.shift() || 18, "Goal", "You attack the box, take one touch away from pressure, and finish before the defender can block.", "good"));
+    moments.push(highlight(minutes.shift() || fallbackHighlightMinute(playerStats), "Goal", "You attack the box, take one touch away from pressure, and finish before the defender can block.", "good"));
   }
 
   if (endProduct.assist) {
-    moments.push(highlight(minutes.shift() || 32, "Assist", "You receive between lines, wait for the runner, and slide the pass through before the move ends with a finish.", "good"));
+    moments.push(highlight(minutes.shift() || fallbackHighlightMinute(playerStats), "Assist", "You receive between lines, wait for the runner, and slide the pass through before the move ends with a finish.", "good"));
   }
 
   if (endProduct.cleanSheet) {
-    moments.push(highlight(minutes.shift() || 54, "Key save", "You set early, read the striker's body shape, and push the shot wide for a corner.", "good"));
+    moments.push(highlight(minutes.shift() || fallbackHighlightMinute(playerStats), "Key save", "You set early, read the striker's body shape, and push the shot wide for a corner.", "good"));
   }
 
   const library = role === "GK" ? goalkeeperHighlights(rating) : outfieldHighlights(player.position, rating);
   while (moments.length < (mvp ? 5 : rating >= 6.5 ? 4 : 3) && library.length) {
     const index = Math.floor(randomBetween(0, library.length));
     const [title, body, type] = library.splice(index, 1)[0];
-    moments.push(highlight(minutes.shift() || Math.floor(randomBetween(9, 88)), title, body, type || quality));
+    moments.push(highlight(minutes.shift() || fallbackHighlightMinute(playerStats), title, body, type || quality));
   }
 
   return moments
@@ -3596,13 +3668,26 @@ function generateMatchHighlights(rating, mvp, endProduct) {
     .map((item, index) => ({ ...item, id: `hl-${state.career.totalWeeks}-${index}` }));
 }
 
-function uniqueMinutes(count) {
+function uniqueMinutes(count, playerStats = null) {
+  const totalMinutes = playerStats?.minutes || 90;
+  const start = playerStats?.startMinute || (playerStats && playerStats.minutes > 0 && !playerStats.started ? Math.max(1, 91 - totalMinutes) : 1);
+  const end = playerStats?.endMinute || (playerStats && playerStats.minutes > 0 ? Math.min(90, start + totalMinutes - 1) : 90);
+  const target = end - start < 30 ? Math.min(count, 2) : count;
   const minutes = [];
-  while (minutes.length < count) {
-    const minute = Math.floor(randomBetween(7, 89));
+  let guard = 0;
+  while (minutes.length < target && guard < 80) {
+    guard += 1;
+    const minute = Math.floor(randomBetween(Math.max(2, start + 1), Math.max(start + 2, end - 1)));
     if (!minutes.some((existing) => Math.abs(existing - minute) < 8)) minutes.push(minute);
   }
   return minutes.sort((a, b) => a - b);
+}
+
+function fallbackHighlightMinute(playerStats = null) {
+  if (!playerStats || playerStats.minutes >= 88) return Math.floor(randomBetween(9, 88));
+  const start = playerStats.startMinute || (playerStats.started ? 1 : Math.max(1, 91 - playerStats.minutes));
+  const end = playerStats.endMinute || Math.min(90, start + Math.max(1, playerStats.minutes) - 1);
+  return Math.floor(randomBetween(start, end));
 }
 
 function highlight(minute, title, body, type = "") {

@@ -664,6 +664,15 @@ button:disabled {
   text-transform: uppercase;
 }
 
+.compact-league-table th:nth-child(1),
+.compact-league-table td:nth-child(1),
+.compact-league-table th:nth-child(n+3),
+.compact-league-table td:nth-child(n+3),
+.squad-table th:nth-child(n+2),
+.squad-table td:nth-child(n+2) {
+  text-align: center;
+}
+
 .league-table tr:last-child td {
   border-bottom: 0;
 }
@@ -1186,6 +1195,80 @@ button:disabled {
   .setup-form,
   .panel {
     padding: 14px;
+  }
+
+  .filter-row {
+    gap: 6px;
+  }
+
+  .filter-btn {
+    min-height: 34px;
+    padding: 7px 9px;
+    font-size: 0.78rem;
+  }
+
+  .table-wrap {
+    overflow-x: visible;
+  }
+
+  .league-table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .league-table th,
+  .league-table td {
+    padding: 7px 5px;
+    font-size: 0.72rem;
+  }
+
+  .league-table th {
+    font-size: 0.64rem;
+  }
+
+  .compact-league-table th:nth-child(4),
+  .compact-league-table td:nth-child(4),
+  .compact-league-table th:nth-child(5),
+  .compact-league-table td:nth-child(5),
+  .compact-league-table th:nth-child(6),
+  .compact-league-table td:nth-child(6),
+  .compact-league-table th:nth-child(9),
+  .compact-league-table td:nth-child(9),
+  .squad-table th:nth-child(3),
+  .squad-table td:nth-child(3),
+  .squad-table th:nth-child(5),
+  .squad-table td:nth-child(5) {
+    display: none;
+  }
+
+  .compact-league-table th:nth-child(1),
+  .compact-league-table td:nth-child(1) {
+    width: 30px;
+  }
+
+  .compact-league-table th:nth-child(2),
+  .compact-league-table td:nth-child(2),
+  .squad-table th:nth-child(1),
+  .squad-table td:nth-child(1) {
+    overflow-wrap: anywhere;
+  }
+
+  .compact-league-table th:nth-child(3),
+  .compact-league-table td:nth-child(3),
+  .compact-league-table th:nth-child(7),
+  .compact-league-table td:nth-child(7),
+  .compact-league-table th:nth-child(8),
+  .compact-league-table td:nth-child(8),
+  .squad-table th:nth-child(2),
+  .squad-table td:nth-child(2),
+  .squad-table th:nth-child(4),
+  .squad-table td:nth-child(4) {
+    width: 42px;
+  }
+
+  .squad-table th:nth-child(6),
+  .squad-table td:nth-child(6) {
+    width: 78px;
   }
 
   .schedule-card,

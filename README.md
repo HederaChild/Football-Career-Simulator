@@ -29,8 +29,8 @@ The game must stay free and public. It is hosted on GitHub Pages as a static web
 
 Current asset/save version at last update:
 
-- `index.html` loads `styles.css?v=20` and `app.js?v=20`.
-- `app.js` uses `SAVE_KEY = "full-time-life-save-v20"`.
+- `index.html` loads `styles.css?v=21` and `app.js?v=21`.
+- `app.js` uses `SAVE_KEY = "full-time-life-save-v21"`.
 
 When making major save-breaking changes, bump both the asset version and `SAVE_KEY`.
 
@@ -219,6 +219,7 @@ Life choices affect training quality, confidence, form, and match consistency.
 - Top clubs have a small number of elite players, normal starters, backups, and lower-rated depth.
 - Player names are generated with nationality variety.
 - Name pools were expanded to reduce repeated names.
+- Generated names now use club-specific seeds so different clubs in the same country do not reuse the same name pattern.
 - Generated squads now bias toward roughly 60% local nationality for the club's country, with foreign players still present.
 - Squad tables show nationality and value.
 - Academy squads are much lower rated for long career progression.
@@ -254,19 +255,32 @@ Currently implemented:
 - `English League 2`: 24 clubs, 46 matches
 - `English League 3`: 24 clubs, 46 matches
 - `Spanish League`: 20 clubs, 38 matches
+- `Spanish League 2` and `Spanish League 3`
 - `Italian League`: 20 clubs, 38 matches
+- `Italian League 2` and `Italian League 3`
 - `German League`: 18 clubs, 34 matches
+- `German League 2` and `German League 3`
 - `French League`: 18 clubs, 34 matches
+- `French League 2` and `French League 3`
 - `Portuguese League`: 18 clubs, 34 matches
+- `Portuguese League 2` and `Portuguese League 3`
 - `Dutch League`: 18 clubs, 34 matches
+- `Dutch League 2`
 - `Korean League`: 12 clubs, 38 matches
+- `Korean League 2`
 - `Malaysian League`: 13 clubs, 24 matches
+- `Malaysian League 2`
 - `Japanese League`: 20 clubs, 38 matches
+- `Japanese League 2`
 - `Brazilian League`: 20 clubs, 38 matches
+- `Brazilian League 2`
 - `Argentine League`: 30 clubs, 16 matches
+- `Argentine League 2`
 - `Academy League`: 20 clubs, 30 matches
 
-English League 1, 2, and 3 include promotion/relegation at season end.
+Domestic league browsing is grouped by country first, then that country's tiers. This is meant to keep the Leagues page usable on mobile instead of showing every league button at once.
+
+Multiple countries include promotion/relegation between tier 1, tier 2, and tier 3 where those tiers exist.
 
 Continental competitions:
 
@@ -291,6 +305,7 @@ League results now come from generated matchday fixtures instead of each team up
 - Played scoreboard fixtures now show scorers, assists, yellow cards, and red cards under the scoreline.
 - Post-match reports now include team match stats such as possession, shots, shots on target, passes, pass accuracy, corners, fouls, and cards.
 - Post-match reports also include user stats such as minutes, passes, pass accuracy, key passes, distance covered, shots, tackles, and role-specific stats like saves or interceptions.
+- User match minutes now show the actual range played, for example `62-90 (29)`, and key highlights are constrained inside that range.
 
 ### News
 
@@ -324,10 +339,20 @@ Notifications Center should remain prominent because the user specifically asked
 
 ## Recent Verification Notes
 
-Last verified local build: asset/save version `v20`.
+Last verified local build: asset/save version `v21`.
 
 Checks performed:
 
+- Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=21-local`.
+- `Start academy offers` advanced to the academy contract screen.
+- Signing an academy deal advanced into the dashboard weekly loop.
+- Squad tab showed 24 visible squad names and 24 unique names in the checked academy squad.
+- Generated squad first names were more varied after club-specific name seeding.
+- Leagues tab now shows country filters first, then the selected country's tiers.
+- England filter showed `English League 1`, `English League 2`, and `English League 3` as tier choices.
+- Post-match report showed `Your match stats` with a minutes range, for example `1-80 (80)`.
+- Verified key highlight minutes stayed inside the displayed minutes range.
+- Browser console had no errors during v21 start, academy signing, squad check, league grouping, matchday, and post-match report checks.
 - Fresh local start loaded at `http://127.0.0.1:4174/?new=1&v=20-local`.
 - Fresh squad check showed 24 unique names from 24 displayed rows and a better first-name spread.
 - Squad generation still showed local league nationality bias, with foreign players mixed in.
